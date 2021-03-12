@@ -20,6 +20,14 @@ Input::~Input()
 	Safe_Delete_Map(m_mapKey);
 }
 
+void Input::InitUnCatchedKeyState()
+{
+	for (auto iter = m_unCatchedKeyMap.begin(); iter != m_unCatchedKeyMap.end(); ++iter)
+	{
+		iter->second = false;
+	}
+}
+
 bool Input::Init(HWND hWnd)
 {
 	m_hWnd = hWnd;
@@ -32,6 +40,8 @@ bool Input::Init(HWND hWnd)
 	AddKey(VK_LBUTTON, "MouseLButton");
 	AddKey(VK_RBUTTON, "MouseRButton");
 
+	RegisterUnCatchedKey('-');
+	RegisterUnCatchedKey('=');
 	// 마우스 위치를 얻어오는 함수이다.
 	GetCursorPos(&m_tMousePos);
 
@@ -53,7 +63,15 @@ void Input::Update(float dt)
 		int iPushCount = 0;
 		for (size_t i = 0; i < iter->second->vecKey.size(); ++i)
 		{
-			if (GetAsyncKeyState(iter->second->vecKey[i]) & 0x8000)
+			const char& key = iter->second->vecKey[i];
+			if (IsUnCatchedKey(key))
+			{
+				if (m_unCatchedKeyMap[key])
+				{
+					iPushCount++;
+				}
+			}
+			else if (GetAsyncKeyState(key) & 0x8000)
 			{
 				iPushCount++;
 			}
@@ -93,6 +111,7 @@ void Input::Update(float dt)
 	m_pMouse->Update(dt);
 	m_pMouse->LateUpdate(dt);
 	COLLISION_MANAGER->AddObject(m_pMouse);
+	InitUnCatchedKeyState();
 }
 
 bool Input::KeyDown(const string& strKey) const

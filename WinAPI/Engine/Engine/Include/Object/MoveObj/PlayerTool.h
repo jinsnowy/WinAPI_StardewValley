@@ -9,21 +9,22 @@ class PlayerTool :
 private:
 	enum ToolState
 	{
-		TOOL_NONE, // 툴 선택 X
 		TOOL_PICK, // 곡괭이
 		TOOL_AXE,  // 도끼
 		TOOL_HOE,  // 호미
 		TOOL_WATER,// 물뿌리개
 		TOOL_SICKLE, // 낫
-		TOOL_BLADE // 무기
+		TOOL_BLADE, // 무기
+		TOOL_END // 툴 선택 안함
 	};
-	ToolState eToolState = TOOL_WATER;
+	vector<class Item*> m_pTools;
+	ToolState m_eToolState = TOOL_END;
 	static constexpr float posOffsetX = -64.f;
 	static constexpr float posOffsetY = 64.f;
 	class Player* m_pPlayer = nullptr;
 private:
 	void SetPlayer(Player* player);
-	void SetToolState(ToolState eState) { eToolState = eState; }
+	void SetTool(Item* tool);
 	void Play();
 public:
 	PlayerTool();
@@ -43,4 +44,5 @@ private:
 	void LoadPick();
 	void LoadHoe();
 	void LoadAxe();
+	void LoadToolItems();
 };

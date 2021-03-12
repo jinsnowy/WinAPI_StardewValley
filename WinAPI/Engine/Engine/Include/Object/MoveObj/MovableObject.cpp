@@ -2,9 +2,7 @@
 
 MovableObject::MovableObject() 
 	: m_Angle(0.f), m_Speed(100.f),
-	m_bMove(false), m_bGround(false)
-	, m_bJump(false), m_bFalling(true),
-	m_fForce(0.f), m_fForceOrigin(0.f)
+	m_bMove(false)
 {
 }
 
@@ -13,34 +11,12 @@ MovableObject::MovableObject(const MovableObject& obj)
 	m_Angle(obj.m_Angle),
 	m_Speed(obj.m_Speed)
 {
-
-	m_fForceOrigin = obj.m_fForceOrigin;
-	m_fForce = 0.f;
-	m_bMove = false;
-	m_bJump = false;
-	m_bFalling = true;
-	m_bGround = false;
 }
 
 MovableObject::~MovableObject()
 {
 }
 
-void MovableObject::Jump()
-{
-	if (m_bGround)
-	{
-		m_bJump = true;
-		m_bFalling = true;
-		m_fForce = m_fForceOrigin;
-	}
-}
-
-void MovableObject::JumpEnd()
-{
-	m_fForce = 0.f;
-	m_bFalling = false;
-}
 bool MovableObject::Init()
 {
 	return true;
@@ -54,25 +30,6 @@ void MovableObject::Input(float dt)
 
 int MovableObject::Update(float dt)
 {
-	if (m_bFalling == false && m_bGround == false)
-	{
-		m_bFalling = true;
-	}
-	m_bGround = false;
-	if (m_blsPhysics && m_bFalling)
-	{
-		if (m_bJump) 
-			m_bJump = false;
-
-		//m_fGravityTime += dt;
-		//점프 상태일 경우 힘을 감소시킨다.
-		//m_fForce -= (GRAVITY * m_fGravityTime * m_fGravityTime);
-		//m_tPos.y  -= m_fForce * dt;
-
-		m_fForce -= GRAVITY * dt;
-		m_tPos.y  -= (m_fForce * dt - 0.5f * GRAVITY * dt * dt);
-	}
-
 	Object::Update(dt);
     return 0;
 }

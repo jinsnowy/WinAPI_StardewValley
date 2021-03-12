@@ -175,6 +175,8 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Object\Item\Item.h" />
+    <ClInclude Include="Object\Item\Tool.h" />
     <ClInclude Include="Object\Mouse.h" />
     <ClInclude Include="Object\MoveObj\MovableObject.h" />
     <ClInclude Include="Object\MoveObj\Player.h" />
@@ -228,6 +230,8 @@
     <ClCompile Include="Core\Input.cpp" />
     <ClCompile Include="Core\PathManager.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Object\Item\Item.cpp" />
+    <ClCompile Include="Object\Item\Tool.cpp" />
     <ClCompile Include="Object\Mouse.cpp" />
     <ClCompile Include="Object\MoveObj\MovableObject.cpp" />
     <ClCompile Include="Object\MoveObj\Player.cpp" />

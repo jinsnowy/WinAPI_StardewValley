@@ -20,7 +20,7 @@ const char* util::GetChar(const wchar_t* c)
 
 void util::DrawRedRect(HDC hdc, RECT rc)
 {
-	HPEN myPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+	HPEN myPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
 	HPEN OldPen = (HPEN)SelectObject(hdc, myPen);
 	HBRUSH OldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
 

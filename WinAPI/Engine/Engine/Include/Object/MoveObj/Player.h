@@ -26,15 +26,20 @@ public:
 	};
 private:
 	Pos m_tPrev;
-	unique_ptr<PlayerTool> m_pTool = make_unique<PlayerTool>();
+	unique_ptr<PlayerTool> m_pPlayerTool = make_unique<PlayerTool>();
 	PlayerState m_eState = PlayerState::IDLE_RIGHT;
+	vector<class Item*> m_vecItem;
+private:
 	Player();
 	Player(const Player& obj) = delete;
 	~Player();
 private:
+	int m_iCurItemSel = 0;
 	int m_iHP = 0;
-	int m_iMoney = 12341234;
+	int m_iMoney = 5000;
 public:
+	const vector<class Item*>& AccessItemList() const { return m_vecItem; }
+	int GetCurItemSel() const { return m_iCurItemSel; }
 	int GetMoney() const { return m_iMoney; }
 	void InitTexture();
 	void InitAnimation();
@@ -59,6 +64,6 @@ public:
 private:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);
-
+	void KeyInput(float dt);
 };
 

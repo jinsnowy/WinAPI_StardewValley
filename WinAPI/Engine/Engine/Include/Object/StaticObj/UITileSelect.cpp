@@ -243,14 +243,18 @@ void UITileSelect::ChangeState()
 void UITileSelect::Input(float dt)
 {
     UI::Input(dt);
-    int containerSize = m_PrototypeMapContainer.size();
+    int itemNum = m_eCurSelTile == SEL_OBJECT ?
+        (int)m_PrototypeMapContainer[m_iCurSelObject]->size()
+        : (int)m_BaseTileMap[m_eCurSelTile].size();
+
+    int pageNum = itemNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
     if (KEYDOWN("NextObject"))
     {
-        m_iCurPageNum = (m_iCurPageNum + 1) % containerSize;
+        m_iCurPageNum = (m_iCurPageNum + 1) % pageNum;
     }
     if (KEYDOWN("PreviousObject"))
     {
-        m_iCurPageNum = (m_iCurPageNum + containerSize - 1) % containerSize;
+        m_iCurPageNum = (m_iCurPageNum + pageNum - 1) % pageNum;
     }
 }
 

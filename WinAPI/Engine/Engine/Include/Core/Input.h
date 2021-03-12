@@ -5,6 +5,7 @@ class Input
 {
 	DECLARE_SINGLE(Input)
 private:
+	friend class Window;
 	class KeyInfo
 	{
 		friend class Input;
@@ -22,12 +23,18 @@ private:
 		}
 	};
 private:
+	unordered_map<char, bool> m_unCatchedKeyMap;
 	HWND							m_hWnd;
 	unordered_map<string, KeyInfo*> m_mapKey;
 	KeyInfo*						m_pCreateKey;
 	POINT							m_tMousePos;
 	POINT							m_tMouseMove;
 	class Mouse* m_pMouse;
+private:
+	void SetUnCatchedKey(char c) { m_unCatchedKeyMap[c] = true; }
+	void RegisterUnCatchedKey(char c) { m_unCatchedKeyMap.insert(make_pair(c, false)); }
+	void InitUnCatchedKeyState();
+	bool IsUnCatchedKey(char c) { return m_unCatchedKeyMap.find(c) != m_unCatchedKeyMap.end(); }
 public:
 	bool Init(HWND hWnd);
 	void Update(float dt);
@@ -38,6 +45,7 @@ public:
 	Pos GetMouseClientPos() const;
 	Pos GetMouseWorldPos() const;
 	Pos GetMouseMove() const;
+
 public:
 	template<typename T>
 	bool AddKey(const T& data)
@@ -45,14 +53,16 @@ public:
 		const char* pTType = typeid(T).name();
 		if (strcmp(pTType, "char") == 0 || strcmp(pTType, "int") == 0)
 		{
-			m_pCreateKey->vecKey.push_back((DWORD) data);
+			m_pCreateKey->vecKey.push_back((DWORD)data);
 		}
-		else {
+		else 
+		{
 			m_pCreateKey->strName = data;
 			m_mapKey.insert(make_pair(m_pCreateKey->strName, m_pCreateKey));
 		}
 		return true;
 	}
+
 	template<typename T, typename... Types> // 가변 인자 템플릿
 	bool AddKey(const T& data, const Types&... args)
 	{
@@ -64,13 +74,13 @@ public:
 		const char* pTType = typeid(T).name();
 		if (strcmp(pTType, "char") == 0 || strcmp(pTType, "int") == 0)
 		{
-			m_pCreateKey->vecKey.push_back((DWORD) data);
+			m_pCreateKey->vecKey.push_back((DWORD)data);
 		}
-		else {
+		else 
+		{
 			m_pCreateKey->strName = data;
 			m_mapKey.insert(make_pair(m_pCreateKey->strName, m_pCreateKey));
 		}
-
 		AddKey(args...);
 
 		if (m_pCreateKey)

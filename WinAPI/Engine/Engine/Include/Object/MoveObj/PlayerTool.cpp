@@ -1,24 +1,44 @@
 #include "PlayerTool.h"
 #include "Player.h"
-
+#include "../Item/Tool.h"
 PlayerTool::PlayerTool()
 {
+    Init();
 }
 
 PlayerTool::~PlayerTool()
 {
+    Safe_Release_VecList(m_pTools);
 }
 
 void PlayerTool::SetPlayer(Player* player)
 {
     m_pPlayer = player;
     SetPos(player->GetPos().x + posOffsetX, player->GetPos().y + posOffsetY);
+
+    for (Item* tool : m_pTools)
+    {
+        m_pPlayer->m_vecItem.push_back(tool);
+        tool->AddRef();
+    }
+}
+
+void PlayerTool::SetTool(Item* tool)
+{
+    for (int i=0;i<TOOL_END;++i)
+    {
+        if (m_pTools[i] == tool)
+        {
+            m_eToolState = static_cast<ToolState>(i);
+            break;
+        }
+    }
 }
 
 void PlayerTool::Play()
 {
     m_bEnableAnimation = true;
-    switch (eToolState)
+    switch (m_eToolState)
     {
     case TOOL_PICK:
         switch (m_pPlayer->GetState())
@@ -108,6 +128,7 @@ bool PlayerTool::Init()
     LoadHoe();
     LoadPick();
     LoadWater();
+    LoadToolItems();
 
     return true;
 }
@@ -469,6 +490,36 @@ void PlayerTool::LoadAxe()
             3, 1,
             0.f, "AxeUp_Anim", vecFileName);
         SetClipColorKey("AxeUp", 255, 255, 255);
+    }
+}
+
+void PlayerTool::LoadToolItems()
+{
+    m_pTools.resize(TOOL_END, nullptr);
+    m_pTools[TOOL_PICK] = Object::CreateObject<Tool>("PickTool");
+    m_pTools[TOOL_PICK]->SetTexture("PickTool", L"SV/Item/Tool/Pick.bmp");
+
+
+    m_pTools[TOOL_AXE] = Object::CreateObject<Tool>("AxeTool");
+    m_pTools[TOOL_AXE]->SetTexture("AxeTool", L"SV/Item/Tool/Axe.bmp");
+
+    m_pTools[TOOL_HOE] = Object::CreateObject<Tool>("HoeTool");
+    m_pTools[TOOL_HOE]->SetTexture("HoeTool", L"SV/Item/Tool/Hoe.bmp");
+
+    m_pTools[TOOL_WATER] = Object::CreateObject<Tool>("WaterTool");
+    m_pTools[TOOL_WATER]->SetTexture("WaterTool", L"SV/Item/Tool/Water.bmp");
+
+
+    m_pTools[TOOL_SICKLE] = Object::CreateObject<Tool>("SickleTool");
+    m_pTools[TOOL_SICKLE]->SetTexture("SickleTool", L"SV/Item/Tool/Sickle.bmp");
+
+    m_pTools[TOOL_BLADE] = Object::CreateObject<Tool>("BladeTool");
+    m_pTools[TOOL_BLADE]->SetTexture("BladeTool", L"SV/Item/Tool/Blade.bmp");
+
+    for (Item* tool : m_pTools)
+    {
+        tool->SetAsTextureSize();
+        tool->SetColorKey(255, 255, 255);
     }
 }
 

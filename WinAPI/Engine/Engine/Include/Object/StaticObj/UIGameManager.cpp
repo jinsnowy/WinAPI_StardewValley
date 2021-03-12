@@ -4,6 +4,7 @@
 #include "../MoveObj/Player.h"
 #include "../../Application/Window.h"
 #include "../Object.h"
+#include "../Item/Item.h"
 #include "../../Core/Input.h"
 
 DEFINITION_SINGLE(UIGameManager);
@@ -21,6 +22,13 @@ bool UIGameManager::Init()
 	m_vecNeedleTex = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/ClockNeedle/", chromaKey);
 	m_vecWeekDays = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/WeekDays/", chromaKey);
 	m_vecNoon = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/Noon/", chromaKey);
+
+	m_pFastItemListUI = Object::CreateObject<UIPanel>("FastItemListUI");
+	m_pFastItemListUI->SetTexture("FastItemList", L"SV/Scene/FastItemList.bmp");
+	m_pFastItemListUI->SetColorKey(255, 255, 255);
+	m_pFastItemListUI->SetAsTextureSize();
+	m_pFastItemListUI->SetPos(float(GETRESOLUTION.x / 2) - m_pFastItemListUI->GetSize().x / 2.f,
+								float(GETRESOLUTION.y) - m_pFastItemListUI->GetSize().y);
 
 	return true;
 }
@@ -74,13 +82,48 @@ void UIGameManager::Collision(float dt)
 
 void UIGameManager::Draw(HDC hdc, float dt)
 {
-	m_pTimeUI->Draw(hdc, dt);
-	DrawCurrentMoney(hdc);
-	DrawCurrentClockNeedle(hdc);
-	DrawCurrentTime(hdc);
+	DrawCurrentTime(hdc, dt);
+	DrawCurrentMoney(hdc, dt);
+	DrawItemList(hdc, dt);
 }
 
-void UIGameManager::DrawCurrentMoney(HDC hdc)
+
+void UIGameManager::DrawItemList(HDC hdc, float dt)
+{
+	if (m_bFastItemListSelect)
+	{
+		m_pFastItemListUI->Draw(hdc, dt);
+
+		
+		Pos tOffset = m_pFastItemListUI->GetPos();
+		tOffset.x += m_iItemListOffsetX;
+		tOffset.y += m_iItemListOffsetY;
+
+		int sel = m_pPlayer->GetCurItemSel();
+		DrawRedRect(hdc, MakeRect(tOffset.x +sel*(m_iItemListMargin + 56.f), tOffset.y, 56, 56));
+
+		const auto& itemList = m_pPlayer->AccessItemList();
+		int size = min(12, int(itemList.size()));
+		for (int i = 0; i < size; ++i)
+		{
+			itemList[i]->DrawImageAt(hdc, tOffset, true);
+			tOffset.x += m_iItemListMargin + 56.f;
+		}
+
+	}
+	else
+	{
+		m_pItemListUI->Draw(hdc, dt);
+	}
+}
+
+void UIGameManager::SetPlayer(Player* pPlayer)
+{
+	m_pPlayer = pPlayer;
+	if (m_pPlayer)
+		m_pPlayer->AddRef();
+}
+void UIGameManager::DrawCurrentMoney(HDC hdc, float dt)
 {
 	vector<int> currentMoney;
 	int money = m_pPlayer->GetMoney();
@@ -91,26 +134,20 @@ void UIGameManager::DrawCurrentMoney(HDC hdc)
 		currentMoney.push_back(digit);
 	} while (money > 0);
 
-	int stX = m_pTimeUI->GetPos().x + m_iMoneyDrawStartX + (m_iMaxDigits - 1) * (m_iNumberWidth + m_iMargin);
+	int stX = m_pTimeUI->GetPos().x + m_iMoneyDrawStartX + (m_iMaxDigits - 1) * (m_iNumberWidth + m_iMoneyItemMargin);
 	int stY = m_pTimeUI->GetPos().y + m_iMoneyDrawStartY;
 
 	int nDigits = (int)currentMoney.size();
 	for (int i = 0; i < nDigits; ++i)
 	{
 		m_vecMoneyTex[currentMoney[i]]->DrawImageAt(hdc, Pos(stX, stY));
-		stX -= (m_iNumberWidth + m_iMargin);
+		stX -= (m_iNumberWidth + m_iMoneyItemMargin);
 	}
 }
-
-void UIGameManager::SetPlayer(Player* pPlayer)
+void UIGameManager::DrawCurrentTime(HDC hdc, float dt)
 {
-	m_pPlayer = pPlayer;
-	if (m_pPlayer)
-		m_pPlayer->AddRef();
-}
-
-void UIGameManager::DrawCurrentClockNeedle(HDC hdc)
-{
+	m_pTimeUI->Draw(hdc, dt);
+	// 시계 바늘
 	int hours = m_clock->GetHours();
 	if (hours >= 0 && hours <= 5)
 	{
@@ -126,11 +163,9 @@ void UIGameManager::DrawCurrentClockNeedle(HDC hdc)
 	}
 
 	m_vecNeedleTex[iCur]->DrawImageAt(hdc, m_pTimeUI->GetPos());
-}
 
-void UIGameManager::DrawCurrentTime(HDC hdc)
-{
 	Pos tPos = m_pTimeUI->GetPos();
+
 	// 월화수목금토일
 	tPos.x += 140;
 	tPos.y += m_iUpperDisplayStartY;
@@ -165,6 +200,7 @@ UIGameManager::~UIGameManager()
 {
 	SAFE_RELEASE(m_pPlayer);
 	SAFE_RELEASE(m_pTimeUI);
+	SAFE_RELEASE(m_pFastItemListUI);
 	Safe_Release_VecList(m_vecMoneyTex);
 	Safe_Release_VecList(m_vecNeedleTex);
 	Safe_Release_VecList(m_vecWeekDays);

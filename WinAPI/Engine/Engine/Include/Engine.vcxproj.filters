@@ -79,6 +79,9 @@
     <Filter Include="Object\05. Plant">
       <UniqueIdentifier>{8c5088e5-8ba3-4bdc-9df5-4af2aa1346d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\06.Item">
+      <UniqueIdentifier>{d7eaa041-1c8e-41d1-bd2b-7b74d34c841a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -240,6 +243,12 @@
     <ClInclude Include="Object\StaticObj\UIGameManager.h">
       <Filter>Object\04. UI</Filter>
     </ClInclude>
+    <ClInclude Include="Object\Item\Item.h">
+      <Filter>Object\06.Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item\Tool.h">
+      <Filter>Object\06.Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -376,6 +385,12 @@
     </ClCompile>
     <ClCompile Include="Object\StaticObj\UIGameManager.cpp">
       <Filter>Object\04. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Item\Item.cpp">
+      <Filter>Object\06.Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Item\Tool.cpp">
+      <Filter>Object\06.Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -20,7 +20,8 @@
 
 #include "Window.h"
 #include "../Resource.h"
-
+#include "../Other/WindowsMessageMap.h"
+#include "../Core/Input.h"
 DEFINITION_SINGLE(Window)
 
 Window::~Window()
@@ -134,10 +135,10 @@ LRESULT CALLBACK Window::HandleMsgThunk(HWND m_hWnd, UINT msg, WPARAM wParam, LP
 
 LRESULT Window::HandleMsg(HWND m_hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	/*
-		static WindowsMessageMap mm;
-		OutputDebugString(mm(msg, lParam, wParam).c_str());
-	*/
+	
+	// static WindowsMessageMap mm;
+	// OutputDebugString(GetWChar(mm(msg, lParam, wParam).c_str()));
+
 	// 마우스
 	const POINTS pt = MAKEPOINTS(lParam);
 
@@ -147,10 +148,12 @@ LRESULT Window::HandleMsg(HWND m_hWnd, UINT msg, WPARAM wParam, LPARAM lParam) n
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
-	// 게임 프레임이 업데이트 된 이후 상태 변경이 필요한 연산을 집어 넣는다.
-	case WM_RENDER_RESET:
+	case WM_CHAR:
+		if (INPUT->IsUnCatchedKey(char(wParam)))
+		{
+			INPUT->SetUnCatchedKey(char(wParam));
+		}
 		break;
-
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;

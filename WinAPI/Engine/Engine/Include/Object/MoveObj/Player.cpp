@@ -13,6 +13,8 @@
 #include "../../Scene/GameScene.h"
 #include "../../Sound/SoundManager.h"
 #include "PlayerTool.h"
+#include "../Item/Item.h"
+#include "../Item/Tool.h"
 
 Player::Player()
 	:
@@ -22,6 +24,7 @@ Player::Player()
 
 Player::~Player()
 {
+	Safe_Release_VecList(m_vecItem);
 }
 
 void Player::InitTexture()
@@ -289,17 +292,36 @@ bool Player::Init()
 	SAFE_RELEASE(pFoot);
 
 	m_iHP = 1000;
-	m_pTool->Init();
-	m_pTool->SetPlayer(this);
+	m_pPlayerTool->SetPlayer(this);
 
 	SOUND_MANAGER->LoadSound("InHouse_Walking", false, SD_EFFECT, "InHouse_Walking.mp3");
+
+	for (int i = 0; i < 10; ++i)
+	{
+		char name[10] = { 0 };
+		sprintf_s(name, "Item%d", i);
+		INPUT->AddKey(name, '0' + i);
+	}
+
+	INPUT->AddKey("Item-", char(0x2d));
+	INPUT->AddKey("Item=", char(0x3d));
+
 	return true;
 }
 
 void Player::Input(float dt)
 {
 	MovableObject::Input(dt);
+	KeyInput(dt);
 
+	if (m_iCurItemSel < m_vecItem.size())
+	{
+		Tool* pTool = dynamic_cast<Tool*>(m_vecItem[m_iCurItemSel]);
+		if (pTool)
+		{
+			m_pPlayerTool->SetTool(pTool);
+		}
+	}
 	m_tPrev = GetPos();
 	switch (m_eState)
 	{
@@ -383,7 +405,7 @@ void Player::Input(float dt)
 					StateTransit(TOOL_DOWN);
 					break;
 				}
-				m_pTool->Play();
+				m_pPlayerTool->Play();
 			}
 		}
 	}
@@ -410,7 +432,7 @@ void Player::Draw(HDC hDC, float dt)
 {
   	MovableObject::Draw(hDC, dt);
 
-	m_pTool->Draw(hDC, dt);
+	m_pPlayerTool->Draw(hDC, dt);
 
 #ifdef _DEBUG
 	wchar_t playerPos[32] = {};
@@ -444,23 +466,6 @@ void Player::Hit(Collider* pSrc, Collider* pDst, float dt)
 
 void Player::HitPixel(Collider* pSrc, Collider* pDst, float dt)
 {
-	if (pDst->GetTag() == "StageColl")
-	{
-		const vector<Pixel>& pixels = static_cast<ColliderPixel*>(pDst)->GetPixel();
-		Pos tHitPoint = static_cast<ColliderPixel*>(pDst)->GetHitPoint();
-		Rect src = static_cast<ColliderRect*>(pSrc)->GetWorldInfo();
-
-		int bottom = int(src.top + src.bottom) / 2;
-		if (tHitPoint.y < bottom)
-		{
-			if (!IsMoveUp())
-			{
-				SetPos(GetPos().x, GetPos().y - (bottom - tHitPoint.y));
-				JumpEnd();
-			}
-		}
-		OnGround();
-	}
 }
 
 void Player::Save(FILE* pFile)
@@ -469,4 +474,57 @@ void Player::Save(FILE* pFile)
 
 void Player::Load(FILE* pFile)
 {
+}
+
+void Player::KeyInput(float dt)
+{
+
+	if (KEYDOWN("Item1"))
+	{
+		m_iCurItemSel = 0;
+	}
+	else if (KEYDOWN("Item2"))
+	{
+		m_iCurItemSel = 1;
+	}
+	else if (KEYDOWN("Item3"))
+	{
+		m_iCurItemSel = 2;
+	}
+	else if (KEYDOWN("Item4"))
+	{
+		m_iCurItemSel = 3;
+	}
+	else if (KEYDOWN("Item5"))
+	{
+		m_iCurItemSel = 4;
+	}
+	else if (KEYDOWN("Item6"))
+	{
+		m_iCurItemSel = 5;
+	}
+	else if (KEYDOWN("Item7"))
+	{
+		m_iCurItemSel = 6;
+	}
+	else if (KEYDOWN("Item8"))
+	{
+		m_iCurItemSel = 7;
+	}
+	else if (KEYDOWN("Item9"))
+	{
+		m_iCurItemSel = 8;
+	}
+	else if (KEYDOWN("Item0"))
+	{
+		m_iCurItemSel = 9;
+	}
+	else if (KEYDOWN("Item-"))
+	{
+		m_iCurItemSel = 10;
+	}
+	else if (KEYDOWN("Item="))
+	{
+		m_iCurItemSel = 11;
+	}
 }

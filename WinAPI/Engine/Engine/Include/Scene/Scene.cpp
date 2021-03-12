@@ -19,8 +19,8 @@ Scene::Scene()
 Scene::~Scene()
 {
 	EraseAllPrototypes();
-	Safe_Release_VecList(m_ObjList);
 	Safe_Delete_VecList(m_LayerList);
+	Safe_Release_VecList(m_ObjList);
 }
 
 Object* Scene::FindObject(const string& tag)
