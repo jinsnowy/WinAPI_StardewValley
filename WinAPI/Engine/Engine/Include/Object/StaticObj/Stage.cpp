@@ -32,17 +32,7 @@ Stage::~Stage()
     ClearTile();
 }
 
-bool Stage::IsBlockTile(const Pos& worldPos) const
-{
-    int index = GetTileIndex(worldPos);
-    if (index == -1) return false;
-    return IsBlockTile(index);
-}
 
-bool Stage::IsBlockTile(int index) const
-{
-    return m_baseTile[index]->m_eOption == TO_NOMOVE;
-}
 
 void Stage::CreateTile(int iNumX, int iNumY)
 {
@@ -67,6 +57,18 @@ void Stage::CreateTile(int iNumX, int iNumY)
             m_baseTile.push_back(pTile);
         }
     }
+}
+
+bool Stage::IsBlockTile(const Pos& worldPos) const
+{
+    int index = GetTileIndex(worldPos);
+    if (index == -1) return false;
+    return IsBlockTile(index);
+}
+
+bool Stage::IsBlockTile(int index) const
+{
+    return m_baseTile[index]->m_eOption == TO_NOMOVE;
 }
 
 bool Stage::Init()

@@ -4,13 +4,13 @@ class Tool : public Item
 {
 	friend class Object;
 private:
-	int m_iPower = 0;
-	int m_iEndure = 0;
+	float m_iPower = 0.f;
+	float m_iEndure = 0.f;
 public:
 	int GetPower() const { return m_iPower; }
 	int GetEndure() const { return m_iEndure; }
-	void SetPower(int power) { m_iPower = power; }
-	void SetEndure(int endure) { m_iEndure = endure; }
+	void SetPower(float power) { m_iPower = power; }
+	void SetEndure(float endure) { m_iEndure = endure; }
 protected:
 	Tool();
 	Tool(const Tool& item);

@@ -16,10 +16,11 @@ public:
 		return m_eOption;
 	}
 	void SetTileOption(TILE_OPTION eOption);
-public:
+protected:
     Tile();
     Tile(const Tile& tile);
     virtual ~Tile();
+	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
 public:
 	virtual bool Init();
 	virtual void Input(float dt);
@@ -32,5 +33,7 @@ public:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);
 	virtual void LateInit();
+
+
 };
 

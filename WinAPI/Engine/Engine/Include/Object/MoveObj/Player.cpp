@@ -7,6 +7,7 @@
 #include "../../Resources/Texture.h"
 #include "../../Collider/ColliderRect.h"
 #include "../../Collider/ColliderPixel.h"
+#include "../../Collider/CollisionManager.h"
 #include "../../Core/Camera.h"
 #include "../../Animation/Animation.h"
 #include "../../Scene/SceneManager.h"
@@ -140,7 +141,7 @@ void Player::InitAnimation()
 		}
 		AddAnimationClip("ToolDown",
 			AT_FRAME, AO_ONCE_RETURN,
-			0.0f, 0.4f,
+			0.0f, TOOLSPEED,
 			3, 1,
 			0, 0,
 			3, 1,
@@ -159,7 +160,7 @@ void Player::InitAnimation()
 		}
 		AddAnimationClip("ToolUp",
 			AT_FRAME, AO_ONCE_RETURN,
-			0.0f, 0.4f,
+			0.0f, TOOLSPEED,
 			3, 1,
 			0, 0,
 			3, 1,
@@ -178,7 +179,7 @@ void Player::InitAnimation()
 		}
 		AddAnimationClip("ToolLeft",
 			AT_FRAME, AO_ONCE_RETURN,
-			0.0f, 0.4f,
+			0.0f, TOOLSPEED,
 			3, 1,
 			0, 0,
 			3, 1,
@@ -197,7 +198,7 @@ void Player::InitAnimation()
 		}
 		AddAnimationClip("ToolRight",
 			AT_FRAME, AO_ONCE_RETURN,
-			0.0f, 0.4f,
+			0.0f, TOOLSPEED,
 			3, 1,
 			0, 0,
 			3, 1,
@@ -206,6 +207,12 @@ void Player::InitAnimation()
 		SetClipNextState("ToolRight", IDLE_RIGHT);
 	}
 	
+}
+
+float Player::GetToolPower() const
+{
+	assert(m_iCurItemSel < m_vecItem.size());
+	return static_cast<Tool*>(m_vecItem[m_iCurItemSel])->GetPower();
 }
 
 void Player::StateTransit(int iNext)
@@ -297,49 +304,35 @@ bool Player::Init()
 void Player::Input(float dt)
 {
 	MovableObject::Input(dt);
-	KeyInput(dt);
+	ChangePlayerTool(dt);
 
-	if (m_iCurItemSel < m_vecItem.size())
+	if (m_eState == TOOL_USE)
 	{
-		Tool* pTool = dynamic_cast<Tool*>(m_vecItem[m_iCurItemSel]);
-		if (pTool)
-		{
-			m_pPlayerTool->SetTool(pTool);
-		}
+		return;
 	}
+
+	if (KEYPRESS("MoveUp"))
+	{
+		MoveYFromSpeed(dt, MD_BACK);
+		StateTransit(WALK_UP);
+	}
+	else if (KEYPRESS("MoveDown"))
+	{
+		MoveYFromSpeed(dt, MD_FRONT);
+		StateTransit(WALK_DOWN);
+	}
+	else if (KEYPRESS("MoveLeft"))
+	{
+		MoveXFromSpeed(dt, MD_BACK);
+		StateTransit(WALK_LEFT);
+	}
+	else if (KEYPRESS("MoveRight"))
+	{
+		MoveXFromSpeed(dt, MD_FRONT);
+		StateTransit(WALK_RIGHT);
+	}
+	
 	m_tPrev = GetPos();
-	switch (m_eState)
-	{
-	case IDLE_RIGHT:
-	case IDLE_LEFT:
-	case IDLE_UP:
-	case IDLE_DOWN:
-	case WALK_RIGHT:
-	case WALK_LEFT:
-	case WALK_UP:
-	case WALK_DOWN:
-		if (KEYPRESS("MoveUp"))
-		{
-			MoveYFromSpeed(dt, MD_BACK);
-			StateTransit(WALK_UP);
-		}
-		else if (KEYPRESS("MoveDown"))
-		{
-			MoveYFromSpeed(dt, MD_FRONT);
-			StateTransit(WALK_DOWN);
-		}
-		else if (KEYPRESS("MoveLeft"))
-		{
-			MoveXFromSpeed(dt, MD_BACK);
-			StateTransit(WALK_LEFT);
-		}
-		else if (KEYPRESS("MoveRight"))
-		{
-			MoveXFromSpeed(dt, MD_FRONT);
-			StateTransit(WALK_RIGHT);
-		}
-		break;
-	}
 	if (m_bMove)
 	{
 		// 다음 타일이 갈 수 없다면,
@@ -355,6 +348,7 @@ void Player::Input(float dt)
 	}
 	else
 	{
+		// 움직이지 않았다면,
 		switch (m_eState)
 		{
 		case WALK_RIGHT:
@@ -370,38 +364,54 @@ void Player::Input(float dt)
 			StateTransit(IDLE_DOWN);
 			break;
 		}
-		if (KEYDOWN("MouseLButton"))
+	
+		if (KEYDOWN("MouseLButton") && IsIdleState())
 		{
-			INDEX index = static_cast<GameScene*>(m_pScene)->IndexDiff(MOUSEWORLDPOS, GetPos());
-			if (max(abs(index.x), abs(index.y)) <= 1)
+			INDEX index = static_cast<GameScene*>(m_pScene)->IndexDiff(MOUSEWORLDPOS, GetCenterPos());
+			if (max(abs(index.x), abs(index.y)) == 1)
 			{
-				bool isIdle = false;
-				switch (m_eState)
+				if (index.x > 0)
 				{
-				case IDLE_RIGHT:
-					isIdle = true;
+					StateTransit(IDLE_RIGHT);
 					m_pAnimation->ChangeClip("ToolRight");
-					break;
-				case IDLE_LEFT:
-					isIdle = true;
-					m_pAnimation->ChangeClip("ToolLeft");
-					break;
-				case IDLE_UP:
-					isIdle = true;
-					m_pAnimation->ChangeClip("ToolUp");
-					break;
-				case IDLE_DOWN:
-					isIdle = true;
-					m_pAnimation->ChangeClip("ToolDown");
-					break;
 				}
-				if (isIdle)
+				else if (index.x < 0)
 				{
-					m_pPlayerTool->Play();
-					StateTransit(TOOL_USE);
+					StateTransit(IDLE_LEFT);
+					m_pAnimation->ChangeClip("ToolLeft");
+				}
+				else if (index.y < 0)
+				{
+					StateTransit(IDLE_UP);
+					m_pAnimation->ChangeClip("ToolUp");
+				}
+				else if (index.y > 0)
+				{
+					StateTransit(IDLE_DOWN);
+					m_pAnimation->ChangeClip("ToolDown");
+				}
+					
+				m_pPlayerTool->Play();
+				StateTransit(TOOL_USE);
+
+				// 나무/돌/수풀 체크
+				if (HasTool(PlayerTool::TOOL_AXE))
+				{
+					TRIGGER_CLICKATTACKEVENT(MOUSEWORLDPOS, "AxeTool", GetToolPower());
+				}
+				else if (HasTool(PlayerTool::TOOL_PICK))
+				{
+					TRIGGER_CLICKATTACKEVENT(MOUSEWORLDPOS, "PickTool", GetToolPower());
+				}
+				else if (HasTool(PlayerTool::TOOL_HOE))
+				{
+
 				}
 			}
 		}
+		
+		
+		
 	}
 }
 
@@ -474,9 +484,8 @@ void Player::Load(FILE* pFile)
 {
 }
 
-void Player::KeyInput(float dt)
+void Player::ChangePlayerTool(float dt)
 {
-
 	if (KEYDOWN("Item1"))
 	{
 		m_iCurItemSel = 0;
@@ -524,5 +533,13 @@ void Player::KeyInput(float dt)
 	else if (KEYDOWN("Item="))
 	{
 		m_iCurItemSel = 11;
+	}
+	if (m_iCurItemSel < m_vecItem.size())
+	{
+		Tool* pTool = dynamic_cast<Tool*>(m_vecItem[m_iCurItemSel]);
+		if (pTool)
+		{
+			m_pPlayerTool->SetTool(pTool);
+		}
 	}
 }

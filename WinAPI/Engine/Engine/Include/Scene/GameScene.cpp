@@ -122,6 +122,11 @@ void GameScene::Draw(HDC hdc, float dt)
 {
     Scene::Draw(hdc, dt);
 
+    Pos tPos = MOUSEWORLDPOS;
+    int index = m_pGroundStage->GetTileIndex(tPos);
+    Pos tilePos = m_pGroundStage->GetTilePos(index);
+    tilePos -= CAMERA->GetTopLeft();
+    DrawRedRect(hdc, MakeRect(int(tilePos.x), int(tilePos.y), TILESIZE, TILESIZE));
 #ifdef _DEBUG
     stringstream ss;
     Pos playerPos = AccessPlayer()->GetPos();

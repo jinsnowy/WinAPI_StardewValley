@@ -203,3 +203,7 @@ void Tile::LateInit()
 {
     StaticObject::LateInit();
 }
+
+void Tile::TileHit(Collider* pSrc, Collider* pDst, float dt)
+{
+}

@@ -35,31 +35,6 @@ bool UIGameManager::Init()
 
 void UIGameManager::Input(float dt)
 {
-	//if (KEYDOWN("LeftM"))
-	//{
-	//	--m_iMargin;
-	//}
-	//if (KEYDOWN("RightM"))
-	//{
-	//	++m_iMargin;
-	//}
-	//if (KEYDOWN("Left"))
-	//{
-	//	--m_iMoneyDrawStartX;
-	//}
-	//if (KEYDOWN("Right"))
-	//{
-	//	++m_iMoneyDrawStartX;
-	//}
-	//if (KEYDOWN("Up"))
-	//{
-	//	--m_iMoneyDrawStartY;
-	//}
-	//if (KEYDOWN("Down"))
-	//{
-	//	++m_iMoneyDrawStartY;
-	//}
-	//_cprintf("start %d %d, margin %d\n", m_iMoneyDrawStartX, m_iMoneyDrawStartY, m_iMargin);
 }
 
 int UIGameManager::Update(float dt)

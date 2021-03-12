@@ -1,5 +1,10 @@
 #include "CollisionManager.h"
 #include "../Object/Object.h"
+#include "../Object/PointObject.h"
+#include "../Collider/ColliderPoint.h"
+#include "../Collider/ColliderPointAttack.h"
+#include "../Collider/ColliderRect.h"
+#include "../Core/Input.h"
 #include "Collider.h"
 
 DEFINITION_SINGLE(CollisionManager)
@@ -17,9 +22,53 @@ bool CollisionManager::Init()
     return true;
 }
 
+void CollisionManager::ClickPoint()
+{
+    AddCollidePoint(MOUSEWORLDPOS, "Click");
+}
+
+void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
+{
+    Object* pPoint = Object::CreateObject<PointObject>(strTag);
+    ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
+    pColl->SetPoint(pos.x, pos.y);
+    SAFE_RELEASE(pColl);
+    m_tempCollisionObjList.push_back(pPoint);
+    m_CollisionObjList.push_back(pPoint);
+}
+
+void CollisionManager::AddCollideAttackPoint(const Pos& pos, const string& strTag, float power)
+{
+    Object* pPoint = Object::CreateObject<PointObject>(strTag);
+    ColliderPointAttack* pColl = pPoint->AddCollider<ColliderPointAttack>(strTag);
+    pColl->SetPoint(pos.x, pos.y);
+    pColl->SetPower(power);
+    SAFE_RELEASE(pColl);
+    m_tempCollisionObjList.push_back(pPoint);
+    m_CollisionObjList.push_back(pPoint);
+}
+
+void CollisionManager::TempLateUpdate(float dt)
+{
+    for (auto iter = m_tempCollisionObjList.begin();
+        iter != m_tempCollisionObjList.end();
+        ++iter)
+    {
+        (*iter)->LateUpdate(dt);
+    }
+    m_tempCollisionObjList.clear();
+}
+
 void CollisionManager::Clear()
 {
     m_CollisionObjList.clear();
+    for (auto iter = m_tempCollisionObjList.begin();
+        iter != m_tempCollisionObjList.end();
+        ++iter)
+    {
+        SAFE_RELEASE((*iter));
+    }
+    m_tempCollisionObjList.clear();
 }
 
 void CollisionManager::AddObject(Object* pObj)
@@ -37,6 +86,7 @@ void CollisionManager::Collision(float dt)
         m_CollisionObjList.clear();
         return;
     }
+    TempLateUpdate(dt);
 
     // 오브젝트 간 충돌 처리를 한다.
     list<Object*>::iterator iter;
@@ -54,7 +104,7 @@ void CollisionManager::Collision(float dt)
         }
     }
     
-    m_CollisionObjList.clear();
+    Clear();
 }
 
 bool CollisionManager::CheckCollision(Object* pSrc, Object* pDst, float dt)

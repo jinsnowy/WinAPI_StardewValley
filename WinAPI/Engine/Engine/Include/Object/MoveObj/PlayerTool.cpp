@@ -184,7 +184,7 @@ void PlayerTool::LoadWater()
         }
         AddAnimationClip("WaterDown",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -202,7 +202,7 @@ void PlayerTool::LoadWater()
         }
         AddAnimationClip("WaterLeft",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -220,7 +220,7 @@ void PlayerTool::LoadWater()
         }
         AddAnimationClip("WaterRight",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -238,7 +238,7 @@ void PlayerTool::LoadWater()
         }
         AddAnimationClip("WaterUp",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -266,7 +266,7 @@ void PlayerTool::LoadPick()
         }
         AddAnimationClip("PickDown",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -284,7 +284,7 @@ void PlayerTool::LoadPick()
         }
         AddAnimationClip("PickLeft",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -302,7 +302,7 @@ void PlayerTool::LoadPick()
         }
         AddAnimationClip("PickRight",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -320,7 +320,7 @@ void PlayerTool::LoadPick()
         }
         AddAnimationClip("PickUp",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -348,7 +348,7 @@ void PlayerTool::LoadHoe()
         }
         AddAnimationClip("HoeDown",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -366,7 +366,7 @@ void PlayerTool::LoadHoe()
         }
         AddAnimationClip("HoeLeft",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -384,7 +384,7 @@ void PlayerTool::LoadHoe()
         }
         AddAnimationClip("HoeRight",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -402,7 +402,7 @@ void PlayerTool::LoadHoe()
         }
         AddAnimationClip("HoeUp",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -431,7 +431,7 @@ void PlayerTool::LoadAxe()
         }
         AddAnimationClip("AxeDown",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -449,7 +449,7 @@ void PlayerTool::LoadAxe()
         }
         AddAnimationClip("AxeLeft",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -467,7 +467,7 @@ void PlayerTool::LoadAxe()
         }
         AddAnimationClip("AxeRight",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -485,7 +485,7 @@ void PlayerTool::LoadAxe()
         }
         AddAnimationClip("AxeUp",
             AT_FRAME, AO_ONCE_RETURN,
-            0.0f, 0.4f,
+            0.0f, TOOLSPEED,
             3, 1,
             0, 0,
             3, 1,
@@ -499,10 +499,11 @@ void PlayerTool::LoadToolItems()
     m_pTools.resize(TOOL_END, nullptr);
     m_pTools[TOOL_PICK] = Object::CreateObject<Tool>("PickTool");
     m_pTools[TOOL_PICK]->SetTexture("PickTool", L"SV/Item/Tool/Pick.bmp");
-
+    m_pTools[TOOL_PICK]->SetPower(100.f);
 
     m_pTools[TOOL_AXE] = Object::CreateObject<Tool>("AxeTool");
     m_pTools[TOOL_AXE]->SetTexture("AxeTool", L"SV/Item/Tool/Axe.bmp");
+    m_pTools[TOOL_AXE]->SetPower(100.f);
 
     m_pTools[TOOL_HOE] = Object::CreateObject<Tool>("HoeTool");
     m_pTools[TOOL_HOE]->SetTexture("HoeTool", L"SV/Item/Tool/Hoe.bmp");
@@ -510,14 +511,14 @@ void PlayerTool::LoadToolItems()
     m_pTools[TOOL_WATER] = Object::CreateObject<Tool>("WaterTool");
     m_pTools[TOOL_WATER]->SetTexture("WaterTool", L"SV/Item/Tool/Water.bmp");
 
-
     m_pTools[TOOL_SICKLE] = Object::CreateObject<Tool>("SickleTool");
     m_pTools[TOOL_SICKLE]->SetTexture("SickleTool", L"SV/Item/Tool/Sickle.bmp");
+    m_pTools[TOOL_SICKLE]->SetPower(100.f);
 
     m_pTools[TOOL_BLADE] = Object::CreateObject<Tool>("BladeTool");
     m_pTools[TOOL_BLADE]->SetTexture("BladeTool", L"SV/Item/Tool/Blade.bmp");
 
-    for (Item* tool : m_pTools)
+    for (Tool* tool : m_pTools)
     {
         tool->SetAsTextureSize();
         tool->SetColorKey(255, 255, 255);

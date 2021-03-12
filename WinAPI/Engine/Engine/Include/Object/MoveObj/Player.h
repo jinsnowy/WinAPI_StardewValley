@@ -38,13 +38,18 @@ public:
 	const vector<class Item*>& AccessItemList() const { return m_vecItem; }
 	int GetCurItemSel() const { return m_iCurItemSel; }
 	int GetMoney() const { return m_iMoney; }
-	void InitTexture();
-	void InitAnimation();
 	PlayerState GetState() const { return m_eState; }
 	inline Pos GetCenterPos() const
 	{
 		return Pos(GetPos().x + GetSize().x / 2, GetPos().y);
 	}
+private:
+	bool HasTool(PlayerTool::ToolState tool) const
+	{
+		if (m_iCurItemSel >= m_vecItem.size()) return false;
+		return m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[tool];
+	}
+	float GetToolPower() const;
 public:
 	virtual void StateTransit(int iNext);
 	virtual bool Init();
@@ -61,6 +66,13 @@ public:
 private:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);
-	void KeyInput(float dt);
+	void InitTexture();
+	void InitAnimation();
+	void ChangePlayerTool(float dt);
+	bool IsIdleState()
+	{
+		return (m_eState == IDLE_DOWN) || (m_eState == IDLE_UP)
+			|| (m_eState == IDLE_LEFT) || (m_eState == IDLE_RIGHT);
+	}
 };
 

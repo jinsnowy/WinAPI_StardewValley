@@ -214,7 +214,6 @@ bool Collider::CollisionSphereToPixel(const Sphere& src, const vector<Pixel>& ve
 
 bool Collider::CollisionRectToPoint(const Rect& src, const Pos& dst)
 {
-	// _cprintf("mouse pose : %2.1f %2.1f\n", dst.x, dst.y);
 	if (dst.x < src.left)  return false;
 	if (dst.x > src.right) return false;
 	if (dst.y < src.top)   return false;

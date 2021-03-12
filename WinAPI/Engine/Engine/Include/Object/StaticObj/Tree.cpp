@@ -2,6 +2,8 @@
 #include "Tree.h"
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
+#include "../../Collider/ColliderPointAttack.h"
+#include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
 const wchar_t* const Tree::m_strBaseName[] = { L"Tree1.bmp", L"Tree2.bmp", L"Tree3.bmp" };
 
@@ -11,7 +13,7 @@ Tree::Tree()
 }
 
 Tree::Tree(const Tree& obj)
-	: Tile(obj)
+	: InteractiveTile(obj)
 {
 
 }
@@ -30,12 +32,14 @@ bool Tree::Init()
 	SetColorKey(255, 255, 255);
 	SetAsTextureSize();
 
-	Size imgSize = GetImageSize();
 	SetPos(0.f, 0.f);
 	SetPivot(0.3333f, 1.0f);
 
+	SetHP(500.f);
+
+	Size imgSize = GetImageSize();
 	ColliderRect* pRC = AddCollider<ColliderRect>("TreeBody");
-	pRC->SetRect(-imgSize.x / 3 + 2, -imgSize.y + TILESIZE, 2 * imgSize.x / 3 - 2, - 2);
+	pRC->SetRect(-imgSize.x / 3 + 5, -imgSize.y + TILESIZE, 2 * imgSize.x / 3 - 5, - 5);
 	SAFE_RELEASE(pRC);
 
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileBlock");
@@ -68,39 +72,54 @@ void Tree::ShadeIn(Collider* pSrc, Collider* pDst, float dt)
 	}
 }
 
-void Tree::ShadeOut(Collider* pSrc, Collider* pDst, float dt)
+void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
-	if (pDst->GetTag() == "PlayerBody")
+	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
 	{
-		DisableTransparentEffect();
+		float power = static_cast<ColliderPointAttack*>(pDst)->GetPower();
+		GetDamage(power);
+		SOUND_MANAGER->PlaySound("TreeHit");
+		if (IsDie())
+		{
+			Die();
+		}
 	}
+
 }
+
+void Tree::Die()
+{
+	Ref::Die();
+
+	SOUND_MANAGER->PlaySound("TreeOver");
+}
+
 void Tree::Input(float dt)
 {
+	InteractiveTile::Input(dt);
 	DisableTransparentEffect();
-	Tile::Input(dt);
 }
 
 int Tree::Update(float dt)
 {
-	Tile::Update(dt);
+	InteractiveTile::Update(dt);
 	return 0;
 }
 
 int Tree::LateUpdate(float dt)
 {
-	Tile::LateUpdate(dt);
+	InteractiveTile::LateUpdate(dt);
 	return 0;
 }
 
 void Tree::Collision(float dt)
 {
-	Tile::Collision(dt);
+	InteractiveTile::Collision(dt);
 }
 
 void Tree::Draw(HDC hDC, float dt)
 {
-	Tile::Draw(hDC, dt);
+	InteractiveTile::Draw(hDC, dt);
 }
 
 Tree* Tree::Clone()
@@ -110,15 +129,24 @@ Tree* Tree::Clone()
 
 void Tree::Save(FILE* pFile)
 {
-	Tile::Save(pFile);
+	InteractiveTile::Save(pFile);
 }
 
 void Tree::Load(FILE* pFile)
 {
-	Tile::Load(pFile);
+	InteractiveTile::Load(pFile);
+
+	Size imgSize = GetImageSize();
 
 	ColliderRect* pRC = static_cast<ColliderRect*>(GetCollider("TreeBody"));
+	pRC->SetRect(-imgSize.x / 3 + 5, -imgSize.y + TILESIZE, 2 * imgSize.x / 3 - 5, -5);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::ShadeIn);
 	pRC->AddCollisionFunction(CS_STAY, this, &Tree::ShadeIn);
+	SAFE_RELEASE(pRC);
+
+	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
+	pRC->SetRect(0, 0.f, imgSize.x / 3, TILESIZE);
+	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::TileHit);
+	pRC->AddCollisionFunction(CS_STAY, this, &Tree::TileHit);
 	SAFE_RELEASE(pRC);
 }

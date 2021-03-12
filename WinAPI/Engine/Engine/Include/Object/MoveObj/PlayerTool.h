@@ -17,14 +17,14 @@ private:
 		TOOL_BLADE, // 무기
 		TOOL_END // 툴 선택 안함
 	};
-	vector<class Item*> m_pTools;
+	vector<class Tool*> m_pTools;
 	ToolState m_eToolState = TOOL_END;
 	static constexpr float posOffsetX = -64.f;
 	static constexpr float posOffsetY = 64.f;
 	class Player* m_pPlayer = nullptr;
 private:
 	void SetPlayer(Player* player);
-	void SetTool(Item* tool);
+	void SetTool(class Item* tool);
 	void Play();
 public:
 	PlayerTool();

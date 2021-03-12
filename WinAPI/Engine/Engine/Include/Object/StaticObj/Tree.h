@@ -1,7 +1,7 @@
 #pragma once
-#include "Tile.h"
+#include "InteractiveTile.h"
 
-class Tree : public Tile
+class Tree : public InteractiveTile
 {
 	friend class PrototypeManager;
 	friend class Object;
@@ -14,10 +14,11 @@ protected:
 	Tree();
 	Tree(const Tree& obj);
 	virtual ~Tree();
+	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
+	virtual void Die();
 private:
 	void ChangeTreeTexture(int id);
 	void ShadeIn(Collider* pSrc, Collider* pDst, float dt);
-	void ShadeOut(Collider* pSrc, Collider* pDst, float dt);
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

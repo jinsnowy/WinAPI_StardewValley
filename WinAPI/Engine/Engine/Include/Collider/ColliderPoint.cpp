@@ -8,6 +8,7 @@
 ColliderPoint::ColliderPoint()
 	: m_tPos(0,0), m_tWorldPos(0,0)
 {
+	m_eCollType = CT_POINT;
 }
 
 ColliderPoint::ColliderPoint(const ColliderPoint& coll)
@@ -58,8 +59,6 @@ bool ColliderPoint::CheckCollision(Collider* pDst)
 		return CollisionPixelToPoint(static_cast<ColliderPixel*>(pDst)->GetPixel(),
 									static_cast<ColliderPixel*>(pDst)->GetWidth(),
 									static_cast<ColliderPixel*>(pDst)->GetHeight(), m_tWorldPos);
-	//case CT_POINT:
-	//	return m_tWorldInfo == static_cast<ColliderPoint*>(pDst)->GetWorldInfo();
 	}
 	return false;
 }

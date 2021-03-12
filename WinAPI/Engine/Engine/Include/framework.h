@@ -16,6 +16,7 @@
 #endif
 
 // 매크로
+#define TOOLSPEED 0.6f
 #define GLYPHX 20
 #define GLYPHY 24
 #define PI		3.141592f

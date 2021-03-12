@@ -60,7 +60,7 @@ bool UITileSelect::Init()
     {
         const wchar_t* imgPath = entry.path().c_str();
         string strTexkey = ExtractKey(GetChar(imgPath), lstrlen(imgPath));
-        Tile* pTile = new Tile;
+        Tile* pTile = Object::CreateObject<Tile>("Tile");
 
         wstring pFileName = m_strNumberPath;
         wstring strwTexKey(strTexkey.begin(), strTexkey.end());
@@ -211,7 +211,7 @@ void UITileSelect::LoadTiles(EDIT_MODE eSel, const wchar_t* pBaseFolderName, con
             continue;
         }
         string strTexkey = ExtractKey(GetChar(imgPath), lstrlen(imgPath));
-        Tile* pTile = new Tile;
+        Tile* pTile = Object::CreateObject<Tile>("Tile");
 
         wstring pFileName = pBaseFolderName;
         wstring strwTexKey(strTexkey.begin(), strTexkey.end());

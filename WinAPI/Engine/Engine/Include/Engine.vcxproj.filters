@@ -249,6 +249,15 @@
     <ClInclude Include="Object\Item\Tool.h">
       <Filter>Object\06.Item</Filter>
     </ClInclude>
+    <ClInclude Include="Object\PointObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider\ColliderPointAttack.h">
+      <Filter>Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\InteractiveTile.h">
+      <Filter>Object\05. Plant</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -391,6 +400,15 @@
     </ClCompile>
     <ClCompile Include="Object\Item\Tool.cpp">
       <Filter>Object\06.Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\PointObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider\ColliderPointAttack.cpp">
+      <Filter>Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\InteractiveTile.cpp">
+      <Filter>Object\05. Plant</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

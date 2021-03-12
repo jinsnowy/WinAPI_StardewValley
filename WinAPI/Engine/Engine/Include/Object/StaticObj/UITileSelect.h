@@ -57,7 +57,7 @@ public:
 	virtual int LateUpdate(float dt);
 	virtual void Collision(float dt);
 	virtual void Draw(HDC hdc, float dt);
-	virtual UITileSelect* Clone() { return nullptr; }
+	virtual UITileSelect* Clone() { throw EXCEPT(L"UITileSelct Cloned"); return nullptr; }
 private:
 	void SetUpTagButton(class Scene* curScene);
 	string ExtractKey(const char* str, int size);
