@@ -43,16 +43,16 @@ void PlayerTool::Play()
     case TOOL_PICK:
         switch (m_pPlayer->GetState())
         {
-        case Player::PlayerState::TOOL_DOWN:
+        case Player::PlayerState::IDLE_DOWN:
             m_pAnimation->ChangeClip("PickDown");
             break;
-        case Player::PlayerState::TOOL_LEFT:
+        case Player::PlayerState::IDLE_LEFT:
             m_pAnimation->ChangeClip("PickLeft");
             break;
-        case Player::PlayerState::TOOL_RIGHT:
+        case Player::PlayerState::IDLE_RIGHT:
             m_pAnimation->ChangeClip("PickRight");
             break;
-        case Player::PlayerState::TOOL_UP:
+        case Player::PlayerState::IDLE_UP:
             m_pAnimation->ChangeClip("PickUp");
             break;
         }
@@ -60,16 +60,16 @@ void PlayerTool::Play()
     case TOOL_AXE:
         switch (m_pPlayer->GetState())
         {
-        case Player::PlayerState::TOOL_DOWN:
+        case Player::PlayerState::IDLE_DOWN:
             m_pAnimation->ChangeClip("AxeDown");
             break;
-        case Player::PlayerState::TOOL_LEFT:
+        case Player::PlayerState::IDLE_LEFT:
             m_pAnimation->ChangeClip("AxeLeft");
             break;
-        case Player::PlayerState::TOOL_RIGHT:
+        case Player::PlayerState::IDLE_RIGHT:
             m_pAnimation->ChangeClip("AxeRight");
             break;
-        case Player::PlayerState::TOOL_UP:
+        case Player::PlayerState::IDLE_UP:
             m_pAnimation->ChangeClip("AxeUp");
             break;
         }
@@ -77,16 +77,16 @@ void PlayerTool::Play()
     case TOOL_HOE:
         switch (m_pPlayer->GetState())
         {
-        case Player::PlayerState::TOOL_DOWN:
+        case Player::PlayerState::IDLE_DOWN:
             m_pAnimation->ChangeClip("HoeDown");
             break;
-        case Player::PlayerState::TOOL_LEFT:
+        case Player::PlayerState::IDLE_LEFT:
             m_pAnimation->ChangeClip("HoeLeft");
             break;
-        case Player::PlayerState::TOOL_RIGHT:
+        case Player::PlayerState::IDLE_RIGHT:
             m_pAnimation->ChangeClip("HoeRight");
             break;
-        case Player::PlayerState::TOOL_UP:
+        case Player::PlayerState::IDLE_UP:
             m_pAnimation->ChangeClip("HoeUp");
             break;
         }
@@ -94,16 +94,16 @@ void PlayerTool::Play()
     case TOOL_WATER:
         switch (m_pPlayer->GetState())
         {
-        case Player::PlayerState::TOOL_DOWN:
+        case Player::PlayerState::IDLE_DOWN:
             m_pAnimation->ChangeClip("WaterDown");
             break;
-        case Player::PlayerState::TOOL_LEFT:
+        case Player::PlayerState::IDLE_LEFT:
             m_pAnimation->ChangeClip("WaterLeft");
             break;
-        case Player::PlayerState::TOOL_RIGHT:
+        case Player::PlayerState::IDLE_RIGHT:
             m_pAnimation->ChangeClip("WaterRight");
             break;
-        case Player::PlayerState::TOOL_UP:
+        case Player::PlayerState::IDLE_UP:
             m_pAnimation->ChangeClip("WaterUp");
             break;
         }
@@ -163,7 +163,7 @@ void PlayerTool::Draw(HDC hDC, float dt)
 
 void PlayerTool::StateTransit(int iState)
 {
-    SetTexture("ToolEnd");
+    SetTexture("ToolEnd", L"SV/ToolEnd.bmp");
 }
 
 void PlayerTool::LoadWater()
@@ -419,6 +419,7 @@ void PlayerTool::LoadAxe()
 
     // Axe 애니메이션
     {
+
         basePath = L"Player/SV/AxeTool/ToolDown/";
         vecFileName.clear();
         for (int i = 1; i <= 3; ++i)

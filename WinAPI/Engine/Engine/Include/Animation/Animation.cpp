@@ -197,7 +197,10 @@ void Animation::SetDefaultClip(const string& strDefaultClip)
 void Animation::ChangeClip(const string& strClip)
 {
 	if (m_strCurClip == strClip)
+	{
+		if(m_pCurClip && m_pCurClip->eOption != AO_ONCE_RETURN)
 		return;
+	}
 
 	m_strCurClip = strClip;
 

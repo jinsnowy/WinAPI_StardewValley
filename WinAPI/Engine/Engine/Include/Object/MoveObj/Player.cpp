@@ -125,9 +125,6 @@ void Player::InitAnimation()
 			9, 1,
 			0.f, "WalkUp_Anim", vecFileName);
 		SetClipColorKey("WalkUp", 255, 255, 255);
-
-
-
 	}
 	
 	// Tool 애니메이션
@@ -251,18 +248,6 @@ void Player::StateTransit(int iNext)
 		break;
 	case WALK_UP:
 		m_pAnimation->ChangeClip("WalkUp");
-		break;
-	case TOOL_LEFT:
-		m_pAnimation->ChangeClip("ToolLeft");
-		break;
-	case TOOL_RIGHT:
-		m_pAnimation->ChangeClip("ToolRight");
-		break;
-	case TOOL_DOWN:
-		m_pAnimation->ChangeClip("ToolDown");
-		break;
-	case TOOL_UP:
-		m_pAnimation->ChangeClip("ToolUp");
 		break;
 	}
 }
@@ -390,22 +375,31 @@ void Player::Input(float dt)
 			INDEX index = static_cast<GameScene*>(m_pScene)->IndexDiff(MOUSEWORLDPOS, GetPos());
 			if (max(abs(index.x), abs(index.y)) <= 1)
 			{
+				bool isIdle = false;
 				switch (m_eState)
 				{
 				case IDLE_RIGHT:
-					StateTransit(TOOL_RIGHT);
+					isIdle = true;
+					m_pAnimation->ChangeClip("ToolRight");
 					break;
 				case IDLE_LEFT:
-					StateTransit(TOOL_LEFT);
+					isIdle = true;
+					m_pAnimation->ChangeClip("ToolLeft");
 					break;
 				case IDLE_UP:
-					StateTransit(TOOL_UP);
+					isIdle = true;
+					m_pAnimation->ChangeClip("ToolUp");
 					break;
 				case IDLE_DOWN:
-					StateTransit(TOOL_DOWN);
+					isIdle = true;
+					m_pAnimation->ChangeClip("ToolDown");
 					break;
 				}
-				m_pPlayerTool->Play();
+				if (isIdle)
+				{
+					m_pPlayerTool->Play();
+					StateTransit(TOOL_USE);
+				}
 			}
 		}
 	}
@@ -414,12 +408,16 @@ void Player::Input(float dt)
 int Player::Update(float dt)
 {
 	MovableObject::Update(dt);
+
+	m_pPlayerTool->Update(dt);
 	return 0;
 }
 
 int Player::LateUpdate(float dt)
 {
 	MovableObject::LateUpdate(dt);
+
+	m_pPlayerTool->LateUpdate(dt);
 	return 0;
 }
 

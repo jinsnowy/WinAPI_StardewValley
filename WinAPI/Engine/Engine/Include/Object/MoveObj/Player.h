@@ -19,10 +19,7 @@ public:
 		WALK_RIGHT,
 		WALK_DOWN,
 		WALK_UP,
-		TOOL_LEFT,
-		TOOL_RIGHT,
-		TOOL_DOWN,
-		TOOL_UP,
+		TOOL_USE,
 	};
 private:
 	Pos m_tPrev;
