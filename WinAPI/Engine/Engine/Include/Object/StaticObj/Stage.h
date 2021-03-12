@@ -37,13 +37,39 @@ public:
 	void SetTileNone(const Pos& tPos);
 	void ChangeTileByCloneTile(const Pos& tPos, Tile* pClone);
 	void ChangeTileOption(const Pos& tPos, TILE_OPTION eOption);
+	inline int GetTileIndex(const Pos& tPos) const
+	{
+		return GetTileIndex(tPos.x, tPos.y);
+	}
+	inline int GetTileIndex(float x, float y) const
+	{
+		INDEX index = GetTileRowColIndex(x, y);
 
-	Pos GetTilePos(const Pos& worldPos);
-	Pos GetTilePos(int index);
-	INDEX GetTileRowColIndex(const Pos& tPos) const;
-	INDEX GetTileRowColIndex(float x, float y) const;
-	int GetTileIndex(const Pos& tPos) const;
-	int GetTileIndex(float x, float y) const;
+		if (index.x < 0 || index.x >= m_iTileNumX || index.y < 0 || index.y >= m_iTileNumY)
+			return -1;
+
+		return index.y * m_iTileNumX + index.x;
+	}
+	inline INDEX GetTileRowColIndex(const Pos& tPos) const
+	{
+		return GetTileRowColIndex(tPos.x, tPos.y);
+	}
+	inline INDEX GetTileRowColIndex(float x, float y) const
+	{
+		return INDEX(int(x) / TILESIZE, int(y) / TILESIZE);
+	}
+	inline Pos GetTilePos(int index)
+	{
+		int yIndex = index / m_iTileNumX;
+		int xIndex = index % m_iTileNumX;
+
+		return Pos(float(xIndex * TILESIZE), float(yIndex * TILESIZE));
+	}
+	inline Pos GetTilePos(const Pos& worldPos)
+	{
+		return GetTilePos(GetTileIndex(worldPos));
+	}
+
 	RESOLUTION GetTileSize() const { return { TILESIZE, TILESIZE }; }
 	int GetStageWidth() const { return m_iTileNumX * TILESIZE; }
 	int GetStageHeight() const { return m_iTileNumY * TILESIZE; }

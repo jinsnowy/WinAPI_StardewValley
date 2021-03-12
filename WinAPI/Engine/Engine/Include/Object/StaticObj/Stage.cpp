@@ -224,43 +224,6 @@ void Stage::ChangeTileOption(const Pos& tPos, TILE_OPTION eOption)
     m_baseTile[ind]->SetTileOption(eOption);
 }
 
-int Stage::GetTileIndex(const Pos& tPos) const
-{
-    return GetTileIndex(tPos.x ,tPos.y);
-}
-
-int Stage::GetTileIndex(float x, float y) const
-{
-    INDEX index = GetTileRowColIndex(x, y);
-
-    if (index.x < 0 || index.x >= m_iTileNumX || index.y < 0 || index.y >= m_iTileNumY)
-        return -1;
-
-    return index.y * m_iTileNumX + index.x;
-}
-
-INDEX Stage::GetTileRowColIndex(const Pos& tPos) const
-{
-    return GetTileRowColIndex(tPos.x, tPos.y);
-}
-
-INDEX Stage::GetTileRowColIndex(float x, float y) const
-{
-    return INDEX(int(x) / TILESIZE, int(y) / TILESIZE);
-}
-
-Pos Stage::GetTilePos(int index)
-{
-    int yIndex = index / m_iTileNumX;
-    int xIndex = index % m_iTileNumX;
-
-    return Pos(float(xIndex*TILESIZE), float(yIndex*TILESIZE));
-}
-
-Pos Stage::GetTilePos(const Pos& worldPos)
-{
-    return GetTilePos(GetTileIndex(worldPos));
-}
 
 void Stage::ClearTile()
 {

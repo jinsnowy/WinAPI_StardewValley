@@ -192,43 +192,6 @@ void Object::SetClipNextState(const string& strName, int iState)
     m_pAnimation->SetClipNextState(strName, iState);
 }
 
-void Object::DrawImageAt(HDC hdc, const Pos& at, bool ignorePivot)
-{
-    DrawImageAt(hdc, int(at.x), int(at.y), ignorePivot);
-}
-
-void Object::DrawImageAt(HDC hdc, int px, int py, bool ignorePivot)
-{
-    if (m_pTexture)
-    {
-        Size tSize = GetImageSize();
-        if (!ignorePivot)
-        {
-            px = px - m_tPivot.x * tSize.x;
-            py = py - m_tPivot.y * tSize.y;
-        }
-        m_pTexture->DrawImageAt(hdc, px, py);
-    }
-}
-
-void Object::DrawImageAtFixedSize(HDC hdc, const Pos& at, int size, bool ignorePivot)
-{
-    DrawImageAtFixedSize(hdc, int(at.x), int(at.y), size, ignorePivot);
-}
-
-void Object::DrawImageAtFixedSize(HDC hdc, int px, int py, int size, bool ignorePivot)
-{
-    if (m_pTexture)
-    {
-        Size tSize = GetImageSize();
-        if (!ignorePivot)
-        {
-            px = px - m_tPivot.x * tSize.x;
-            py = py - m_tPivot.y * tSize.y;
-        }
-        m_pTexture->DrawImageAtFixedSize(hdc, px, py, size);
-    }
-}
 
 // ------------------------
 

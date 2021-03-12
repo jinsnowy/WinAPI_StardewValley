@@ -2,6 +2,7 @@
 #include "../framework.h"
 #include "../Collider/Collider.h"
 #include "../Animation/Animation.h"
+#include "../Resources/Texture.h"
 
 class Object : public Ref
 {
@@ -192,10 +193,40 @@ public:
 	void SetColorKey(unsigned char r, unsigned char g, unsigned char b);
 	void SetAnimationClipColorKey(const string& strClip, unsigned char r, unsigned char g, unsigned char b);
 	void SetClipNextState(const string& strName, int iState);
-	void DrawImageAt(HDC hdc, const Pos& at, bool ignorePivot = false);
-	void DrawImageAt(HDC hdc, int px, int py, bool ignorePivot = false);
-	void DrawImageAtFixedSize(HDC hdc, const Pos& at, int size, bool ignorePivot = false);
-	void DrawImageAtFixedSize(HDC hdc, int px, int py, int size, bool ignorePivot = false);
+	inline void DrawImageAt(HDC hdc, const Pos& at, bool ignorePivot = false)
+	{
+		DrawImageAt(hdc, int(at.x), int(at.y), ignorePivot);
+	}
+	inline void DrawImageAt(HDC hdc, int px, int py, bool ignorePivot = false)
+	{
+		if (m_pTexture)
+		{
+			Size tSize = GetImageSize();
+			if (!ignorePivot)
+			{
+				px = px - m_tPivot.x * tSize.x;
+				py = py - m_tPivot.y * tSize.y;
+			}
+			m_pTexture->DrawImageAt(hdc, px, py);
+		}
+	}
+	inline void DrawImageAtFixedSize(HDC hdc, const Pos& at, int size, bool ignorePivot = false)
+	{
+		DrawImageAtFixedSize(hdc, int(at.x), int(at.y), size, ignorePivot);
+	}
+	inline void DrawImageAtFixedSize(HDC hdc, int px, int py, int size, bool ignorePivot = false)
+	{
+		if (m_pTexture)
+		{
+			Size tSize = GetImageSize();
+			if (!ignorePivot)
+			{
+				px = px - m_tPivot.x * tSize.x;
+				py = py - m_tPivot.y * tSize.y;
+			}
+			m_pTexture->DrawImageAtFixedSize(hdc, px, py, size);
+		}
+	}
 public:
 	virtual bool Init();
 	virtual void Input(float dt);
