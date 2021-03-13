@@ -317,14 +317,14 @@ Rect Player::BuildSwingAttack(int dx, int dy)
 		rect.left = - m_fAttackRange;
 		rect.top = -TILESIZE - m_fAttackRange;
 		rect.right = rect.left + 2 * m_fAttackRange;
-		rect.bottom = rect.top + m_fAttackRange;
+		rect.bottom = rect.top + TILESIZE + m_fAttackRange;
 	}
 	else if (dy >= 0)
 	{
 		rect.left = - m_fAttackRange;
 		rect.top = -TILESIZE;
 		rect.right = rect.left + 2 * m_fAttackRange;
-		rect.bottom = rect.top + m_fAttackRange;
+		rect.bottom = rect.top  + TILESIZE + m_fAttackRange;
 	}
 	return rect;
 }

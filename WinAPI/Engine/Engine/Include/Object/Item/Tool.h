@@ -7,8 +7,8 @@ private:
 	float m_iPower = 0.f;
 	float m_iEndure = 0.f;
 public:
-	int GetPower() const { return m_iPower; }
-	int GetEndure() const { return m_iEndure; }
+	float GetPower() const { return m_iPower; }
+	float GetEndure() const { return m_iEndure; }
 	void SetPower(float power) { m_iPower = power; }
 	void SetEndure(float endure) { m_iEndure = endure; }
 protected:

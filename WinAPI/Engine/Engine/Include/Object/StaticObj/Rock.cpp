@@ -35,6 +35,10 @@ bool Rock::Init()
 
 	SetHP(50.f);
 
+	Item* pItem = Item::LoadItem("Stone", L"SV/Item/Outdoor/Stone.bmp");
+	SetDropItem(pItem);
+	SAFE_RELEASE(pItem);
+
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileBlock");
 	pBlock->SetRect(5.f, 5.f, TILESIZE-5.f, TILESIZE-5.f);
 	SAFE_RELEASE(pBlock);
@@ -65,6 +69,7 @@ void Rock::Die()
 {
 	Ref::Die();
 
+	ItemDrop(1);
 	SOUND_MANAGER->PlaySound("RockOver");
 }
 

@@ -17,6 +17,7 @@ enum OBJ_TYPE
 	OBJ_TREE,
 	OBJ_ROCK,
 	OBJ_GRASS,
+	OBJ_TREETRUNK,
 };
 
 enum PR_TYPE

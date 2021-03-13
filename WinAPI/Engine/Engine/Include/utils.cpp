@@ -18,6 +18,35 @@ const char* util::GetChar(const wchar_t* c)
 	return _char_buffer;
 }
 
+uniform_real_distribution<float> util::GenUniformRealDist(float lower, float upper)
+{
+	return uniform_real_distribution<float>(lower, upper);
+}
+uniform_int_distribution<int> util::GenUniformIntDist(int lower, int upper)
+{
+	return uniform_int_distribution<int>(lower, upper);
+}
+
+void util::SetUniformRealDist(float lower, float upper)
+{
+	_real_dist = uniform_real_distribution<float>(lower, upper);
+}
+
+void util::SetUniformIntDist(int lower, int upper)
+{
+	_int_dist = uniform_int_distribution<int>(lower, upper);
+}
+
+float util::GenerateFloatNumber()
+{
+	return _real_dist(_rng);
+}
+
+int util::GenerateIntNumber()
+{
+	return _int_dist(_rng);
+}
+
 void util::DrawRedRect(HDC hdc, RECT rc)
 {
 	HPEN myPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));

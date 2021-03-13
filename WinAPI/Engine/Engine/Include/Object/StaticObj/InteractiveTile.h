@@ -1,5 +1,7 @@
 #pragma once
 #include "Tile.h"
+#include "../Item/Item.h"
+
 class InteractiveTile :
     public Tile
 {
@@ -7,6 +9,7 @@ class InteractiveTile :
 	friend class Stage;
 private:
 	float m_iHP = 0.f;
+	class Item* m_pItem = nullptr;
 protected:
 	InteractiveTile();
 	InteractiveTile(const InteractiveTile& obj);
@@ -16,6 +19,8 @@ public:
 	void SetHP(float hp) { m_iHP = hp; }
 	void GetDamage(float power) { m_iHP -= power; }
 	bool IsDie() const { return m_iHP <= 0.f; }
+	void SetDropItem(class Item* pItem);
+	virtual void ItemDrop(int num);
 	virtual void Die() = 0;
 public:
 	virtual bool Init();

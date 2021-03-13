@@ -191,6 +191,7 @@
     <ClInclude Include="Object\StaticObj\StaticObject.h" />
     <ClInclude Include="Object\StaticObj\Tile.h" />
     <ClInclude Include="Object\StaticObj\Tree.h" />
+    <ClInclude Include="Object\StaticObj\TreeTrunk.h" />
     <ClInclude Include="Object\StaticObj\UI.h" />
     <ClInclude Include="Object\StaticObj\UIButton.h" />
     <ClInclude Include="Object\StaticObj\UIGameManager.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="Object\StaticObj\StaticObject.cpp" />
     <ClCompile Include="Object\StaticObj\Tile.cpp" />
     <ClCompile Include="Object\StaticObj\Tree.cpp" />
+    <ClCompile Include="Object\StaticObj\TreeTrunk.cpp" />
     <ClCompile Include="Object\StaticObj\UI.cpp" />
     <ClCompile Include="Object\StaticObj\UIButton.cpp" />
     <ClCompile Include="Object\StaticObj\UIGameManager.cpp" />

@@ -18,6 +18,7 @@
 #include "StaticObj/Grass.h"
 #include "StaticObj/Tree.h"
 #include "StaticObj/Rock.h"
+#include "StaticObj/TreeTrunk.h"
 
 Object::Object() :
     m_pTexture(nullptr),
@@ -89,6 +90,9 @@ Object* Object::CreateObjectByType(OBJ_TYPE eType)
         break;
     case OBJ_GRASS:
         pObj = Object::CreateObject<Grass>("Grass");
+        break;
+    case OBJ_TREETRUNK:
+        pObj = Object::CreateObject<TreeTrunk>("TreeTrunk");
         break;
     }
     return pObj;

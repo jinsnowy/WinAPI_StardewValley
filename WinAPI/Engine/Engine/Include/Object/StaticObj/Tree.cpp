@@ -1,10 +1,11 @@
 #include "Tree.h"
-
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
 #include "../../Collider/ColliderPoint.h"
 #include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
+#include "../../Scene/Scene.h"
+#include "TreeTrunk.h"
 const wchar_t* const Tree::m_strBaseName[] = { L"Tree1.bmp", L"Tree2.bmp", L"Tree3.bmp" };
 
 Tree::Tree()
@@ -36,6 +37,10 @@ bool Tree::Init()
 	SetPivot(0.3333f, 1.0f);
 
 	SetHP(500.f);
+
+	Item* pItem = Item::LoadItem("Wood", L"SV/Item/Outdoor/Wood.bmp");
+	SetDropItem(pItem);
+	SAFE_RELEASE(pItem);
 
 	Size imgSize = GetImageSize();
 	ColliderRect* pRC = AddCollider<ColliderRect>("TreeBody");
@@ -91,7 +96,11 @@ void Tree::Die()
 {
 	Ref::Die();
 
-	SOUND_MANAGER->PlaySound("TreeOver");
+	ItemDrop(10);
+	Object* pTrunk = m_pScene->CreateObject<TreeTrunk>("TreeTrunk", m_pLayer);
+	pTrunk->SetPos(GetPos());
+	pTrunk->LateInit();
+	SAFE_RELEASE(pTrunk);
 }
 
 void Tree::Input(float dt)

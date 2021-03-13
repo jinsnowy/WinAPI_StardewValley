@@ -8,10 +8,12 @@
 #include "../Object/StaticObj/Tree.h"
 #include "../Object/StaticObj/Rock.h"
 #include "../Object/StaticObj/Grass.h"
+#include "../Object/StaticObj/TreeTrunk.h"
 
 DEFINITION_SINGLE(PrototypeManager);
 
-unordered_map<string, Object*> PrototypeManager::m_mapProtoType[PR_END];
+unordered_map<string, Object*> PrototypeManager::m_mapObjPrototype[PR_END];
+
 
 PrototypeManager::PrototypeManager()
 {
@@ -21,8 +23,9 @@ PrototypeManager::~PrototypeManager()
 {
     for (int i = 0; i < PR_END; ++i)
     {
-        Safe_Release_Map(m_mapProtoType[static_cast<PR_TYPE>(i)]);
+        Safe_Release_Map(m_mapObjPrototype[static_cast<PR_TYPE>(i)]);
     }
+
 }
 
 bool PrototypeManager::Init()
@@ -54,6 +57,9 @@ bool PrototypeManager::Init()
     pGrass->ChangeTexture(2);
     RegisterProtoType(PR_OUTDOOR, "Grass3_Prototype", pGrass);
 
+    TreeTrunk* pTrunk = LoadObject<TreeTrunk>();
+    RegisterProtoType(PR_OUTDOOR, "TreeTrunk1_Prototype", pTrunk);
+
 	return true;
 }
 
@@ -64,7 +70,7 @@ void PrototypeManager::RegisterProtoType(PR_TYPE eType, const string& strPrototy
 
     assert(pObj != nullptr);
 
-    m_mapProtoType[eType].insert(make_pair(strPrototypeKey, pObj));
+    m_mapObjPrototype[eType].insert(make_pair(strPrototypeKey, pObj));
 }
 
 Object* PrototypeManager::FindPrototype(const string& strPrototypeKey)
@@ -80,8 +86,8 @@ Object* PrototypeManager::FindPrototype(const string& strPrototypeKey)
 
 Object* PrototypeManager::FindPrototype(PR_TYPE eType, const string& strPrototypeKeytrTag)
 {
-	auto found = m_mapProtoType[eType].find(strPrototypeKeytrTag);
-	if (found == m_mapProtoType[eType].end())
+	auto found = m_mapObjPrototype[eType].find(strPrototypeKeytrTag);
+	if (found == m_mapObjPrototype[eType].end())
 	{
 		return nullptr;
 	}
@@ -112,3 +118,4 @@ Object* PrototypeManager::CreateCloneObject(const string& strPrototypeKey, const
 
 	return pObj;
 }
+

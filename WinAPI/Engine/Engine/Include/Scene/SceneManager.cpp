@@ -34,6 +34,7 @@ SceneManager::~SceneManager()
 	SAFE_RELEASE(m_pPlayer);
 
 	UI_MANAGER->Release();
+	Item::ClearItemMap();
 }
 
 bool SceneManager::Init()

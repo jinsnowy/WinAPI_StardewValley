@@ -34,6 +34,10 @@ bool Grass::Init()
 	SetPivot(0.f, 0.f);
 
 	SetHP(50.f);
+	
+	Item* pItem = Item::LoadItem("Fiber", L"SV/Item/Outdoor/Fiber.bmp");
+	SetDropItem(pItem);
+	SAFE_RELEASE(pItem);
 
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileIdleBlock");
 	pBlock->SetRect(5.f, 5.f, TILESIZE - 5.f, TILESIZE - 5.f);
@@ -65,6 +69,7 @@ void Grass::Die()
 {
 	Ref::Die();
 
+	ItemDrop(1);
 	SOUND_MANAGER->PlaySound("GrassOver");
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "../framework.h"
 
+class Item;
 class Object;
 class Layer;
 class PrototypeManager
@@ -9,8 +10,9 @@ class PrototypeManager
 	friend class UITileSelect;
 	DECLARE_SINGLE(PrototypeManager);
 private:
-	static unordered_map<string, Object*> m_mapProtoType[PR_END];
-	unordered_map<string, Object*>* GetPrototypes(PR_TYPE eType) const { return &m_mapProtoType[eType]; }
+	static unordered_map<string, Object*> m_mapObjPrototype[PR_END];
+
+	unordered_map<string, Object*>* GetPrototypes(PR_TYPE eType) const { return &m_mapObjPrototype[eType]; }
 public:
 	template<typename T>
 	static T* LoadObject()
@@ -38,6 +40,7 @@ public:
 	static Object* FindPrototype(const string& strPrototypeKey);
 	static Object* FindPrototype(PR_TYPE eType, const string& strPrototypeKey);
 	static Object* CreateCloneObject(const string& strPrototypeKey, const string& strTag, class Scene* pScene = nullptr, class Layer* pLayer = nullptr);
+
 	bool Init();
 };
 

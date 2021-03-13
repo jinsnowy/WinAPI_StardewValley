@@ -261,6 +261,9 @@
     <ClInclude Include="Object\StaticObj\Grass.h">
       <Filter>Object\05. Plant</Filter>
     </ClInclude>
+    <ClInclude Include="Object\StaticObj\TreeTrunk.h">
+      <Filter>Object\05. Plant</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -414,6 +417,9 @@
       <Filter>Object\05. Plant</Filter>
     </ClCompile>
     <ClCompile Include="Object\StaticObj\Grass.cpp">
+      <Filter>Object\05. Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\TreeTrunk.cpp">
       <Filter>Object\05. Plant</Filter>
     </ClCompile>
   </ItemGroup>
