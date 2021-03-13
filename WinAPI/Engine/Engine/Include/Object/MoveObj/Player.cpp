@@ -127,7 +127,86 @@ void Player::InitAnimation()
 			0.f, "WalkUp_Anim", vecFileName);
 		SetClipColorKey("WalkUp", 255, 255, 255);
 	}
-	
+
+	// Swing 애니메이션
+	{
+		basePath = L"Player/SV/SwingRight/";
+		vecFileName.clear();
+		for (int i = 1; i <= 5; ++i)
+		{
+			ss << basePath << L"SwingRight" << i << ".bmp";
+			vecFileName.push_back(ss.str());
+			ss.clear();
+			ss.str(L"");
+		}
+		AddAnimationClip("SwingRight",
+			AT_FRAME, AO_ONCE_RETURN,
+			0.0f, SWINGSPEED,
+			5, 1,
+			0, 0,
+			5, 1,
+			0.f, "SwingRight_Anim", vecFileName);
+		SetClipColorKey("SwingRight", 255, 255, 255);
+		SetClipNextState("SwingRight", IDLE_RIGHT);
+
+		basePath = L"Player/SV/SwingLeft/";
+		vecFileName.clear();
+		for (int i = 1; i <= 5; ++i)
+		{
+			ss << basePath << L"SwingLeft" << i << ".bmp";
+			vecFileName.push_back(ss.str());
+			ss.clear();
+			ss.str(L"");
+		}
+		AddAnimationClip("SwingLeft",
+			AT_FRAME, AO_ONCE_RETURN,
+			0.0f, SWINGSPEED,
+			5, 1,
+			0, 0,
+			5, 1,
+			0.f, "SwingLeft_Anim", vecFileName);
+		SetClipColorKey("SwingLeft", 255, 255, 255);
+		SetClipNextState("SwingLeft", IDLE_LEFT);
+
+		basePath = L"Player/SV/SwingUp/";
+		vecFileName.clear();
+		for (int i = 1; i <= 5; ++i)
+		{
+			ss << basePath << L"SwingUp" << i << ".bmp";
+			vecFileName.push_back(ss.str());
+			ss.clear();
+			ss.str(L"");
+		}
+		AddAnimationClip("SwingUp",
+			AT_FRAME, AO_ONCE_RETURN,
+			0.0f, SWINGSPEED,
+			5, 1,
+			0, 0,
+			5, 1,
+			0.f, "SwingUp_Anim", vecFileName);
+		SetClipColorKey("SwingUp", 255, 255, 255);
+		SetClipNextState("SwingUp", IDLE_UP);
+
+		basePath = L"Player/SV/SwingDown/";
+		vecFileName.clear();
+		for (int i = 1; i <= 5; ++i)
+		{
+			ss << basePath << L"SwingDown" << i << ".bmp";
+			vecFileName.push_back(ss.str());
+			ss.clear();
+			ss.str(L"");
+		}
+		AddAnimationClip("SwingDown",
+			AT_FRAME, AO_ONCE_RETURN,
+			0.0f, SWINGSPEED,
+			5, 1,
+			0, 0,
+			5, 1,
+			0.f, "SwingDown_Anim", vecFileName);
+		SetClipColorKey("SwingDown", 255, 255, 255);
+		SetClipNextState("SwingDown", IDLE_DOWN);
+	}
+
 	// Tool 애니메이션
 	{
 		basePath = L"Player/SV/ToolDown/";
@@ -211,8 +290,43 @@ void Player::InitAnimation()
 
 float Player::GetToolPower() const
 {
-	assert(m_iCurItemSel < m_vecItem.size());
-	return static_cast<Tool*>(m_vecItem[m_iCurItemSel])->GetPower();
+	if(IsToolSelected())
+		return static_cast<Tool*>(m_vecItem[m_iCurItemSel])->GetPower();
+	return 0.f;
+}
+
+Rect Player::BuildSwingAttack(int dx, int dy)
+{
+	Rect rect = {};
+	if (dx > 0)
+	{
+		rect.left = 0;
+		rect.top = -TILESIZE - m_fAttackRange;
+		rect.right = rect.left + m_fAttackRange;
+		rect.bottom = rect.top + 2 * m_fAttackRange;
+	}
+	else if (dx < 0)
+	{
+		rect.left = - m_fAttackRange;
+		rect.top = -TILESIZE - m_fAttackRange;
+		rect.right = rect.left + m_fAttackRange;
+		rect.bottom = rect.top + 2 * m_fAttackRange;
+	}
+	else if (dy < 0)
+	{
+		rect.left = - m_fAttackRange;
+		rect.top = -TILESIZE - m_fAttackRange;
+		rect.right = rect.left + 2 * m_fAttackRange;
+		rect.bottom = rect.top + m_fAttackRange;
+	}
+	else if (dy >= 0)
+	{
+		rect.left = - m_fAttackRange;
+		rect.top = -TILESIZE;
+		rect.right = rect.left + 2 * m_fAttackRange;
+		rect.bottom = rect.top + m_fAttackRange;
+	}
+	return rect;
 }
 
 void Player::StateTransit(int iNext)
@@ -367,49 +481,64 @@ void Player::Input(float dt)
 			break;
 		}
 	
-		if (KEYDOWN("MouseLButton") && IsIdleState())
+		if (KEYDOWN("MouseLButton") && IsIdleState() && IsToolSelected())
 		{
 			Pos tMousePos = MOUSEWORLDPOS;
-			INDEX index = static_cast<GameScene*>(m_pScene)->IndexDiff(tMousePos, GetCenterPos());
+			Pos tCenterPos = GetCenterPos();
+			Pos tPos = GetPos();
+			INDEX index = static_cast<GameScene*>(m_pScene)->IndexDiff(tMousePos, tCenterPos);
 			if (max(abs(index.x), abs(index.y)) <= 1)
 			{
+				bool bSwingTool = IsSwingTool();
 				if (index.x > 0)
 				{
+					bSwingTool ? m_pAnimation->ChangeClip("SwingRight") :
+								m_pAnimation->ChangeClip("ToolRight");
 					StateTransit(IDLE_RIGHT);
-					m_pAnimation->ChangeClip("ToolRight");
 				}
 				else if (index.x < 0)
 				{
+					bSwingTool ? m_pAnimation->ChangeClip("SwingLeft") :
+								m_pAnimation->ChangeClip("ToolLeft");
 					StateTransit(IDLE_LEFT);
-					m_pAnimation->ChangeClip("ToolLeft");
 				}
 				else if (index.y < 0)
 				{
+					bSwingTool ? m_pAnimation->ChangeClip("SwingUp") :
+								m_pAnimation->ChangeClip("ToolUp");
 					StateTransit(IDLE_UP);
-					m_pAnimation->ChangeClip("ToolUp");
 				}
 				else if (index.y >= 0)
 				{
+					bSwingTool ? m_pAnimation->ChangeClip("SwingDown") :
+								m_pAnimation->ChangeClip("ToolDown");
 					StateTransit(IDLE_DOWN);
-					m_pAnimation->ChangeClip("ToolDown");
 				}
 					
 				m_pPlayerTool->Play();
 				StateTransit(TOOL_USE);
 
-				// 나무/돌/수풀 체크
-				if (HasTool(PlayerTool::TOOL_AXE))
+				if (bSwingTool)
 				{
-					TRIGGER_CLICKATTACKEVENT(tMousePos, "AxeTool", GetToolPower());
+					// 낫/검 체크
+					Rect attackRange = BuildSwingAttack(index.x, index.y);
+					TRIGGER_RECTATTACKEVENT(GetCenterPos(), attackRange, "SwingTool", GetToolPower());
 				}
-				else if (HasTool(PlayerTool::TOOL_PICK))
-				{
-					TRIGGER_CLICKATTACKEVENT(tMousePos, "PickTool", GetToolPower());
-				}
-				else if (HasTool(PlayerTool::TOOL_HOE))
-				{
-					const auto& gameScene = static_cast<GameScene*>(m_pScene);
-					gameScene->DigTile(tMousePos);
+				else {
+					// 도끼/곡괭이/호미 체크
+					if (HasTool(PlayerTool::TOOL_AXE))
+					{
+						TRIGGER_CLICKATTACKEVENT(tMousePos, "AxeTool", GetToolPower());
+					}
+					else if (HasTool(PlayerTool::TOOL_PICK))
+					{
+						TRIGGER_CLICKATTACKEVENT(tMousePos, "PickTool", GetToolPower());
+					}
+					else if (HasTool(PlayerTool::TOOL_HOE))
+					{
+						const auto& gameScene = static_cast<GameScene*>(m_pScene);
+						gameScene->DigTile(tMousePos);
+					}
 				}
 			}
 		}
@@ -448,7 +577,7 @@ void Player::Draw(HDC hDC, float dt)
 	swprintf_s(playerPos, L"Pos: %.1f, %.1f", GetPos().x, GetPos().y);
 	Pos tPos = m_tPos - m_tSize * m_tPivot;
 	tPos -= CAMERA->GetTopLeft();
-	TextOut(hDC, tPos.x, tPos.y, playerPos, lstrlen(playerPos));
+	TextOut(hDC, tPos.x, tPos.y - 10, playerPos, lstrlen(playerPos));
 #endif
 	if (SHOWCHECK(SHOW_TILEOPTION))
 	{

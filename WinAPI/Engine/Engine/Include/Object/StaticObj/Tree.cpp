@@ -2,7 +2,7 @@
 
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
-#include "../../Collider/ColliderPointAttack.h"
+#include "../../Collider/ColliderPoint.h"
 #include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
 const wchar_t* const Tree::m_strBaseName[] = { L"Tree1.bmp", L"Tree2.bmp", L"Tree3.bmp" };
@@ -76,7 +76,7 @@ void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
 	{
-		float power = static_cast<ColliderPointAttack*>(pDst)->GetPower();
+		float power = static_cast<ColliderPoint*>(pDst)->GetPower();
 		GetDamage(power);
 		SOUND_MANAGER->PlaySound("TreeHit");
 		if (IsDie())

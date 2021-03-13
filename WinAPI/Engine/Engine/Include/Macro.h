@@ -17,7 +17,8 @@
 #define SHOWCHECK(X)    SceneManager::Instance()->CheckShowMode(X)
 #define DRAWGLYPH(hdc, c, x, y) ResourceManager::Instance()->DrawGlyph(hdc, c, x, y)
 #define TRIGGER_CLICKEVENT(POS, TAG) CollisionManager::Instance()->AddCollidePoint(POS, TAG)
-#define TRIGGER_CLICKATTACKEVENT(POS, TAG, POWER) CollisionManager::Instance()->AddCollideAttackPoint(POS, TAG, POWER)
+#define TRIGGER_CLICKATTACKEVENT(POS, TAG, POWER) CollisionManager::Instance()->AddCollidePoint(POS, TAG, POWER)
+#define TRIGGER_RECTATTACKEVENT(POS, RECTA, TAG, POWER) CollisionManager::Instance()->AddCollideRect(POS, RECTA, TAG, POWER)
 
 #define DEFINITION_SINGLE(Type) Type* Type::INSTANCE = 0;
 #define DECLARE_SINGLE(Type)	\

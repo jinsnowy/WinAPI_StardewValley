@@ -1,7 +1,6 @@
 #include "Grass.h"
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
-#include "../../Collider/ColliderPointAttack.h"
 #include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
 const wchar_t* const Grass::m_strBaseName[] = { L"Grass1.bmp", L"Grass2.bmp", L"Grass3.bmp" };
@@ -56,7 +55,7 @@ void Grass::ChangeTexture(int id)
 
 void Grass::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
-	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "SickleTool")
+	if (pDst->GetTag() == "SwingTool")
 	{
 		Die();
 	}

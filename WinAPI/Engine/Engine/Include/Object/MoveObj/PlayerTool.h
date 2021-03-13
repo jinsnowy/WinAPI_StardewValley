@@ -44,5 +44,7 @@ private:
 	void LoadPick();
 	void LoadHoe();
 	void LoadAxe();
+	void LoadSickle();
+	void LoadBlade();
 	void LoadToolItems();
 };

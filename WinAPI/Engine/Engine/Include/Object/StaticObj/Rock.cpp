@@ -1,7 +1,6 @@
 #include "Rock.h"
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
-#include "../../Collider/ColliderPointAttack.h"
 #include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
 const wchar_t* const Rock::m_strBaseName[] = { L"Rock1.bmp", L"Rock2.bmp", L"Rock3.bmp" };

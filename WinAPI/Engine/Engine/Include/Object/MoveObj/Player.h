@@ -2,6 +2,7 @@
 #include "../../framework.h"
 #include "MovableObject.h"
 #include "PlayerTool.h"
+#include "../Item/Tool.h"
 
 class Player : public MovableObject
 {
@@ -31,6 +32,7 @@ private:
 	Player(const Player& obj) = delete;
 	~Player();
 private:
+	float m_fAttackRange = TILESIZE;
 	int m_iCurItemSel = 0;
 	int m_iHP = 0;
 	int m_iMoney = 5000;
@@ -43,13 +45,7 @@ public:
 	{
 		return Pos(GetPos().x + GetSize().x / 2, GetPos().y);
 	}
-private:
-	bool HasTool(PlayerTool::ToolState tool) const
-	{
-		if (m_iCurItemSel >= m_vecItem.size()) return false;
-		return m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[tool];
-	}
-	float GetToolPower() const;
+
 public:
 	virtual void StateTransit(int iNext);
 	virtual bool Init();
@@ -69,10 +65,29 @@ private:
 	void InitTexture();
 	void InitAnimation();
 	void ChangePlayerTool(float dt);
-	bool IsIdleState()
+private:
+	float GetToolPower() const;
+	bool HasTool(PlayerTool::ToolState tool) const
+	{
+		if (m_iCurItemSel >= m_vecItem.size()) return false;
+		return m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[tool];
+	}
+	bool IsSwingTool() const
+	{
+		if (m_iCurItemSel >= m_vecItem.size()) return false;
+		return (m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[PlayerTool::TOOL_SICKLE]
+			|| m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[PlayerTool::TOOL_BLADE]);
+	}
+	bool IsToolSelected() const
+	{
+		if (m_iCurItemSel >= m_vecItem.size()) return false;
+		 return dynamic_cast<Tool*>(m_vecItem[m_iCurItemSel]) != nullptr;
+	}
+	bool IsIdleState() const
 	{
 		return (m_eState == IDLE_DOWN) || (m_eState == IDLE_UP)
 			|| (m_eState == IDLE_LEFT) || (m_eState == IDLE_RIGHT);
 	}
+	Rect BuildSwingAttack(int dx, int dy);
 };
 

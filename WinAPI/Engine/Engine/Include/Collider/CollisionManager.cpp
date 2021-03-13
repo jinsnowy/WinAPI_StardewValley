@@ -2,8 +2,9 @@
 #include "../Object/Object.h"
 #include "../Object/PointObject.h"
 #include "../Collider/ColliderPoint.h"
-#include "../Collider/ColliderPointAttack.h"
 #include "../Collider/ColliderRect.h"
+#include "../Resources/ResourceManager.h"
+#include "../Scene/SceneManager.h"
 #include "../Core/Input.h"
 #include "Collider.h"
 
@@ -27,23 +28,30 @@ void CollisionManager::ClickPoint()
     AddCollidePoint(MOUSEWORLDPOS, "Click");
 }
 
-void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
+void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag, float power)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
-    ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
-    pColl->SetPoint(pos.x, pos.y);
+    pPoint->SetPos(pos.x, pos.y);
+
+    ColliderRect* pColl = pPoint->AddCollider<ColliderRect>(strTag);
+    pColl->SetRect(rect.left, rect.top, rect.right, rect.bottom);
+    pColl->SetPower(power);
     SAFE_RELEASE(pColl);
+
     m_tempCollisionObjList.push_back(pPoint);
     m_CollisionObjList.push_back(pPoint);
 }
 
-void CollisionManager::AddCollideAttackPoint(const Pos& pos, const string& strTag, float power)
+
+void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag, float power)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
-    ColliderPointAttack* pColl = pPoint->AddCollider<ColliderPointAttack>(strTag);
-    pColl->SetPoint(pos.x, pos.y);
+    pPoint->SetPos(pos.x, pos.y);
+
+    ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
     pColl->SetPower(power);
     SAFE_RELEASE(pColl);
+
     m_tempCollisionObjList.push_back(pPoint);
     m_CollisionObjList.push_back(pPoint);
 }

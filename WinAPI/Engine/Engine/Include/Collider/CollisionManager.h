@@ -10,10 +10,9 @@ private:
 public:
 	bool Init();
 	void ClickPoint();
-	void AddCollidePoint(const Pos& pos, const string& strTag);
-	void AddCollideAttackPoint(const Pos& pos, const string& strTag, float power);
+	void AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag, float power = 0.f);
+	void AddCollidePoint(const Pos& pos, const string& strTag, float power = 0.f);
 	void TempLateUpdate(float dt);
-
 
 	void AddObject(class Object* pObj);
 	void Collision(float dt);

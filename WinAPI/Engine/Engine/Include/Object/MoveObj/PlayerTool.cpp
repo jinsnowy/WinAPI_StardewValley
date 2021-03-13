@@ -109,8 +109,38 @@ void PlayerTool::Play()
         }
         break;
     case TOOL_SICKLE:
+        switch (m_pPlayer->GetState())
+        {
+        case Player::PlayerState::IDLE_DOWN:
+            m_pAnimation->ChangeClip("SickleDown");
+            break;
+        case Player::PlayerState::IDLE_LEFT:
+            m_pAnimation->ChangeClip("SickleLeft");
+            break;
+        case Player::PlayerState::IDLE_RIGHT:
+            m_pAnimation->ChangeClip("SickleRight");
+            break;
+        case Player::PlayerState::IDLE_UP:
+            m_pAnimation->ChangeClip("SickleUp");
+            break;
+        }
         break;
     case TOOL_BLADE:
+        switch (m_pPlayer->GetState())
+        {
+        case Player::PlayerState::IDLE_DOWN:
+            m_pAnimation->ChangeClip("BladeDown");
+            break;
+        case Player::PlayerState::IDLE_LEFT:
+            m_pAnimation->ChangeClip("BladeLeft");
+            break;
+        case Player::PlayerState::IDLE_RIGHT:
+            m_pAnimation->ChangeClip("BladeRight");
+            break;
+        case Player::PlayerState::IDLE_UP:
+            m_pAnimation->ChangeClip("BladeUp");
+            break;
+        }
         break;
     }
 }
@@ -128,6 +158,8 @@ bool PlayerTool::Init()
     LoadHoe();
     LoadPick();
     LoadWater();
+    LoadSickle();
+    LoadBlade();
     LoadToolItems();
 
     return true;
@@ -419,7 +451,6 @@ void PlayerTool::LoadAxe()
 
     // Axe 애니메이션
     {
-
         basePath = L"Player/SV/AxeTool/ToolDown/";
         vecFileName.clear();
         for (int i = 1; i <= 3; ++i)
@@ -494,6 +525,170 @@ void PlayerTool::LoadAxe()
     }
 }
 
+void PlayerTool::LoadSickle()
+{
+    wstring basePath;
+    vector<wstring> vecFileName;
+    wstringstream ss;
+
+    // 낫 애니메이션
+    {
+        basePath = L"Player/SV/SickleTool/SwingDown/";
+        vecFileName.clear();
+        for (int i = 1; i <= 5; ++i)
+        {
+            ss << basePath << L"SickleDown" << i << ".bmp";
+            vecFileName.push_back(ss.str());
+            ss.clear();
+            ss.str(L"");
+        }
+        AddAnimationClip("SickleDown",
+            AT_FRAME, AO_ONCE_RETURN,
+            0.0f, SWINGSPEED,
+            5, 1,
+            0, 0,
+            5, 1,
+            0.f, "SickleDown_Anim", vecFileName);
+        SetClipColorKey("SickleDown", 255, 255, 255);
+
+        basePath = L"Player/SV/SickleTool/SwingLeft/";
+        vecFileName.clear();
+        for (int i = 1; i <= 5; ++i)
+        {
+            ss << basePath << L"SickleLeft" << i << ".bmp";
+            vecFileName.push_back(ss.str());
+            ss.clear();
+            ss.str(L"");
+        }
+        AddAnimationClip("SickleLeft",
+            AT_FRAME, AO_ONCE_RETURN,
+            0.0f, SWINGSPEED,
+            5, 1,
+            0, 0,
+            5, 1,
+            0.f, "SickleLeft_Anim", vecFileName);
+        SetClipColorKey("SickleLeft", 255, 255, 255);
+
+        basePath = L"Player/SV/SickleTool/SwingRight/";
+        vecFileName.clear();
+        for (int i = 1; i <= 5; ++i)
+        {
+            ss << basePath << L"SickleRight" << i << ".bmp";
+            vecFileName.push_back(ss.str());
+            ss.clear();
+            ss.str(L"");
+        }
+        AddAnimationClip("SickleRight",
+            AT_FRAME, AO_ONCE_RETURN,
+            0.0f, SWINGSPEED,
+            5, 1,
+            0, 0,
+            5, 1,
+            0.f, "SickleRight_Anim", vecFileName);
+        SetClipColorKey("SickleRight", 255, 255, 255);
+
+        basePath = L"Player/SV/SickleTool/SwingUp/";
+        vecFileName.clear();
+        for (int i = 1; i <= 5; ++i)
+        {
+            ss << basePath << L"SickleUp" << i << ".bmp";
+            vecFileName.push_back(ss.str());
+            ss.clear();
+            ss.str(L"");
+        }
+        AddAnimationClip("SickleUp",
+            AT_FRAME, AO_ONCE_RETURN,
+            0.0f, SWINGSPEED,
+            5, 1,
+            0, 0,
+            5, 1,
+            0.f, "SickleUp_Anim", vecFileName);
+        SetClipColorKey("SickleUp", 255, 255, 255);
+    }
+}
+
+void PlayerTool::LoadBlade()
+{
+    wstring basePath;
+    vector<wstring> vecFileName;
+    wstringstream ss;
+
+    // 검 애니메이션
+    {
+        basePath = L"Player/SV/BladeTool/SwingDown/";
+        vecFileName.clear();
+        for (int i = 1; i <= 5; ++i)
+        {
+            ss << basePath << L"BladeDown" << i << ".bmp";
+            vecFileName.push_back(ss.str());
+            ss.clear();
+            ss.str(L"");
+        }
+        AddAnimationClip("BladeDown",
+            AT_FRAME, AO_ONCE_RETURN,
+            0.0f, SWINGSPEED,
+            5, 1,
+            0, 0,
+            5, 1,
+            0.f, "BladeDown_Anim", vecFileName);
+        SetClipColorKey("BladeDown", 255, 255, 255);
+
+        basePath = L"Player/SV/BladeTool/SwingLeft/";
+        vecFileName.clear();
+        for (int i = 1; i <= 5; ++i)
+        {
+            ss << basePath << L"BladeLeft" << i << ".bmp";
+            vecFileName.push_back(ss.str());
+            ss.clear();
+            ss.str(L"");
+        }
+        AddAnimationClip("BladeLeft",
+            AT_FRAME, AO_ONCE_RETURN,
+            0.0f, SWINGSPEED,
+            5, 1,
+            0, 0,
+            5, 1,
+            0.f, "BladeLeft_Anim", vecFileName);
+        SetClipColorKey("BladeLeft", 255, 255, 255);
+
+        basePath = L"Player/SV/BladeTool/SwingRight/";
+        vecFileName.clear();
+        for (int i = 1; i <= 5; ++i)
+        {
+            ss << basePath << L"BladeRight" << i << ".bmp";
+            vecFileName.push_back(ss.str());
+            ss.clear();
+            ss.str(L"");
+        }
+        AddAnimationClip("BladeRight",
+            AT_FRAME, AO_ONCE_RETURN,
+            0.0f, SWINGSPEED,
+            5, 1,
+            0, 0,
+            5, 1,
+            0.f, "BladeRight_Anim", vecFileName);
+        SetClipColorKey("BladeRight", 255, 255, 255);
+
+        basePath = L"Player/SV/BladeTool/SwingUp/";
+        vecFileName.clear();
+        for (int i = 1; i <= 5; ++i)
+        {
+            ss << basePath << L"BladeUp" << i << ".bmp";
+            vecFileName.push_back(ss.str());
+            ss.clear();
+            ss.str(L"");
+        }
+        AddAnimationClip("BladeUp",
+            AT_FRAME, AO_ONCE_RETURN,
+            0.0f, SWINGSPEED,
+            5, 1,
+            0, 0,
+            5, 1,
+            0.f, "BladeUp_Anim", vecFileName);
+        SetClipColorKey("BladeUp", 255, 255, 255);
+    }
+}
+
 void PlayerTool::LoadToolItems()
 {
     m_pTools.resize(TOOL_END, nullptr);
@@ -517,6 +712,7 @@ void PlayerTool::LoadToolItems()
 
     m_pTools[TOOL_BLADE] = Object::CreateObject<Tool>("BladeTool");
     m_pTools[TOOL_BLADE]->SetTexture("BladeTool", L"SV/Item/Tool/Blade.bmp");
+    m_pTools[TOOL_BLADE]->SetPower(100.f);
 
     for (Tool* tool : m_pTools)
     {
