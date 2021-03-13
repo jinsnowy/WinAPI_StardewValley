@@ -14,6 +14,10 @@
 #include "../Collider/ColliderPoint.h"
 #include "../Animation/Animation.h"
 #include "../Core/PathManager.h"
+#include "StaticObj/Tile.h"
+#include "StaticObj/Grass.h"
+#include "StaticObj/Tree.h"
+#include "StaticObj/Rock.h"
 
 Object::Object() :
     m_pTexture(nullptr),
@@ -69,6 +73,26 @@ Object::~Object()
 // ----------- Add and Delete Object from Object List
 
 
+Object* Object::CreateObjectByType(OBJ_TYPE eType)
+{
+    Object* pObj = nullptr;
+    switch (eType)
+    {
+    case OBJ_TREE:
+        pObj = Object::CreateObject<Tree>("Tree");
+        break;
+    case OBJ_TILE:
+        pObj = Object::CreateObject<Tile>("Tile");
+        break;
+    case OBJ_ROCK:
+        pObj = Object::CreateObject<Rock>("Rock");
+        break;
+    case OBJ_GRASS:
+        pObj = Object::CreateObject<Grass>("Grass");
+        break;
+    }
+    return pObj;
+}
 void Object::SetClipColorKey(const string& strName, unsigned char r, unsigned char g, unsigned char b)
 {
     assert(m_pAnimation != nullptr);

@@ -15,11 +15,13 @@ enum OBJ_TYPE
 	OBJ_NORMAL = 0,
 	OBJ_TILE,
 	OBJ_TREE,
+	OBJ_ROCK,
+	OBJ_GRASS,
 };
 
 enum PR_TYPE
 {
-	PR_PLANT,
+	PR_OUTDOOR,
 	PR_END
 };
 

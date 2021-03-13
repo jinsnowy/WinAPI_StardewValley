@@ -258,6 +258,12 @@
     <ClInclude Include="Object\StaticObj\InteractiveTile.h">
       <Filter>Object\05. Plant</Filter>
     </ClInclude>
+    <ClInclude Include="Object\StaticObj\Rock.h">
+      <Filter>Object\05. Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Grass.h">
+      <Filter>Object\05. Plant</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -408,6 +414,12 @@
       <Filter>Collider</Filter>
     </ClCompile>
     <ClCompile Include="Object\StaticObj\InteractiveTile.cpp">
+      <Filter>Object\05. Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Rock.cpp">
+      <Filter>Object\05. Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Grass.cpp">
       <Filter>Object\05. Plant</Filter>
     </ClCompile>
   </ItemGroup>

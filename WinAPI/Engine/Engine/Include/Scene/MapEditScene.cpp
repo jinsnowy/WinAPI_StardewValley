@@ -39,7 +39,8 @@ MapEditScene::~MapEditScene()
     INPUT->DeleteKey("Load");
 
     EmptyMapEditScene();
-
+    
+    Safe_Release_VecList(m_vecStage);
     SAFE_RELEASE(m_pSelUI);
     SAFE_RELEASE(m_pSelObject);
 }
@@ -50,7 +51,6 @@ bool MapEditScene::Init()
     {
         return false;
     }
-
 
     SetUpDefaultStages(50, 50);
 
@@ -349,55 +349,16 @@ void MapEditScene::LoadDefaultStages(const char* fileName)
 {
     EmptyMapEditScene();
 
-    FILE* pFile = PATH_MANAGER->FileOpen(fileName, DATA_PATH, "rb");
-    if (pFile == NULL)
-    {
-        throw EXCEPT(L"File Not Exists");
-    }
+    Scene::LoadDefaultStages(fileName);
 
-    LoadStage(ST_GROUND, "GroundStage", "Ground", pFile);
-    LoadStage(ST_STATIC, "StaticStage", "Static", pFile);
+    m_vecStage[ST_GROUND] = static_cast<Stage*>(FindObject("GroundStage"));
+    m_vecStage[ST_GROUND]->AddRef();
+
+    m_vecStage[ST_STATIC] = static_cast<Stage*>(FindObject("StaticStage"));
+    m_vecStage[ST_STATIC]->AddRef();
 
     m_iTileNumX = m_vecStage[ST_GROUND]->GetStageTileNumX();
     m_iTileNumY = m_vecStage[ST_GROUND]->GetStageTileNumY();
-
-    Layer* pLayer = FindLayer("Object");
-    Object* pObj = nullptr;
-    int objNum, objType;
-    fread(&objNum, 4, 1, pFile);
-    for (int i = 0; i < objNum; ++i)
-    {
-        fread(&objType, 4, 1, pFile);
-        switch (objType)
-        {
-        case OBJ_TREE:
-            pObj = Object::CreateObject<Tree>("Tree");
-            break;
-        case OBJ_TILE:
-            pObj = Object::CreateObject<Tile>("Tile");
-            break;
-        }
-        if (pObj)
-        {
-            pObj->Load(pFile);
-            AddObject(pObj, pLayer);
-            SAFE_RELEASE(pObj);
-        }
-    }
-
-
-    if (pFile)
-    {
-        fclose(pFile);
-    }
-}
-
-void MapEditScene::LoadStage(STAGE_TAG eStageTag, const string& objTag, const string& strlayerTag, FILE* pFile)
-{
-    StageClear(eStageTag, strlayerTag);
-    Layer* pStageLayer = FindLayer(strlayerTag);
-    m_vecStage[eStageTag] = CreateObject<Stage>(objTag, pStageLayer);
-    m_vecStage[eStageTag]->LoadFromFile(pFile);
 }
 
 TILE_OPTION MapEditScene::GetCurOption() const
@@ -418,6 +379,7 @@ void MapEditScene::StageClear(STAGE_TAG eStageTag, const string& layerTag)
 
         m_vecStage[eStageTag]->ClearTile();
         pLayer->EraseObject(m_vecStage[eStageTag]);
+        EraseObject(m_vecStage[eStageTag]);
         SAFE_RELEASE(m_vecStage[eStageTag]);
     }
 }
@@ -460,7 +422,7 @@ void MapEditScene::SetUpTileSelectUI()
     m_pSelUI->LoadTiles(SEL_TILEOBJECT, L"SV/TileObject/Wall/");
 
     // object prototype
-    m_pSelUI->LoadPrototypes(PR_PLANT);
+    m_pSelUI->LoadPrototypes(PR_OUTDOOR);
 
     m_pSelUI->SetUpTagButton(this);
   
@@ -468,7 +430,7 @@ void MapEditScene::SetUpTileSelectUI()
 
 void MapEditScene::BackButtonCallback(float dt)
 {
-    SceneState state;
+    SceneState state = {};
     state.nextBeacon = BC_NONE;
     state.nextDir = RIGHT;
     state.nextScene = SC_START;

@@ -1,24 +1,22 @@
 #pragma once
 #include "InteractiveTile.h"
-
-class Tree : public InteractiveTile
+class Grass : public InteractiveTile
 {
 	friend class PrototypeManager;
 	friend class Object;
 	friend class Stage;
 private:
 	static constexpr int m_iTypeNum = 3;
-	static constexpr wchar_t m_strFolderPath[] = L"SV/Object/Outdoor/Tree/";
+	static constexpr wchar_t m_strFolderPath[] = L"SV/Object/Outdoor/Grass/";
 	static const wchar_t* const m_strBaseName[];
 protected:
-	Tree();
-	Tree(const Tree& obj);
-	virtual ~Tree();
+	Grass();
+	Grass(const Grass& obj);
+	virtual ~Grass();
 	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
 	virtual void Die();
 private:
 	void ChangeTexture(int id);
-	void ShadeIn(Collider* pSrc, Collider* pDst, float dt);
 public:
 	virtual bool Init();
 	virtual void Input(float dt);
@@ -26,7 +24,7 @@ public:
 	virtual int LateUpdate(float dt);
 	virtual void Collision(float dt);
 	virtual void Draw(HDC hDC, float dt);
-	virtual Tree* Clone();
+	virtual Grass* Clone();
 public:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);

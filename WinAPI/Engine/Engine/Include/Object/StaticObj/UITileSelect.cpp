@@ -22,8 +22,8 @@ UITileSelect::~UITileSelect()
         Safe_Release_VecList(kv.second);
     }
     m_BaseTileMap.clear();
-    m_PrototypeMapContainer.clear();
-
+  
+    Safe_Release_VecList(m_PrototypeContainer);
     Safe_Release_VecList(m_NumberTiles);
     Safe_Release_VecList(m_btn);
 
@@ -111,7 +111,7 @@ Object* UITileSelect::GetClickObject(const Pos& screenPos, bool &UITouch)
 
     // 페이지 클릭
     int itemNum = m_eCurSelTile == SEL_OBJECT ?
-        (int)m_PrototypeMapContainer[m_iCurSelObject]->size()
+        (int)m_PrototypeContainer.size()
         : (int)m_BaseTileMap[m_eCurSelTile].size();
 
     int pageNum = itemNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
@@ -162,10 +162,9 @@ Object* UITileSelect::SelectTile(const Pos& screenPos, bool &UITouch)
 
 Object* UITileSelect::SelectObject(const Pos& screenPos, bool& UITouch)
 {
-    const unordered_map<string, Object*> prototypes = *m_PrototypeMapContainer[m_iCurSelObject];
 
-    unordered_map<string, Object*>::const_iterator iter = prototypes.begin();
-    unordered_map<string, Object*>::const_iterator iterEnd = prototypes.end();
+    vector<Object*>::const_iterator iter = m_PrototypeContainer.begin();
+    vector<Object*>::const_iterator iterEnd = m_PrototypeContainer.end();
 
     Pos tPos = GetPos();
     Pos tSize = GetSize();
@@ -182,7 +181,7 @@ Object* UITileSelect::SelectObject(const Pos& screenPos, bool& UITouch)
                 && screenPos.y >= py && screenPos.y < py + TILESIZE)
             {
                 UITouch = true;
-                return iter->second->Clone();
+                return (*iter)->Clone();
             }
             ++iter;
             px += (TILESIZE + m_iMarginItem);
@@ -229,7 +228,18 @@ void UITileSelect::LoadTiles(EDIT_MODE eSel, const wchar_t* pBaseFolderName, con
 
 void UITileSelect::LoadPrototypes(PR_TYPE eType)
 {
-    m_PrototypeMapContainer.push_back(PROTOTYPE_MANAGER->GetPrototypes(eType));
+    unordered_map<string, Object*>* prototypes = PROTOTYPE_MANAGER->GetPrototypes(eType);
+    for (auto iter = prototypes->begin(); iter!= prototypes->end(); ++iter)
+    {
+        m_PrototypeContainer.push_back(iter->second);
+        iter->second->AddRef();
+    }
+
+    const auto sort_by = [](Object* pa, Object* pb)
+    {
+        return pa->AccessTexture()->GetTag() < pb->AccessTexture()->GetTag();
+    };
+    sort(m_PrototypeContainer.begin(), m_PrototypeContainer.end(), sort_by);
 }
 
 void UITileSelect::ChangeState()
@@ -244,7 +254,7 @@ void UITileSelect::Input(float dt)
 {
     UI::Input(dt);
     int itemNum = m_eCurSelTile == SEL_OBJECT ?
-        (int)m_PrototypeMapContainer[m_iCurSelObject]->size()
+        (int)m_PrototypeContainer.size()
         : (int)m_BaseTileMap[m_eCurSelTile].size();
 
     int pageNum = itemNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
@@ -350,11 +360,8 @@ void UITileSelect::DrawTilePanel(HDC hdc, float dt)
 
 void UITileSelect::DrawObjectPanel(HDC hdc, float dt)
 {
-    if (m_PrototypeMapContainer.size() == 0) return;
-    const unordered_map<string, Object*> prototypes = *m_PrototypeMapContainer[m_iCurSelObject];
-
-    unordered_map<string, Object*>::const_iterator iter = prototypes.begin();
-    unordered_map<string, Object*>::const_iterator iterEnd = prototypes.end();
+    vector<Object*>::const_iterator iter = m_PrototypeContainer.begin();
+    vector<Object*>::const_iterator iterEnd = m_PrototypeContainer.end();
 
     Pos tPos = GetPos();
     Pos tSize = GetSize();
@@ -367,7 +374,7 @@ void UITileSelect::DrawObjectPanel(HDC hdc, float dt)
     {
         for (int i = 0; i < m_iDrawMaxitemNumX && iter != iterEnd; ++i)
         {
-            iter->second->DrawImageAtFixedSize(hdc, px, py, TILESIZE, true);
+            (*iter)->DrawImageAtFixedSize(hdc, px, py, TILESIZE, true);
             ++iter;
             px += (TILESIZE + m_iMarginItem);
         }
@@ -376,7 +383,7 @@ void UITileSelect::DrawObjectPanel(HDC hdc, float dt)
     }
 
     // 페이지 번호
-    const int pageNum = int(prototypes.size()) / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
+    const int pageNum = int(m_PrototypeContainer.size()) / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
 
     px = tPos.x; py = tPos.y;
     for (int i = 0; i < pageNum; i++)

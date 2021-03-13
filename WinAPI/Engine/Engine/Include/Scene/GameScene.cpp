@@ -4,10 +4,10 @@
 #include "../Object/Object.h"
 #include "../Core/PathManager.h"
 #include "../Core/Input.h"
-#include "../Object/StaticObj/Tile.h"
-#include "../Object/StaticObj/Tree.h"
 #include "../Core/Camera.h"
 #include "../Object/MoveObj/Player.h"
+#include "../Sound/SoundManager.h"
+#include "../Object/StaticObj/Tile.h"
 #include "Layer.h"
 
 GameScene::GameScene()
@@ -81,6 +81,11 @@ INDEX GameScene::IndexDiff(const Pos& pos, const Pos& from)
     return GetTileRowColIndex(pos) - GetTileRowColIndex(from);
 }
 
+bool GameScene::ValidIndex(INDEX index) const
+{
+    return m_pGroundStage->ValidIndex(index);
+}
+
 
 TILE_OPTION GameScene::GetTileOption(const Pos& worldPos)
 {
@@ -90,6 +95,25 @@ TILE_OPTION GameScene::GetTileOption(const Pos& worldPos)
 bool GameScene::IsBlockTile(const Pos& worldPos)
 {
     return m_pStaticStage->IsBlockTile(worldPos);
+}
+
+void GameScene::DigTile(const Pos& worldPos)
+{
+    int index = GetTileIndex(worldPos);
+    if (index == -1) return;
+
+    const string& texTag = m_pGroundStage->AccessTile(index)->AccessTexture()->GetTag();
+    if (texTag.starts_with("Dirt") && 
+        m_pStaticStage->AccessTile(index)->GetTileOption() == TO_CROP_GROUND)
+    {
+        Tile* tile = m_pGroundStage->GetTile(index);
+        if (tile->GetTileOption() == TO_CROP_GROUND)
+        {
+            tile->SetTexture("Dirt_Dig");
+            SOUND_MANAGER->PlaySound("DirtDig");
+        }
+        SAFE_RELEASE(tile);
+    }
 }
 
 bool GameScene::Init()
@@ -206,52 +230,6 @@ void GameScene::SetUpScene(SceneState state, Player* player)
 void GameScene::SetUpScene(const char* fileName)
 {
     LoadDefaultStages(fileName);
-}
-
-void GameScene::LoadStage(const string& objectTag, const string& strlayerTag,  FILE* pFile)
-{
-    Layer* pStageLayer = FindLayer(strlayerTag);
-    Stage* pStage = CreateObject<Stage>(objectTag, pStageLayer);
-    pStage->LoadFromFile(pFile);
-    SAFE_RELEASE(pStage);
-}
-
-void GameScene::LoadDefaultStages(const char* fileName)
-{
-    FILE* pFile = PATH_MANAGER->FileOpen(fileName, DATA_PATH, "rb");
-
-    LoadStage("GroundStage", "Ground", pFile);
-    LoadStage("StaticStage", "Static", pFile);
-
-    Layer* pLayer = FindLayer("Object");
-    Object* pObj = nullptr;
-    int objNum, objType;    
-    fread(&objNum, 4, 1, pFile);
-    for (int i = 0; i < objNum; ++i)
-    {
-        fread(&objType, 4, 1, pFile);
-        switch (objType)
-        {
-        case OBJ_TREE:
-            pObj = Object::CreateObject<Tree>("Tree");
-            break;
-        case OBJ_TILE:
-            pObj = Object::CreateObject<Tile>("Tile");
-            break;
-        }
-        if (pObj)
-        {
-            pObj->Load(pFile);
-            AddObject(pObj, pLayer);
-            SAFE_RELEASE(pObj);
-        }
-    }
-
-
-    if (pFile)
-    {
-        fclose(pFile);
-    }
 
     m_pGroundStage = static_cast<Stage*>(FindObject("GroundStage"));
     m_pGroundStage->AddRef();

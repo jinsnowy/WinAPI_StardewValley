@@ -185,7 +185,9 @@
     <ClInclude Include="Object\Object.h" />
     <ClInclude Include="Object\PointObject.h" />
     <ClInclude Include="Object\Ref.h" />
+    <ClInclude Include="Object\StaticObj\Grass.h" />
     <ClInclude Include="Object\StaticObj\InteractiveTile.h" />
+    <ClInclude Include="Object\StaticObj\Rock.h" />
     <ClInclude Include="Object\StaticObj\Stage.h" />
     <ClInclude Include="Object\StaticObj\StaticObject.h" />
     <ClInclude Include="Object\StaticObj\Tile.h" />
@@ -243,7 +245,9 @@
     <ClCompile Include="Object\Object.cpp" />
     <ClCompile Include="Object\PointObject.cpp" />
     <ClCompile Include="Object\Ref.cpp" />
+    <ClCompile Include="Object\StaticObj\Grass.cpp" />
     <ClCompile Include="Object\StaticObj\InteractiveTile.cpp" />
+    <ClCompile Include="Object\StaticObj\Rock.cpp" />
     <ClCompile Include="Object\StaticObj\Stage.cpp" />
     <ClCompile Include="Object\StaticObj\StaticObject.cpp" />
     <ClCompile Include="Object\StaticObj\Tile.cpp" />

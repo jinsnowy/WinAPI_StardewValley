@@ -6,6 +6,8 @@
 #include "../Scene/Layer.h"
 #include "../Core/PathManager.h"
 #include "../Object/StaticObj/Tree.h"
+#include "../Object/StaticObj/Rock.h"
+#include "../Object/StaticObj/Grass.h"
 
 DEFINITION_SINGLE(PrototypeManager);
 
@@ -26,13 +28,31 @@ PrototypeManager::~PrototypeManager()
 bool PrototypeManager::Init()
 {
     Tree* pTree = LoadObject<Tree>();
-    RegisterProtoType(PR_PLANT, "Tree1_Prototype", pTree);
+    RegisterProtoType(PR_OUTDOOR, "Tree1_Prototype", pTree);
     pTree = pTree->Clone();
-    pTree->ChangeTreeTexture(1);
-    RegisterProtoType(PR_PLANT, "Tree2_Prototype", pTree);
+    pTree->ChangeTexture(1);
+    RegisterProtoType(PR_OUTDOOR, "Tree2_Prototype", pTree);
     pTree = pTree->Clone();
-    pTree->ChangeTreeTexture(2);
-    RegisterProtoType(PR_PLANT, "Tree3_Prototype", pTree);
+    pTree->ChangeTexture(2);
+    RegisterProtoType(PR_OUTDOOR, "Tree3_Prototype", pTree);
+
+    Rock* pRock = LoadObject<Rock>();
+    RegisterProtoType(PR_OUTDOOR, "Rock1_Prototype", pRock);
+    pRock = pRock->Clone();
+    pRock->ChangeTexture(1);
+    RegisterProtoType(PR_OUTDOOR, "Rock2_Prototype", pRock);
+    pRock = pRock->Clone();
+    pRock->ChangeTexture(2);
+    RegisterProtoType(PR_OUTDOOR, "Rock3_Prototype", pRock);
+
+    Grass* pGrass = LoadObject<Grass>();
+    RegisterProtoType(PR_OUTDOOR, "Grass1_Prototype", pGrass);
+    pGrass = pGrass->Clone();
+    pGrass->ChangeTexture(1);
+    RegisterProtoType(PR_OUTDOOR, "Grass2_Prototype", pGrass);
+    pGrass = pGrass->Clone();
+    pGrass->ChangeTexture(2);
+    RegisterProtoType(PR_OUTDOOR, "Grass3_Prototype", pGrass);
 
 	return true;
 }

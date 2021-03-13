@@ -15,6 +15,9 @@ private:
 	int m_iTileNumY = -1;
 	vector<class Tile*> m_baseTile;
 public:
+	const Tile* AccessTile(int index) const { return m_baseTile[index]; }
+	Tile* GetTile(int index);
+public:
 	const vector<class Tile*>* GetTiles() const { return &m_baseTile; }
 	bool IsBlockTile(const Pos& worldPos) const;
 	bool IsBlockTile(int index) const;
@@ -37,6 +40,14 @@ public:
 	void SetTileNone(const Pos& tPos);
 	void ChangeTileByCloneTile(const Pos& tPos, Tile* pClone);
 	void ChangeTileOption(const Pos& tPos, TILE_OPTION eOption);
+	inline bool ValidIndex(INDEX index) const
+	{
+		if (index.x < 0) return false;
+		if (index.x >= m_iTileNumX) return false;
+		if (index.y < 0) return false;
+		if (index.y >= m_iTileNumY) return false;
+		return true;
+	}
 	inline int GetTileIndex(const Pos& tPos) const
 	{
 		return GetTileIndex(tPos.x, tPos.y);

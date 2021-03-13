@@ -83,6 +83,8 @@ protected:
 public:
 	static string GetNearObjectName(Scene* pScene, const Pos& worldPos);
 	static string ConvertToNameOption(TILE_OPTION eOpt);
-	
+protected:
+	void LoadStage(const string& objectTag, const string& strlayerTag, FILE* pFile);
+	virtual void LoadDefaultStages(const char* fileName);
 };
 

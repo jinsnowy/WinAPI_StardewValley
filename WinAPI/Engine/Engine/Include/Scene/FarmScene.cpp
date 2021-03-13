@@ -19,6 +19,7 @@ bool FarmScene::Init()
 	SOUND_MANAGER->LoadSound("TreeOver", false, SD_EFFECT, "Object/TreeOver.mp3");
 	SOUND_MANAGER->LoadSound("RockOver", false, SD_EFFECT, "Object/RockOver.mp3");
 	SOUND_MANAGER->LoadSound("GrassOver", false, SD_EFFECT, "Object/GrassOver.mp3");
+	SOUND_MANAGER->LoadSound("DirtDig", false, SD_EFFECT, "Object/DirtDig.mp3");
 	return true;
 }
 

@@ -311,6 +311,8 @@ void Player::Input(float dt)
 		return;
 	}
 
+	m_tPrev = GetPos();
+
 	if (KEYPRESS("MoveUp"))
 	{
 		MoveYFromSpeed(dt, MD_BACK);
@@ -332,7 +334,7 @@ void Player::Input(float dt)
 		StateTransit(WALK_RIGHT);
 	}
 	
-	m_tPrev = GetPos();
+
 	if (m_bMove)
 	{
 		// 다음 타일이 갈 수 없다면,
@@ -367,8 +369,9 @@ void Player::Input(float dt)
 	
 		if (KEYDOWN("MouseLButton") && IsIdleState())
 		{
-			INDEX index = static_cast<GameScene*>(m_pScene)->IndexDiff(MOUSEWORLDPOS, GetCenterPos());
-			if (max(abs(index.x), abs(index.y)) == 1)
+			Pos tMousePos = MOUSEWORLDPOS;
+			INDEX index = static_cast<GameScene*>(m_pScene)->IndexDiff(tMousePos, GetCenterPos());
+			if (max(abs(index.x), abs(index.y)) <= 1)
 			{
 				if (index.x > 0)
 				{
@@ -385,7 +388,7 @@ void Player::Input(float dt)
 					StateTransit(IDLE_UP);
 					m_pAnimation->ChangeClip("ToolUp");
 				}
-				else if (index.y > 0)
+				else if (index.y >= 0)
 				{
 					StateTransit(IDLE_DOWN);
 					m_pAnimation->ChangeClip("ToolDown");
@@ -397,21 +400,19 @@ void Player::Input(float dt)
 				// 나무/돌/수풀 체크
 				if (HasTool(PlayerTool::TOOL_AXE))
 				{
-					TRIGGER_CLICKATTACKEVENT(MOUSEWORLDPOS, "AxeTool", GetToolPower());
+					TRIGGER_CLICKATTACKEVENT(tMousePos, "AxeTool", GetToolPower());
 				}
 				else if (HasTool(PlayerTool::TOOL_PICK))
 				{
-					TRIGGER_CLICKATTACKEVENT(MOUSEWORLDPOS, "PickTool", GetToolPower());
+					TRIGGER_CLICKATTACKEVENT(tMousePos, "PickTool", GetToolPower());
 				}
 				else if (HasTool(PlayerTool::TOOL_HOE))
 				{
-
+					const auto& gameScene = static_cast<GameScene*>(m_pScene);
+					gameScene->DigTile(tMousePos);
 				}
 			}
 		}
-		
-		
-		
 	}
 }
 

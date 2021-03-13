@@ -2,10 +2,11 @@
 #include "Layer.h"
 #include "../Math.h"
 #include "../Object/Object.h"
+#include "../Object/StaticObj/Stage.h"
 #include "../Scene/SceneManager.h"
 #include "../Application/Window.h"
 #include "../Core/Camera.h"
-
+#include "../Core/PathManager.h"
 Scene::Scene()
 {
 	Layer* pLayer = CreateLayer("UI", INT_MAX);
@@ -328,5 +329,41 @@ string Scene::ConvertToNameOption(TILE_OPTION eOpt)
 		return "Beacon3";
 	default:
 		return "Invalid";
+	}
+}
+
+void Scene::LoadStage(const string& objectTag, const string& strlayerTag, FILE* pFile)
+{
+	Layer* pStageLayer = FindLayer(strlayerTag);
+	Stage* pStage = CreateObject<Stage>(objectTag, pStageLayer);
+	pStage->LoadFromFile(pFile);
+	SAFE_RELEASE(pStage);
+}
+
+void Scene::LoadDefaultStages(const char* fileName)
+{
+	FILE* pFile = PATH_MANAGER->FileOpen(fileName, DATA_PATH, "rb");
+
+	LoadStage("GroundStage", "Ground", pFile);
+	LoadStage("StaticStage", "Static", pFile);
+
+	Layer* pLayer = FindLayer("Object");
+	int objNum, objType;
+	fread(&objNum, 4, 1, pFile);
+	for (int i = 0; i < objNum; ++i)
+	{
+		fread(&objType, 4, 1, pFile);
+		Object* pObj = Object::CreateObjectByType(static_cast<OBJ_TYPE>(objType));
+		if (pObj)
+		{
+			pObj->Load(pFile);
+			AddObject(pObj, pLayer);
+			SAFE_RELEASE(pObj);
+		}
+	}
+
+	if (pFile)
+	{
+		fclose(pFile);
 	}
 }

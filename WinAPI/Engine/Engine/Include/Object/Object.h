@@ -30,6 +30,8 @@ public:
 		}
 		return pObj;
 	}
+	static Object* CreateObjectByType(OBJ_TYPE eType);
+
 	void SetAnimationVisibility(bool enabled) { m_bEnableAnimation = enabled; }
 	void SetClipColorKey(const string& strName, unsigned char r, unsigned char g, unsigned char b);
 	Animation* CreateAnimation(const string& strTag)

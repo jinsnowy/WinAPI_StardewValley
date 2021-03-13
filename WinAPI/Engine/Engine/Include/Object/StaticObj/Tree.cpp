@@ -1,5 +1,5 @@
 #include "Tree.h"
-#include "Tree.h"
+
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
 #include "../../Collider/ColliderPointAttack.h"
@@ -48,7 +48,7 @@ bool Tree::Init()
 	return true;
 }
 
-void Tree::ChangeTreeTexture(int id)
+void Tree::ChangeTexture(int id)
 {
 	assert(id < m_iTypeNum);
 	string strTexKey = "TreeTexture" + to_string(id + 1);
@@ -139,13 +139,11 @@ void Tree::Load(FILE* pFile)
 	Size imgSize = GetImageSize();
 
 	ColliderRect* pRC = static_cast<ColliderRect*>(GetCollider("TreeBody"));
-	pRC->SetRect(-imgSize.x / 3 + 5, -imgSize.y + TILESIZE, 2 * imgSize.x / 3 - 5, -5);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::ShadeIn);
 	pRC->AddCollisionFunction(CS_STAY, this, &Tree::ShadeIn);
 	SAFE_RELEASE(pRC);
 
 	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
-	pRC->SetRect(0, 0.f, imgSize.x / 3, TILESIZE);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::TileHit);
 	pRC->AddCollisionFunction(CS_STAY, this, &Tree::TileHit);
 	SAFE_RELEASE(pRC);

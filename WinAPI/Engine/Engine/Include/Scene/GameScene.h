@@ -20,7 +20,10 @@ public:
     Pos GetTilePos(const Pos& worldPos);
     INDEX GetTileRowColIndex(const Pos& worldPos);
     INDEX IndexDiff(const Pos& pos, const Pos& from);
+    bool ValidIndex(INDEX index) const;
+
     bool IsBlockTile(const Pos& worldPos);
+    void DigTile(const Pos& worldPos);
 public:
     virtual void SetUpScene(const char* fileName);
     virtual bool Init();
@@ -29,9 +32,6 @@ public:
     virtual void LateUpdate(float dt);
     virtual void Collision(float dt);
     virtual void Draw(HDC hdc, float dt);
-private:
-    virtual void LoadStage(const string& objectTag, const string& strlayerTag, FILE* pFile) final;
-    virtual void LoadDefaultStages(const char* fileName) final;
 private:
     Pos FindBeacon(BEACON_TAG bc);
     void SetUpScene(SceneState state, Player* player);

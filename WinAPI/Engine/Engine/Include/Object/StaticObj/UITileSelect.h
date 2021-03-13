@@ -26,7 +26,6 @@ private:
 	int m_iTotalSizeY = 0;
 private:
 	int m_iCurPageNum = 0;
-	int m_iCurSelObject = 0;
 	EDIT_MODE m_eCurSelTile = SEL_GROUND;
 
 	int m_iMarginWidth = 10;
@@ -37,7 +36,7 @@ private:
 	static constexpr int m_iStageTagHeight = 80;
 	unordered_map<int, vector<class Tile*>> m_BaseTileMap;
 	vector<class Tile*> m_NumberTiles;
-	vector<unordered_map<string, Object*>*> m_PrototypeMapContainer;
+	vector<Object*> m_PrototypeContainer;
 public:
 	bool IsOpt(const string& optName) const;
 	TILE_OPTION GetOpt(const string& optName) const;

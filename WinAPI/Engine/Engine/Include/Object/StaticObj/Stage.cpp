@@ -59,6 +59,12 @@ void Stage::CreateTile(int iNumX, int iNumY)
     }
 }
 
+Tile* Stage::GetTile(int index)
+{
+    m_baseTile[index]->AddRef();
+    return m_baseTile[index]; 
+}
+
 bool Stage::IsBlockTile(const Pos& worldPos) const
 {
     int index = GetTileIndex(worldPos);
