@@ -99,21 +99,15 @@ TILE_OPTION UITileSelect::GetOpt(const string& optName) const
 
 Object* UITileSelect::GetClickObject(const Pos& screenPos, bool &UITouch)
 {
+    UITouch = UITouched(screenPos);
     Pos tPos = GetPos();
     Pos tSize = GetSize();
-    UITouch = false;
-    int px = tPos.x, py = tPos.y;
-    if (screenPos.x >= px && screenPos.x < px + tSize.x
-        && screenPos.y >= py && screenPos.y < py + tSize.y)
-    {
-        UITouch = true;
-    }
-
     // 페이지 클릭
     int itemNum = m_eCurSelTile == SEL_OBJECT ?
         (int)m_PrototypeContainer.size()
         : (int)m_BaseTileMap[m_eCurSelTile].size();
 
+    int px = tPos.x, py = tPos.y;
     int pageNum = itemNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
     for (int i = 0; i < pageNum; i++)
     {
@@ -121,17 +115,16 @@ Object* UITileSelect::GetClickObject(const Pos& screenPos, bool &UITouch)
             && screenPos.y >= py && screenPos.y < py + m_iSelButtonSize)
         {
             m_iCurPageNum = i;
-            UITouch = true;
             return nullptr;
         }
         px += (m_iSelButtonSize + m_iMarginItem);
     }
 
     return m_eCurSelTile == SEL_OBJECT ?
-        SelectObject(screenPos, UITouch) : SelectTile(screenPos, UITouch);
+        SelectObject(screenPos) : SelectTile(screenPos);
 }
 
-Object* UITileSelect::SelectTile(const Pos& screenPos, bool &UITouch)
+Object* UITileSelect::SelectTile(const Pos& screenPos)
 {
     Pos tPos = GetPos();
     Pos tSize = GetSize();
@@ -147,7 +140,6 @@ Object* UITileSelect::SelectTile(const Pos& screenPos, bool &UITouch)
             if (screenPos.x >= px && screenPos.x < px + TILESIZE
                 && screenPos.y >= py && screenPos.y < py + TILESIZE)
             {
-                UITouch = true;
                 m_BaseTileMap[m_eCurSelTile][itemInd]->AddRef();
                 return m_BaseTileMap[m_eCurSelTile][itemInd];
             }
@@ -160,9 +152,8 @@ Object* UITileSelect::SelectTile(const Pos& screenPos, bool &UITouch)
     return nullptr;
 }
 
-Object* UITileSelect::SelectObject(const Pos& screenPos, bool& UITouch)
+Object* UITileSelect::SelectObject(const Pos& screenPos)
 {
-
     vector<Object*>::const_iterator iter = m_PrototypeContainer.begin();
     vector<Object*>::const_iterator iterEnd = m_PrototypeContainer.end();
 
@@ -180,7 +171,6 @@ Object* UITileSelect::SelectObject(const Pos& screenPos, bool& UITouch)
             if (screenPos.x >= px && screenPos.x < px + TILESIZE
                 && screenPos.y >= py && screenPos.y < py + TILESIZE)
             {
-                UITouch = true;
                 return (*iter)->Clone();
             }
             ++iter;
@@ -266,6 +256,28 @@ void UITileSelect::Input(float dt)
     {
         m_iCurPageNum = (m_iCurPageNum + pageNum - 1) % pageNum;
     }
+    if (UITouched(MOUSECLIENTPOS) && KEYDOWN("MouseLButton"))
+    {
+        m_ClickPos = MOUSECLIENTPOS - GetPos();
+        if (!m_bDrag)
+        {
+            m_bDrag = true;
+        }
+    }
+    if (KEYPRESS("MouseLButton"))
+    {
+        if (m_bDrag)
+        {
+            SetPos(MOUSECLIENTPOS - m_ClickPos);
+        }
+    }
+    if (KEYUP("MouseLButton"))
+    {
+        if (m_bDrag)
+        {
+            m_bDrag = false;
+        }
+    }
 }
 
 int UITileSelect::Update(float dt)
@@ -289,6 +301,19 @@ void UITileSelect::Draw(HDC hdc, float dt)
 {
     UI::Draw(hdc, dt);
     m_eCurSelTile == SEL_OBJECT ? DrawObjectPanel(hdc, dt) : DrawTilePanel(hdc, dt);
+}
+
+bool UITileSelect::UITouched(const Pos& screenPos) const
+{
+    Pos tPos = GetPos();
+    Pos tSize = GetSize();
+  
+    if (screenPos.x >= tPos.x && screenPos.x < tPos.x + tSize.x
+        && screenPos.y >= tPos.y && screenPos.y < tPos.y + tSize.y)
+    {
+        return true;
+    }
+    return false;
 }
 
 void UITileSelect::SetUpTagButton(Scene* curScene)

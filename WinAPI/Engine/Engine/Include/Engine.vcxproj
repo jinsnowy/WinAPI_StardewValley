@@ -209,6 +209,7 @@
     <ClInclude Include="Scene\InHouseScene.h" />
     <ClInclude Include="Scene\Layer.h" />
     <ClInclude Include="Scene\MapEditScene.h" />
+    <ClInclude Include="Scene\MiddlewayScene.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\StartScene.h" />
@@ -269,6 +270,7 @@
     <ClCompile Include="Scene\InHouseScene.cpp" />
     <ClCompile Include="Scene\Layer.cpp" />
     <ClCompile Include="Scene\MapEditScene.cpp" />
+    <ClCompile Include="Scene\MiddlewayScene.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\StartScene.cpp" />

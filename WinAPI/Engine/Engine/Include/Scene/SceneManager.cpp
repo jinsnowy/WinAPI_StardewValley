@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "StartScene.h"
 #include "MapEditScene.h"
+#include "MiddlewayScene.h"
 #include "InHouseScene.h"
 #include "FarmScene.h"
 #include "../Core/FrameTimer.h"
@@ -140,6 +141,9 @@ void SceneManager::ChangeScene()
 			break;
 		case SCENE_CREATE::SC_FARM:
 			CreateScene<FarmScene>(nxt);
+			break;
+		case SCENE_CREATE::SC_MIDDLEWAY:
+			CreateScene<MiddlewayScene>(nxt);
 			break;
 		}
 	}

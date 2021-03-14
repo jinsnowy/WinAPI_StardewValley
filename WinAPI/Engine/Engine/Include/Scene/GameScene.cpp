@@ -93,6 +93,7 @@ TILE_OPTION GameScene::GetTileOption(const Pos& worldPos) const
     return m_pStaticStage->GetTileOption(worldPos);
 }
 
+
 bool GameScene::IsBlockTile(const Pos& worldPos) const
 {
     return m_pStaticStage->IsBlockTile(worldPos);
@@ -138,7 +139,31 @@ void GameScene::Update(float dt)
 void GameScene::LateUpdate(float dt)
 {
     Scene::LateUpdate(dt);
-  
+   
+    Pos tPos = m_pPlayer->GetPos();
+    float fScreenWidth = float(CAMERA->GetWorldRS().x);
+    float fScreenHeight = float(CAMERA->GetWorldRS().y);
+
+    if (m_pPlayer->GetLeft() < 0)
+    {
+        tPos.x -= m_pPlayer->GetLeft();
+        m_pPlayer->SetPos(tPos);
+    }
+    else if (m_pPlayer->GetRight() >= fScreenWidth)
+    {
+        tPos.x -=  m_pPlayer->GetRight() - fScreenWidth + 1;
+        m_pPlayer->SetPos(tPos);
+    }
+    else if (m_pPlayer->GetBottom() >= fScreenHeight)
+    {
+        tPos.y -=  m_pPlayer->GetBottom() - fScreenHeight + 1;
+        m_pPlayer->SetPos(tPos);
+    }
+    else if (m_pPlayer->GetTop() < 0)
+    {
+        tPos.y -= m_pPlayer->GetTop();
+        m_pPlayer->SetPos(tPos);
+    }
 }
 
 void GameScene::Collision(float dt)

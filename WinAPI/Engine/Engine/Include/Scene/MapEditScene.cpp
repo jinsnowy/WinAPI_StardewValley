@@ -255,7 +255,10 @@ void MapEditScene::Draw(HDC hDC, float dt)
 
     memset(m_strText1, 0, sizeof(m_strText1));
     wsprintf(m_strText1, L"Object num %d\n", (int) m_pObjLayer->GetObjList()->size());
-    TextOut(hDC, 0, 10, m_strText1, lstrlen(m_strText1));
+    TextOut(hDC, 0, 100, m_strText1, lstrlen(m_strText1));
+    memset(m_strText1, 0, sizeof(m_strText1));
+    wsprintf(m_strText1, L"MapSize %d x %d\n", m_iTileNumX, m_iTileNumY);
+    TextOut(hDC, 0, 120, m_strText1, lstrlen(m_strText1));
     // 마우스 선택 타일 드로우
     Pos tPos = MOUSEWORLDPOS;
     int index = m_vecStage[ST_GROUND]->GetTileIndex(tPos);

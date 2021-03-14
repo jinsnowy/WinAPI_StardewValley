@@ -7,11 +7,11 @@ class Rect_
 {
 public:
 	Rect_() = default;
-	Rect_(T left_in, T right_in, T top_in, T bottom_in)
+	Rect_(T left_in, T top_in, T right_in, T bottom_in)
 		:
 		left(left_in),
-		right(right_in),
 		top(top_in),
+		right(right_in),
 		bottom(bottom_in)
 	{
 	}
@@ -37,7 +37,7 @@ public:
 	}
 	bool ContainsPoint(const Vec2_<T>& point) const
 	{
-		return point.x >= left && point.x < right&& point.y >= top && point.y < bottom;
+		return point.x >= left && point.x <= right&& point.y >= top && point.y <= bottom;
 	}
 	Vec2_<T> GetCenter() const
 	{

@@ -34,20 +34,20 @@ void InHouseScene::Update(float dt)
 
 void InHouseScene::LateUpdate(float dt)
 {
-	GameScene::LateUpdate(dt);
-
-	Pos curPos = AccessPlayer()->GetCenterPos();
+	const Pos& curPos = AccessPlayer()->GetCenterPos();
 	TILE_OPTION option = GetTileOption(curPos);
 	switch (option)
 	{
 	case TO_BEACON_1:
-		SceneState state;
+		SceneState state = {};
 		state.nextDir = DOWN;
 		state.nextBeacon = BC_ONE;
 		state.nextScene = SC_FARM;
 		SCENE_MANAGER->SignalizeSceneChange(state);
 		break;
 	}
+
+	GameScene::LateUpdate(dt);
 }
 
 void InHouseScene::Collision(float dt)

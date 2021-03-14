@@ -111,9 +111,6 @@
     <ClInclude Include="Types\Rect.h">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="Macro.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\SceneManager.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -269,6 +266,12 @@
     </ClInclude>
     <ClInclude Include="Effect\BoundEffect.h">
       <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\MiddlewayScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Macro.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -430,6 +433,9 @@
     </ClCompile>
     <ClCompile Include="Effect\BoundEffect.cpp">
       <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\MiddlewayScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

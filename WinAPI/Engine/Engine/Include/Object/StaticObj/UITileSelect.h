@@ -25,6 +25,8 @@ private:
 	int m_iTotalSizeX = 0;
 	int m_iTotalSizeY = 0;
 private:
+	bool m_bDrag = false;
+	Pos m_ClickPos;
 	int m_iCurPageNum = 0;
 	EDIT_MODE m_eCurSelTile = SEL_GROUND;
 
@@ -58,10 +60,11 @@ public:
 	virtual void Draw(HDC hdc, float dt);
 	virtual UITileSelect* Clone() { throw EXCEPT(L"UITileSelct Cloned"); return nullptr; }
 private:
+	bool UITouched(const Pos& screenPos) const;
 	void SetUpTagButton(class Scene* curScene);
 	string ExtractKey(const char* str, int size);
-	Object* SelectObject(const Pos& screenPos, bool& UITouch);
-	Object* SelectTile(const Pos& screenPos, bool& UITouch);
+	Object* SelectObject(const Pos& screenPos);
+	Object* SelectTile(const Pos& screenPos);
 	void DrawTilePanel(HDC hdc, float dt);
 	void DrawObjectPanel(HDC hdc, float dt);
 };

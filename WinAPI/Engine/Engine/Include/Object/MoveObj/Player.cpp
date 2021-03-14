@@ -451,11 +451,9 @@ void Player::Input(float dt)
 		StateTransit(WALK_RIGHT);
 	}
 	
-
 	if (m_bMove)
 	{
 		// 다음 타일이 갈 수 없다면,
-
 		if(gameScene->IsBlockTile(GetCenterPos()))
 		{
 			SetPos(m_tPrev);

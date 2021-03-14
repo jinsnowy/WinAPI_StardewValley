@@ -31,6 +31,7 @@ void ResourceManager::LoadGlyphs()
 		{
 			string strKey = pTex->GetTag();
 			char ch = (char)stoi(strKey);
+			pTex->AddRef();
 			m_mapGlyph.insert(make_pair(ch, pTex));
 		}
 	}

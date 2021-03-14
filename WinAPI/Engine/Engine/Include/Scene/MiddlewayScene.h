@@ -1,15 +1,15 @@
 #pragma once
 #include "GameScene.h"
-class FarmScene : public GameScene
+class MiddlewayScene : public GameScene
 {
 private:
     friend class SceneManager;
 private:
-    const char* pGameDataFileName = "Farm.map";
-    const Rect m_tMiddlewaySceneTrigger = {2232.f,880.f,2340.f,1060.f};
+    const char* pGameDataFileName = "Middleway.map";
+    const Rect m_tFarmSceneTrigger = { -64.f, 1792.f,16.f,2048.f };
 private:
-    FarmScene();
-    ~FarmScene();
+    MiddlewayScene();
+    ~MiddlewayScene();
 public:
     virtual bool Init();
     virtual void Input(float dt);

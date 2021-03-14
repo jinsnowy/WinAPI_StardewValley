@@ -48,6 +48,10 @@ public:
 	{
 		return Pos(GetPos().x + GetSize().x / 2, GetPos().y);
 	}
+	inline Rect GetBodyRect() const
+	{
+		return Rect(GetLeft(), GetTop(), GetRight(), GetBottom());
+	}
 public:
 	virtual void StateTransit(int iNext);
 	virtual bool Init();
