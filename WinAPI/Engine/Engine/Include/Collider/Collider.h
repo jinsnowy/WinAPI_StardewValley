@@ -11,15 +11,12 @@ protected:
 	virtual ~Collider() = 0;
 protected:
 	bool			m_bUIColl;
-	float			m_fPower;
 	COLLIDER_TYPE	m_eCollType;
 	class Object*	m_pObject;
 	list<Collider*> m_CollisionList;
 	list <function<void(Collider*, Collider*, float)>> m_FuncList[CS_END];
 	Pos				m_tHitPoint;
 public:
-	void SetPower(float power) { m_fPower = power; }
-	float GetPower() const { return m_fPower; }
 	void EnableUICollider(bool bUI) { m_bUIColl = bUI; }
 	Pos GetHitPoint() const { return m_tHitPoint; }
 	void SetHitPoint(const Pos& tPos) { m_tHitPoint = tPos; }

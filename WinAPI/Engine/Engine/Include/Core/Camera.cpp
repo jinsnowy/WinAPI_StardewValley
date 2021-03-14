@@ -7,7 +7,7 @@ DEFINITION_SINGLE(Camera)
 Camera::Camera()
 	:
 	m_tPos(0.f,0.f),
-	m_tClientRS(0.f, 0.f),
+	m_tClientRS(0, 0),
 	m_tWorldRS(0, 0),
 	m_tPivot(0, 0),
 	m_pTarget(nullptr)
@@ -106,14 +106,14 @@ void Camera::Scroll(float x, float y)
 	m_tPos.y += y;
 
 	if (m_tPos.x < 0)
-		m_tPos.x = 0;
+		m_tPos.x = 0.f;
 	else if (m_tPos.x > m_tWorldRS.x - m_tClientRS.x)
-		m_tPos.x = m_tWorldRS.x - m_tClientRS.x;
+		m_tPos.x = float(m_tWorldRS.x - m_tClientRS.x);
 
 	if (m_tPos.y < 0)
-		m_tPos.y = 0;
+		m_tPos.y = 0.f;
 	else if (m_tPos.y > m_tWorldRS.y - m_tClientRS.y)
-		m_tPos.y = m_tWorldRS.y - m_tClientRS.y;
+		m_tPos.y =float(m_tWorldRS.y - m_tClientRS.y);
 }
 
 void Camera::ReleaseTarget()

@@ -41,15 +41,15 @@ void Stage::CreateTile(int iNumX, int iNumY)
     m_iTileNumX = iNumX;
     m_iTileNumY = iNumY;
 
-    Pos offset;
+    Pos offset = Pos();
     for (int i = 0; i < iNumY; ++i)
     {
         for (int j = 0; j < iNumX; ++j)
         {
             Tile* pTile = Object::CreateObject<Tile>("Tile");
             
-            offset.x = j * TILESIZE;
-            offset.y = i * TILESIZE;
+            offset.x = (float) j * TILESIZE;
+            offset.y = (float) i * TILESIZE;
 
             pTile->SetSize(TILESIZE, TILESIZE);
             pTile->SetPos(offset.x, offset.y);
@@ -237,5 +237,3 @@ void Stage::ClearTile()
 {
     Safe_Release_VecList(m_baseTile);
 }
-
-

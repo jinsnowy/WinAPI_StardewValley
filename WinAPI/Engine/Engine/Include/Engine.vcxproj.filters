@@ -82,6 +82,9 @@
     <Filter Include="Object\06.Item">
       <UniqueIdentifier>{d7eaa041-1c8e-41d1-bd2b-7b74d34c841a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effect">
+      <UniqueIdentifier>{a8911367-f0f7-4ab7-831e-f175d55ca736}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -264,6 +267,9 @@
     <ClInclude Include="Object\StaticObj\TreeTrunk.h">
       <Filter>Object\05. Plant</Filter>
     </ClInclude>
+    <ClInclude Include="Effect\BoundEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -421,6 +427,9 @@
     </ClCompile>
     <ClCompile Include="Object\StaticObj\TreeTrunk.cpp">
       <Filter>Object\05. Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\BoundEffect.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

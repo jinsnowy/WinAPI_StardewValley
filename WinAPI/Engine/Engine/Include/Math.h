@@ -1,19 +1,15 @@
 #pragma once
-#include "framework.h"
-class Math
+#include "Types/Vec2.h"
+#include <cmath>
+namespace Math
 {
-public:
-	static inline float Distance(const Pos& tPos1, const Pos& tPos2)
+	template<typename T>
+	inline float Distance(const Vec2_<T>& tPos1, const Vec2_<T>& tPos2)
 	{
-		float x = tPos1.x - tPos2.x;
-		float y = tPos1.y - tPos2.y;
+		T x = tPos1.x - tPos2.x;
+		T y = tPos1.y - tPos2.y;
 
 		return sqrtf(x * x + y * y);
 	}
-	static inline float Abs(float val)
-	{
-		return val < 0 ? -val : val;
-	}
-
 };
 

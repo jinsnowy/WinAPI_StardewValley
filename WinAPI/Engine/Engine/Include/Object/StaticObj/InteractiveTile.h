@@ -1,5 +1,6 @@
 #pragma once
 #include "Tile.h"
+#include "../Item/Tool.h"
 #include "../Item/Item.h"
 
 class InteractiveTile :
@@ -30,6 +31,7 @@ public:
 	virtual void Collision(float dt);
 	virtual void Draw(HDC hDC, float dt);
 	virtual InteractiveTile* Clone() = 0;
+	virtual void LateInit() = 0;
 public:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);

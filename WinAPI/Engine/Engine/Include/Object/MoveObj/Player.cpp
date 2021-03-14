@@ -378,26 +378,28 @@ bool Player::Init()
 	SetPos(700.0f, 700.0f);
 	SetSize(64.0f, 128.0f);
 	SetPivot(0.0f, 1.0f);
-	SetSpeed(400.0f);
+	SetSpeed(m_fPlayerSpeed);
 
 	InitTexture();
 	InitAnimation();
 
+	AdvertiseFrom(CO_PLAYER);
+
 	StateTransit(IDLE_RIGHT);
 
 	ColliderRect* pRC = AddCollider<ColliderRect>("PlayerBody");
-	pRC->SetRect(0.f, -120.f, 60.f, 0.f);
+	pRC->SetRect(10.f, -100.f, 50.f, -10.f);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Player::Hit);
 	pRC->AddCollisionFunction(CS_STAY, this, &Player::Hit);
+
 	SAFE_RELEASE(pRC);
 
 	ColliderRect* pFoot = AddCollider <ColliderRect>("PlayerFoot");
 	pFoot->SetRect(0.f, -60.f, 60.f, 0.f);
-	pFoot->AddCollisionFunction(CS_ENTER, this, &Player::BlockFoot);
-	pFoot->AddCollisionFunction(CS_STAY, this, &Player::BlockFoot);
+	pFoot->AddCollisionFunction(CS_ENTER, this, &Player::HitFoot);
+	pFoot->AddCollisionFunction(CS_STAY, this, &Player::HitFoot);
 	SAFE_RELEASE(pFoot);
 
-	m_iHP = 1000;
 	m_pPlayerTool->SetPlayer(this);
 
 	SOUND_MANAGER->LoadSound("InHouse_Walking", false, SD_EFFECT, "InHouse_Walking.mp3");
@@ -426,6 +428,7 @@ void Player::Input(float dt)
 	}
 
 	m_tPrev = GetPos();
+	const GameScene* gameScene = static_cast<GameScene*>(m_pScene);
 
 	if (KEYPRESS("MoveUp"))
 	{
@@ -452,12 +455,12 @@ void Player::Input(float dt)
 	if (m_bMove)
 	{
 		// 다음 타일이 갈 수 없다면,
-		const auto& gameScene = static_cast<GameScene*>(m_pScene);
+
 		if(gameScene->IsBlockTile(GetCenterPos()))
 		{
 			SetPos(m_tPrev);
 		}
-		if (m_pScene->GetSceneType() == SC_INHOUSE && SOUND_MANAGER->IsEnd(SD_EFFECT))
+		if (gameScene->GetSceneType() == SC_INHOUSE && SOUND_MANAGER->IsEnd(SD_EFFECT))
 		{
 			SOUND_MANAGER->PlaySound("InHouse_Walking");
 		}
@@ -486,7 +489,7 @@ void Player::Input(float dt)
 			Pos tMousePos = MOUSEWORLDPOS;
 			Pos tCenterPos = GetCenterPos();
 			Pos tPos = GetPos();
-			INDEX index = static_cast<GameScene*>(m_pScene)->IndexDiff(tMousePos, tCenterPos);
+			INDEX index = gameScene->GetIndexDiff(tMousePos, tCenterPos);
 			if (max(abs(index.x), abs(index.y)) <= 1)
 			{
 				bool bSwingTool = IsSwingTool();
@@ -522,22 +525,21 @@ void Player::Input(float dt)
 				{
 					// 낫/검 체크
 					Rect attackRange = BuildSwingAttack(index.x, index.y);
-					TRIGGER_RECTATTACKEVENT(GetCenterPos(), attackRange, "SwingTool", GetToolPower());
+					TRIGGER_RECTEVENT(GetCenterPos(), attackRange, "SwingTool");
 				}
 				else {
 					// 도끼/곡괭이/호미 체크
 					if (HasTool(PlayerTool::TOOL_AXE))
 					{
-						TRIGGER_CLICKATTACKEVENT(tMousePos, "AxeTool", GetToolPower());
+						TRIGGER_CLICKEVENT(tMousePos, "AxeTool");
 					}
 					else if (HasTool(PlayerTool::TOOL_PICK))
 					{
-						TRIGGER_CLICKATTACKEVENT(tMousePos, "PickTool", GetToolPower());
+						TRIGGER_CLICKEVENT(tMousePos, "PickTool");
 					}
 					else if (HasTool(PlayerTool::TOOL_HOE))
 					{
-						const auto& gameScene = static_cast<GameScene*>(m_pScene);
-						gameScene->DigTile(tMousePos);
+						static_cast<GameScene*>(m_pScene)->DigTile(tMousePos);
 					}
 				}
 			}
@@ -579,6 +581,7 @@ void Player::Draw(HDC hDC, float dt)
 	tPos -= CAMERA->GetTopLeft();
 	TextOut(hDC, tPos.x, tPos.y - 10, playerPos, lstrlen(playerPos));
 #endif
+
 	if (SHOWCHECK(SHOW_TILEOPTION))
 	{
 		Pos tilePos = static_cast<GameScene*>(m_pScene)->GetTilePos(GetCenterPos());
@@ -588,7 +591,7 @@ void Player::Draw(HDC hDC, float dt)
 	}
 }
 
-void Player::BlockFoot(Collider* pSrc, Collider* pDst, float dt)
+void Player::HitFoot(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pDst->GetTag() == "TileBlock")
 	{
@@ -598,12 +601,10 @@ void Player::BlockFoot(Collider* pSrc, Collider* pDst, float dt)
 
 void Player::Hit(Collider* pSrc, Collider* pDst, float dt)
 {
-
-}
-
-
-void Player::HitPixel(Collider* pSrc, Collider* pDst, float dt)
-{
+	if (pDst->GetTag() == "ItemBody")
+	{
+		AddItem(static_cast<Item*>(pDst->GetObj()));
+	}
 }
 
 void Player::Save(FILE* pFile)
@@ -672,4 +673,34 @@ void Player::ChangePlayerTool(float dt)
 			m_pPlayerTool->SetTool(pTool);
 		}
 	}
+}
+
+Item* Player::FindItem(const string& itemTag)
+{
+	for (Item* pItem : m_vecItem)
+	{
+		if (pItem->GetTag() == itemTag)
+		{
+			return pItem;
+		}
+	}
+	return nullptr;
+}
+
+void Player::AddItem(Item* pItem)
+{
+	Item* exist = FindItem(pItem->GetTag());
+	if (!exist)
+	{
+		exist = pItem->Clone();
+		exist->EraseAllColiders();
+		m_vecItem.push_back(exist);
+	}
+	else 
+	{
+		exist->Increase();
+	}
+
+	SOUND_MANAGER->PlaySound("ItemGet");
+	pItem->Die();
 }

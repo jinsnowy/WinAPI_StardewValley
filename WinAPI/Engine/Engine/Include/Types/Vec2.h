@@ -71,9 +71,9 @@ public:
 	{
 		return x * x + y * y;
 	}
-	Vec2_& Normalize()
+	void Normalized()
 	{
-		return *this = GetNormalized();
+		*this = GetNormalized();
 	}
 	Vec2_ GetNormalized() const
 	{

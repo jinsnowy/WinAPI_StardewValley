@@ -32,11 +32,14 @@ private:
 	Player(const Player& obj) = delete;
 	~Player();
 private:
+	static constexpr float m_fPlayerSpeed = 400.f;
+	float m_iHP = 1000.f;
+	float m_iMP = 1000.f;
 	float m_fAttackRange = TILESIZE;
 	int m_iCurItemSel = 0;
-	int m_iHP = 0;
 	int m_iMoney = 5000;
 public:
+	float GetToolPower() const;
 	const vector<class Item*>& AccessItemList() const { return m_vecItem; }
 	int GetCurItemSel() const { return m_iCurItemSel; }
 	int GetMoney() const { return m_iMoney; }
@@ -45,7 +48,6 @@ public:
 	{
 		return Pos(GetPos().x + GetSize().x / 2, GetPos().y);
 	}
-
 public:
 	virtual void StateTransit(int iNext);
 	virtual bool Init();
@@ -56,17 +58,18 @@ public:
 	virtual void Draw(HDC hDC, float dt);
 	virtual Player* Clone() { throw EXCEPT(L"Player cloned"); return nullptr; }
 public:
-	void BlockFoot(class Collider* pSrc, class Collider* pDst, float dt);
+	void HitFoot(class Collider* pSrc, class Collider* pDst, float dt);
 	void Hit(class Collider* pSrc, class Collider* pDst, float dt);
-	void HitPixel(class Collider* pSrc, class Collider* pDst, float dt);
 private:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);
+private:
 	void InitTexture();
 	void InitAnimation();
 	void ChangePlayerTool(float dt);
+	Item* FindItem(const string& itemTag);
+	void AddItem(class Item* pItem);
 private:
-	float GetToolPower() const;
 	bool HasTool(PlayerTool::ToolState tool) const
 	{
 		if (m_iCurItemSel >= m_vecItem.size()) return false;
@@ -81,7 +84,7 @@ private:
 	bool IsToolSelected() const
 	{
 		if (m_iCurItemSel >= m_vecItem.size()) return false;
-		 return dynamic_cast<Tool*>(m_vecItem[m_iCurItemSel]) != nullptr;
+		 return m_vecItem[m_iCurItemSel]->IsToolItem();
 	}
 	bool IsIdleState() const
 	{

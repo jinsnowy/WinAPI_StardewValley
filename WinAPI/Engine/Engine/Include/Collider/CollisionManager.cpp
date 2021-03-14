@@ -28,14 +28,13 @@ void CollisionManager::ClickPoint()
     AddCollidePoint(MOUSEWORLDPOS, "Click");
 }
 
-void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag, float power)
+void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
     pPoint->SetPos(pos.x, pos.y);
 
     ColliderRect* pColl = pPoint->AddCollider<ColliderRect>(strTag);
     pColl->SetRect(rect.left, rect.top, rect.right, rect.bottom);
-    pColl->SetPower(power);
     SAFE_RELEASE(pColl);
 
     m_tempCollisionObjList.push_back(pPoint);
@@ -43,13 +42,13 @@ void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const st
 }
 
 
-void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag, float power)
+void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
     pPoint->SetPos(pos.x, pos.y);
 
     ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
-    pColl->SetPower(power);
+
     SAFE_RELEASE(pColl);
 
     m_tempCollisionObjList.push_back(pPoint);
@@ -94,6 +93,8 @@ void CollisionManager::Collision(float dt)
         m_CollisionObjList.clear();
         return;
     }
+
+    // 임시 콜라이더 위치 업데이트
     TempLateUpdate(dt);
 
     // 오브젝트 간 충돌 처리를 한다.
@@ -108,6 +109,11 @@ void CollisionManager::Collision(float dt)
         list<Object*>::iterator jterEnd = m_CollisionObjList.end();
         for (; jter != jterEnd; ++jter)
         {
+            COLL_CHANNEL eListen = (*iter)->GetListenChannel();
+            if (eListen != CO_ALL && eListen != (*jter)->GetAdvertiseChannel())
+            {
+                continue;
+            }
             CheckCollision(*iter, *jter, dt);
         }
     }

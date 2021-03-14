@@ -2,7 +2,7 @@
 #include <cassert>
 
 
-Ref::Ref() : m_Ref(1), m_id(0), m_bEnable(true), m_bLife(true)
+Ref::Ref() : m_Ref(1), m_bEnable(true), m_bLife(true)
 {
 }
 

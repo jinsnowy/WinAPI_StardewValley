@@ -172,6 +172,7 @@
     <ClInclude Include="Core\FrameTimer.h" />
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\PathManager.h" />
+    <ClInclude Include="Effect\BoundEffect.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Math.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="Core\FrameTimer.cpp" />
     <ClCompile Include="Core\Input.cpp" />
     <ClCompile Include="Core\PathManager.cpp" />
+    <ClCompile Include="Effect\BoundEffect.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
     <ClCompile Include="Object\Item\Tool.cpp" />

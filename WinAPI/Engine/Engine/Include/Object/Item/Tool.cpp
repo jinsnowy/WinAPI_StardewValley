@@ -2,6 +2,7 @@
 
 Tool::Tool()
 {
+    m_bToolItem = true;
 }
 
 Tool::Tool(const Tool& item)

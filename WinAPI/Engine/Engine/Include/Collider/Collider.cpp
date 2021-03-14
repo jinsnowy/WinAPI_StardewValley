@@ -64,7 +64,7 @@ void Collider::Draw(HDC hdc, float dt)
 void Collider::Save(FILE* pFile)
 {
 	// Tag 정보 저장
-	int iLength = m_strTag.length();
+	int iLength = (int) m_strTag.length();
 
 	// Tag 길이를 저장한다.
 	fwrite(&iLength, 4, 1, pFile);

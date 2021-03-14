@@ -22,7 +22,7 @@ bool UIGameManager::Init()
 	m_vecNeedleTex = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/ClockNeedle/", chromaKey);
 	m_vecWeekDays = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/WeekDays/", chromaKey);
 	m_vecNoon = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/Noon/", chromaKey);
-
+	m_vecSmallNumbers = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/SmallNumbers/", chromaKey);
 	m_pFastItemListUI = Object::CreateObject<UIPanel>("FastItemListUI");
 	m_pFastItemListUI->SetTexture("FastItemList", L"SV/Scene/FastItemList.bmp");
 	m_pFastItemListUI->SetColorKey(255, 255, 255);
@@ -69,7 +69,6 @@ void UIGameManager::DrawItemList(HDC hdc, float dt)
 	{
 		m_pFastItemListUI->Draw(hdc, dt);
 
-		
 		Pos tOffset = m_pFastItemListUI->GetPos();
 		tOffset.x += m_iItemListOffsetX;
 		tOffset.y += m_iItemListOffsetY;
@@ -81,7 +80,21 @@ void UIGameManager::DrawItemList(HDC hdc, float dt)
 		int size = min(12, int(itemList.size()));
 		for (int i = 0; i < size; ++i)
 		{
-			itemList[i]->DrawImageAt(hdc, tOffset, true);
+			float itemImgMargin = (56.f - itemList[i]->GetSize().x) / 2.f;
+			itemList[i]->DrawImageAt(hdc, tOffset.x + itemImgMargin, tOffset.y + itemImgMargin, true);
+
+			if (!itemList[i]->IsToolItem())
+			{
+				int num = itemList[i]->GetItemNum();
+				int st_x = tOffset.x + 56.f - m_fSmallNumberSize;
+				int st_y = tOffset.y + 56.f - m_fSmallNumberSize;
+				while (num > 0)
+				{
+					m_vecSmallNumbers[num%10]->DrawImageAt(hdc, st_x, st_y);
+					num /= 10;
+					st_x -= m_fSmallNumberSize;
+				}
+			}
 			tOffset.x += m_iItemListMargin + 56.f;
 		}
 
@@ -180,6 +193,7 @@ UIGameManager::~UIGameManager()
 	Safe_Release_VecList(m_vecNeedleTex);
 	Safe_Release_VecList(m_vecWeekDays);
 	Safe_Release_VecList(m_vecNoon);
+	Safe_Release_VecList(m_vecSmallNumbers);
 }
 
 void UIGameManager::Clock::Tick(float dt)

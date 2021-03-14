@@ -63,42 +63,46 @@ void GameScene::SpawnMainCharacter(const Pos& worldPos)
     m_pPlayer->SetPos(worldPos);
 }
 
-int GameScene::GetTileIndex(const Pos& worldPos)
+int GameScene::GetTileIndex(const Pos& worldPos) const
 {
     return m_pGroundStage->GetTileIndex(worldPos);
 }
-Pos GameScene::GetTilePos(const Pos& worldPos)
+
+Pos GameScene::GetTilePos(const Pos& worldPos) const
 {
     return m_pStaticStage->GetTilePos(worldPos);
 }
-INDEX GameScene::GetTileRowColIndex(const Pos& worldPos)
+
+INDEX GameScene::GetTileRowColIndex(const Pos& worldPos) const
 {
     return m_pGroundStage->GetTileRowColIndex(worldPos);
 }
 
-INDEX GameScene::IndexDiff(const Pos& pos, const Pos& from)
+INDEX GameScene::GetIndexDiff(const Pos& pos, const Pos& from) const
 {
     return GetTileRowColIndex(pos) - GetTileRowColIndex(from);
 }
 
-bool GameScene::ValidIndex(INDEX index) const
+bool GameScene::CheckValidIndex(INDEX index) const
 {
     return m_pGroundStage->ValidIndex(index);
 }
 
-
-TILE_OPTION GameScene::GetTileOption(const Pos& worldPos)
+TILE_OPTION GameScene::GetTileOption(const Pos& worldPos) const
 {
     return m_pStaticStage->GetTileOption(worldPos);
 }
 
-bool GameScene::IsBlockTile(const Pos& worldPos)
+bool GameScene::IsBlockTile(const Pos& worldPos) const
 {
     return m_pStaticStage->IsBlockTile(worldPos);
 }
 
 void GameScene::DigTile(const Pos& worldPos)
 {
+    if (GetSceneType() != SC_FARM)
+        return;
+
     int index = GetTileIndex(worldPos);
     if (index == -1) return;
 
@@ -151,6 +155,7 @@ void GameScene::Draw(HDC hdc, float dt)
     Pos tilePos = m_pGroundStage->GetTilePos(index);
     tilePos -= CAMERA->GetTopLeft();
     DrawRedRect(hdc, MakeRect(int(tilePos.x), int(tilePos.y), TILESIZE, TILESIZE));
+
 #ifdef _DEBUG
     stringstream ss;
     Pos playerPos = AccessPlayer()->GetPos();
@@ -164,7 +169,7 @@ void GameScene::Draw(HDC hdc, float dt)
         ss << " Object: " << objName;
     }
     ss << "\n";
-    size_t length = ss.str().size();
+    int length = (int) ss.str().size();
     playerPos -= CAMERA->GetTopLeft();
     TextOut(hdc, playerPos.x, playerPos.y + 10, GetWChar(ss.str().c_str()), length);
     ss.clear();
@@ -172,8 +177,10 @@ void GameScene::Draw(HDC hdc, float dt)
 #endif
 }
 
-void GameScene::SetUpScene(SceneState state, Player* player)
+void GameScene::SetUpScene(const SceneState &state, Player* player)
 {
+    assert(player != nullptr);
+
     player->SetScene(this);
     player->SetLayer(FindLayer("Object"));
 
@@ -218,10 +225,10 @@ void GameScene::SetUpScene(SceneState state, Player* player)
         break;
     }
 
-    float worldX = m_pStaticStage->GetStageWidth();
-    float worldY = m_pStaticStage->GetStageHeight();
+    int worldX = m_pStaticStage->GetStageWidth();
+    int worldY = m_pStaticStage->GetStageHeight();
 
-    CAMERA->SetWorldResolution(int(worldX), int(worldY));
+    CAMERA->SetWorldResolution(worldX, worldY);
     CAMERA->SetTarget(m_pPlayer);
     CAMERA->SetPivot(0.5f, 0.5f);
     CAMERA->SetPos(m_pPlayer->GetPos());

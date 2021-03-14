@@ -1,11 +1,13 @@
 #include "Tree.h"
+#include "TreeTrunk.h"
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
-#include "../../Collider/ColliderPoint.h"
+#include "../../Scene/GameScene.h"
+#include "../../Object/MoveObj/Player.h"
 #include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
 #include "../../Scene/Scene.h"
-#include "TreeTrunk.h"
+
 const wchar_t* const Tree::m_strBaseName[] = { L"Tree1.bmp", L"Tree2.bmp", L"Tree3.bmp" };
 
 Tree::Tree()
@@ -41,6 +43,9 @@ bool Tree::Init()
 	Item* pItem = Item::LoadItem("Wood", L"SV/Item/Outdoor/Wood.bmp");
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
+
+	AdvertiseFrom(CO_OBJECT);
+	ListenTo(CO_PLAYER);
 
 	Size imgSize = GetImageSize();
 	ColliderRect* pRC = AddCollider<ColliderRect>("TreeBody");
@@ -81,7 +86,7 @@ void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
 	{
-		float power = static_cast<ColliderPoint*>(pDst)->GetPower();
+		float power = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetToolPower();
 		GetDamage(power);
 		SOUND_MANAGER->PlaySound("TreeHit");
 		if (IsDie())
@@ -136,6 +141,24 @@ Tree* Tree::Clone()
 	return new Tree(*this);
 }
 
+void Tree::LateInit()
+{
+	Size imgSize = GetImageSize();
+
+
+	ColliderRect* pRC = static_cast<ColliderRect*>(GetCollider("TreeBody"));
+	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::ShadeIn);
+	pRC->AddCollisionFunction(CS_STAY, this, &Tree::ShadeIn);
+
+	SAFE_RELEASE(pRC);
+
+
+	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
+	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::TileHit);
+	pRC->AddCollisionFunction(CS_STAY, this, &Tree::TileHit);
+	SAFE_RELEASE(pRC);
+}
+
 void Tree::Save(FILE* pFile)
 {
 	InteractiveTile::Save(pFile);
@@ -144,16 +167,4 @@ void Tree::Save(FILE* pFile)
 void Tree::Load(FILE* pFile)
 {
 	InteractiveTile::Load(pFile);
-
-	Size imgSize = GetImageSize();
-
-	ColliderRect* pRC = static_cast<ColliderRect*>(GetCollider("TreeBody"));
-	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::ShadeIn);
-	pRC->AddCollisionFunction(CS_STAY, this, &Tree::ShadeIn);
-	SAFE_RELEASE(pRC);
-
-	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
-	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::TileHit);
-	pRC->AddCollisionFunction(CS_STAY, this, &Tree::TileHit);
-	SAFE_RELEASE(pRC);
 }

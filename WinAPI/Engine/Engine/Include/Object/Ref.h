@@ -10,7 +10,6 @@ protected:
 	bool m_bEnable;
 	bool m_bLife;
 	int m_Ref;
-	size_t m_id;
 	std::string m_strTag;
 public:
 	void AddRef() { ++m_Ref; }
@@ -26,7 +25,6 @@ public:
 	}
 	bool GetEnable() const { return m_bEnable; }
 	bool GetLife() const { return m_bLife; }
-	size_t GetId() const { return m_id; }
 	virtual std::string GetTag() const { return m_strTag; }
 	virtual void Die() { m_bLife = false; }
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }

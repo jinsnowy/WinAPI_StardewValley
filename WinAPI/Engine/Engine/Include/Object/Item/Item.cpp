@@ -1,5 +1,13 @@
 #include "Item.h"
+#include "../../Collider/ColliderRect.h"
+#include "../MoveObj/Player.h"
+#include "../../Scene/GameScene.h"
+#include "../../Scene/Scene.h"
+#include "../../Effect/BoundEffect.h"
+
 unordered_map<string, Item*> Item::m_mapItem;
+normal_distribution<float> Item::m_AngleDist(m_fDropAngle, m_fDropAngleVar);
+normal_distribution<float> Item::m_VeloDist(m_fDropVelo, m_fDropVeloVar);
 
 Item* Item::FindItem(const string& strItemKey)
 {
@@ -24,8 +32,35 @@ Item* Item::LoadItem(const string& strItemKey, const wchar_t* pFileName, const s
     return pItem->Clone();
 }
 
+void Item::ChasePlayer(float dt)
+{
+    const Pos &tPos = GetPos();
+    const Pos &targetPos = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetCenter();
+    if (Math::Distance(targetPos, tPos) <= m_fChaseRange)
+    {
+        Pos dir = (targetPos - tPos).GetNormalized();
+        dir *= (m_fChaseSpeed * dt);
+        SetPos(tPos.x + dir.x, tPos.y + dir.y);
+    }
+}
+
+void Item::GenerateBoundEffect()
+{
+    assert(m_Effect == nullptr);
+
+    float angle = m_AngleDist(util::_rng);
+    float velo = m_VeloDist(util::_rng);
+    
+    angle = (rand() % 2 == 1) ? angle : PI - angle;
+
+    m_Effect = new BoundEffect;
+    m_Effect->Init(GetPos(), 4, angle, velo, GetPos().y + 0.5f, 2.5f);
+}
+
 Item::Item()
 {
+    m_eAdvertiseChannel = CO_ITEM;
+    m_eListenChannel = CO_PLAYER;
 }
 
 Item::Item(const Item& item)
@@ -36,10 +71,14 @@ Item::Item(const Item& item)
 
 Item::~Item()
 {
+    SAFE_DELETE(m_Effect);
 }
 
 bool Item::Init()
 {
+    ColliderRect* pColl =  AddCollider<ColliderRect>("ItemBody");
+    pColl->SetRect(10.f, 10.f, 30.f, 30.f);
+    SAFE_RELEASE(pColl);
     return true;
 }
 
@@ -51,6 +90,20 @@ void Item::Input(float dt)
 int Item::Update(float dt)
 {
     Object::Update(dt);
+
+    if (m_pScene)
+    {
+        if (m_Effect)
+        {
+            SetPos(m_Effect->Next(dt));
+            if (m_Effect->IsEnd())
+            {
+                SAFE_DELETE(m_Effect);
+            }
+        }
+        ChasePlayer(dt);
+    }
+
     return 0;
 }
 

@@ -39,6 +39,9 @@ bool Grass::Init()
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
 
+	AdvertiseFrom(CO_OBJECT);
+	ListenTo(CO_PLAYER);
+
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileIdleBlock");
 	pBlock->SetRect(5.f, 5.f, TILESIZE - 5.f, TILESIZE - 5.f);
 	SAFE_RELEASE(pBlock);
@@ -106,6 +109,16 @@ Grass* Grass::Clone()
 	return new Grass(*this);
 }
 
+void Grass::LateInit()
+{
+	Size imgSize = GetImageSize();
+
+	Collider* pRC = static_cast<ColliderRect*>(GetCollider("TileIdleBlock"));
+	pRC->AddCollisionFunction(CS_ENTER, this, &Grass::TileHit);
+	pRC->AddCollisionFunction(CS_STAY, this, &Grass::TileHit);
+	SAFE_RELEASE(pRC);
+}
+
 void Grass::Save(FILE* pFile)
 {
 	InteractiveTile::Save(pFile);
@@ -114,11 +127,4 @@ void Grass::Save(FILE* pFile)
 void Grass::Load(FILE* pFile)
 {
 	InteractiveTile::Load(pFile);
-
-	Size imgSize = GetImageSize();
-
-	Collider* pRC = static_cast<ColliderRect*>(GetCollider("TileIdleBlock"));
-	pRC->AddCollisionFunction(CS_ENTER, this, &Grass::TileHit);
-	pRC->AddCollisionFunction(CS_STAY, this, &Grass::TileHit);
-	SAFE_RELEASE(pRC);
 }

@@ -1,5 +1,6 @@
 #include "InteractiveTile.h"
 #include "../../Scene/Scene.h"
+
 #include "../Item/Item.h"
 InteractiveTile::InteractiveTile()
 {
@@ -33,16 +34,16 @@ void InteractiveTile::ItemDrop(int num)
 {
     if (!m_pItem)
         return;
-    auto dist_x = util::GenUniformRealDist(-20.f, 20.f);
-    auto dist_y = util::GenUniformRealDist(-5.f, 5.f);
+
     Pos tPos = GetPos();
     for (int i = 0; i < num; ++i)
     {
-        Object* pObj = m_pItem->Clone();
+        Item* pItem = m_pItem->Clone();
         
-        pObj->SetPos(tPos.x + dist_x(_rng), tPos.y + dist_y(_rng));
-        
-        m_pLayer->AddObject(pObj);
+        pItem->SetPos(tPos);
+        pItem->GenerateBoundEffect();
+
+        m_pLayer->AddObject(pItem);
     }
 }
 
@@ -86,4 +87,6 @@ void InteractiveTile::Save(FILE* pFile)
 void InteractiveTile::Load(FILE* pFile)
 {
     Tile::Load(pFile);
+
+    LateInit();
 }

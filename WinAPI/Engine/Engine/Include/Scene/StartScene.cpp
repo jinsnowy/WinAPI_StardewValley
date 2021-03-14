@@ -56,8 +56,8 @@ bool StartScene::Init()
     const float btnHeight = pTex->GetHeight() / 2.f;
     const float margin = 30.f;
 
-    float stX = GETRESOLUTION.x / 2 - margin * 3 / 2 - 2 * btnWidth;
-    float stY = pGameTitle->GetPos().y + pGameTitle->GetSize().y / 2.f + 50;
+    float stX = float(GETRESOLUTION.x / 2) - margin * 3 / 2.f - 2 * btnWidth;
+    float stY = pGameTitle->GetPos().y + pGameTitle->GetSize().y / 2.f + 50.f;
 
     // 시작 버튼
     UIButton* pStartBtn = CreateObject<UIButton>("NewButton", pLayer);
@@ -144,7 +144,7 @@ void StartScene::StartButtonCallback(float fTime)
     SOUND_MANAGER->PlaySound("StartScene_Click");
     SOUND_MANAGER->PauseSound(SD_BACKGROUND);
 
-    SceneState nxt;
+    SceneState nxt = {};
     nxt.nextDir = LEFT;
     nxt.nextBeacon = BC_TWO;
     nxt.nextScene = SC_INHOUSE;
@@ -160,7 +160,7 @@ void StartScene::EndButtonCallback(float fTime)
 
 void StartScene::EditButtonCallback(float fTime)
 {
-    SceneState nxt;
+    SceneState nxt = {};
     nxt.nextDir = RIGHT;
     nxt.nextBeacon = BC_NONE;
     nxt.nextScene = SC_MAPEDIT;

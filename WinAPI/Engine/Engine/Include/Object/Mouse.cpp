@@ -10,7 +10,7 @@ Mouse::Mouse()
 }
 
 Mouse::Mouse(const Mouse& ui)
-    : UI(ui), m_tMove(ui.m_tMove)
+    : UI(ui), m_tMove(ui.m_tMove), m_tWorldPos(ui.m_tWorldPos)
 {
 }
 
@@ -28,8 +28,10 @@ bool Mouse::Init()
 
     ShowCursor(FALSE);
 
-    m_tPos.x = pt.x;
-    m_tPos.y = pt.y;
+    AdvertiseFrom(CO_MOUSE);
+
+    m_tPos.x = (float) pt.x;
+    m_tPos.y = (float) pt.y;
 
     ColliderPoint* pColl = AddCollider<ColliderPoint>("Mouse");
 

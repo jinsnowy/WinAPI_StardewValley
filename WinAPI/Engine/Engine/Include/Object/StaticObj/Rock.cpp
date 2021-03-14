@@ -39,6 +39,8 @@ bool Rock::Init()
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
 
+	AdvertiseFrom(CO_OBJECT);
+	ListenTo(CO_PLAYER);
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileBlock");
 	pBlock->SetRect(5.f, 5.f, TILESIZE-5.f, TILESIZE-5.f);
 	SAFE_RELEASE(pBlock);
@@ -106,6 +108,16 @@ Rock* Rock::Clone()
 	return new Rock(*this);
 }
 
+void Rock::LateInit()
+{
+	Size imgSize = GetImageSize();
+
+	Collider* pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
+	pRC->AddCollisionFunction(CS_ENTER, this, &Rock::TileHit);
+	pRC->AddCollisionFunction(CS_STAY, this, &Rock::TileHit);
+	SAFE_RELEASE(pRC);
+}
+
 void Rock::Save(FILE* pFile)
 {
 	InteractiveTile::Save(pFile);
@@ -114,11 +126,4 @@ void Rock::Save(FILE* pFile)
 void Rock::Load(FILE* pFile)
 {
 	InteractiveTile::Load(pFile);
-
-	Size imgSize = GetImageSize();
-
-	Collider* pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
-	pRC->AddCollisionFunction(CS_ENTER, this, &Rock::TileHit);
-	pRC->AddCollisionFunction(CS_STAY, this, &Rock::TileHit);
-	SAFE_RELEASE(pRC);
 }

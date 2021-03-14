@@ -15,6 +15,7 @@ bool FarmScene::Init()
 	GameScene::SetUpScene(pGameDataFileName);
 
 	SOUND_MANAGER->LoadSound("DoorOpen", false, SD_EFFECT, "DoorOpen.mp3");
+	SOUND_MANAGER->LoadSound("ItemGet", false, SD_EFFECT, "ItemGet.mp3");
 	SOUND_MANAGER->LoadSound("TreeHit", false, SD_EFFECT, "Object/TreeHit.mp3");
 	SOUND_MANAGER->LoadSound("TreeOver", false, SD_EFFECT, "Object/TreeOver.mp3");
 	SOUND_MANAGER->LoadSound("RockOver", false, SD_EFFECT, "Object/RockOver.mp3");

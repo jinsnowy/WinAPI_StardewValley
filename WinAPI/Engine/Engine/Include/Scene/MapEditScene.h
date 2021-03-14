@@ -36,7 +36,6 @@ private:
     void SetUpTileSelectUI();
     void SetUpBaseStage(STAGE_TAG eStageTag, const string& objTag, const string& strlayerTag, int numX, int numY);
     void SetUpDefaultStages(int numX, int numY);
-    void SaveDefaultStages(const char* fileName);
     void LoadDefaultStages(const char* fileName);
     void StageClear(STAGE_TAG eStageTag, const string& layerTag);
     void CameraScroll(float dt);

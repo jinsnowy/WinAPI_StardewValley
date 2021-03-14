@@ -1,9 +1,10 @@
 #include "TreeTrunk.h"
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
-#include "../../Collider/ColliderPoint.h"
 #include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
+#include "../../Scene/GameScene.h"
+#include "../../Object/MoveObj/Player.h"
 const wchar_t* const TreeTrunk::m_strBaseName[] = { L"TreeTrunk1.bmp"};
 
 TreeTrunk::TreeTrunk()
@@ -40,6 +41,9 @@ bool TreeTrunk::Init()
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
 
+	AdvertiseFrom(CO_OBJECT);
+	ListenTo(CO_PLAYER);
+
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileBlock");
 	pBlock->SetRect(5.f, 5.f, TILESIZE - 5.f, TILESIZE - 5.f);
 	SAFE_RELEASE(pBlock);
@@ -52,7 +56,7 @@ void TreeTrunk::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
 	{
-		float power = static_cast<ColliderPoint*>(pDst)->GetPower();
+		float power = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetToolPower();
 		GetDamage(power);
 		SOUND_MANAGER->PlaySound("TreeHit");
 		if (IsDie())
@@ -118,6 +122,4 @@ void TreeTrunk::Save(FILE* pFile)
 void TreeTrunk::Load(FILE* pFile)
 {
 	InteractiveTile::Load(pFile);
-
-	LateInit();
 }

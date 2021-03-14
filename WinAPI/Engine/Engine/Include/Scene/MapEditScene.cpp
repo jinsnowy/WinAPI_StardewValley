@@ -172,23 +172,23 @@ void MapEditScene::Input(float dt)
     if (KEYDOWN("Save"))
     {
         ShowCursor(TRUE);
-        INT_PTR res = DialogBox(WINDOWINSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), WINDOWHANDLE, MapEditScene::DlgProc1);
+        INT_PTR clickResult = DialogBox(WINDOWINSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), WINDOWHANDLE, MapEditScene::DlgProc1);
         ShowCursor(FALSE);
 
-        if (res == IDOK)
+        if (clickResult == IDOK)
         {
             char strFileName[MAX_PATH] = {};
             WideCharToMultiByte(CP_ACP, 0, m_strText1, -1, strFileName, lstrlen(m_strText1), 0, 0);
-            SaveDefaultStages(strFileName);
+            SaveDefaultStages(m_vecStage, strFileName);
         }
     }
     if (KEYDOWN("Load"))
     {
         ShowCursor(TRUE);
-        INT_PTR res = DialogBox(WINDOWINSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), WINDOWHANDLE, MapEditScene::DlgProc1);
+        INT_PTR clickResult = DialogBox(WINDOWINSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), WINDOWHANDLE, MapEditScene::DlgProc1);
         ShowCursor(FALSE);
 
-        if (res == IDOK)
+        if (clickResult == IDOK)
         {
             char strFileName[MAX_PATH] = {};
             WideCharToMultiByte(CP_ACP, 0, m_strText1, -1, strFileName, lstrlen(m_strText1), 0, 0);
@@ -254,7 +254,7 @@ void MapEditScene::Draw(HDC hDC, float dt)
     Scene::Draw(hDC, dt);
 
     memset(m_strText1, 0, sizeof(m_strText1));
-    wsprintf(m_strText1, L"Object num %d\n", m_pObjLayer->GetObjList()->size());
+    wsprintf(m_strText1, L"Object num %d\n", (int) m_pObjLayer->GetObjList()->size());
     TextOut(hDC, 0, 10, m_strText1, lstrlen(m_strText1));
     // 마우스 선택 타일 드로우
     Pos tPos = MOUSEWORLDPOS;
@@ -309,33 +309,6 @@ void MapEditScene::SetUpDefaultStages(int numX, int numY)
     SetUpBaseStage(ST_STATIC, "StaticStage", "Static", numX, numY);
 }
 
-void MapEditScene::SaveDefaultStages(const char* fileName)
-{
-    FILE * pFile = PATH_MANAGER->FileOpen(fileName, DATA_PATH, "wb");
-
-    m_vecStage[ST_GROUND]->SaveFromFile(pFile);
-    m_vecStage[ST_STATIC]->SaveFromFile(pFile);
-
-    const auto& objList = m_pObjLayer->GetObjList();
-    int objNum = (int) objList->size();
-    fwrite(&objNum, 4, 1, pFile);
-    if (objNum > 0)
-    {
-        list<Object*>::const_iterator iter = objList->begin();
-        list<Object*>::const_iterator iterEnd = objList->end();
-        for (; iter != iterEnd; ++iter)
-        {
-            int eType = (int) (*iter)->GetObjectType();
-            fwrite(&eType, 4, 1, pFile);
-            (*iter)->SaveFromFile(pFile);
-        }
-    }
-
-    if (pFile)
-    {
-        fclose(pFile);
-    }
-}
 
 void MapEditScene::SetUpBaseStage(STAGE_TAG eStageTag, const string& objTag, const string& strlayerTag, int numX, int numY)
 {
@@ -388,7 +361,7 @@ void MapEditScene::SetUpBackButton()
 {
     Layer* pLayer = FindLayer("UI");
     UIButton* pBackBtn = CreateObject<UIButton>("BackButton", pLayer);
-    pBackBtn->SetPos(30, GETRESOLUTION.y - 100);
+    pBackBtn->SetPos(30.f, GETRESOLUTION.y - 100.f);
     pBackBtn->SetSize(216.f, 88.f);
     pBackBtn->SetTexture("BackButton", L"SV/BackButton.bmp");
     pBackBtn->SetImageOffset(0.f, 0.f);

@@ -23,7 +23,8 @@
 #define PI		3.141592f
 #define GRAVITY 600.f
 #define TILESIZE 64
-
+#define RAD2DEG(X) (X/PI*180.0f)
+#define DEG2RAD(X) (X*PI/180.f)
 // Path Key
 #define ROOT_PATH		"RootPath"
 #define TEXTURE_PATH	"TexturePath"
@@ -89,6 +90,7 @@
 #include "Resource.h"
 #include "Macro.h"
 #include "utils.h"
+#include "Math.h"
 #include "Other/UserException.h"
 
 // 동적 링크 라이브러리

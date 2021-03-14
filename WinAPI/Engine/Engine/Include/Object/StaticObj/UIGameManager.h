@@ -35,7 +35,7 @@ public:
 	virtual void Draw(HDC hdc, float dt);
 private:
 	static constexpr float m_fUpperMargin = 20.f;
-	static constexpr int m_iMoneyItemMargin = 6.f;
+	static constexpr int m_iMoneyItemMargin = 6;
 	static constexpr int m_iNumberWidth = 18;
 	static constexpr int m_iMaxDigits = 8;
 	static constexpr int m_iMoneyDrawStartX = 64;
@@ -45,6 +45,7 @@ private:
 	static constexpr int m_iUpperDisplayStartY = 20;
 private:
 	static constexpr float m_iItemListMargin = 8.f;
+	static constexpr float m_fSmallNumberSize = 8.f;
 	static constexpr int m_iItemListOffsetX = 20;
 	static constexpr int m_iItemListOffsetY = 20;
 private:
@@ -59,7 +60,7 @@ private:
 	vector<class Texture*> m_vecMoneyTex;
 	vector<class Texture*> m_vecWeekDays;
 	vector<class Texture*> m_vecNoon;
-	vector<class Texture*> m_vecNumbers;
+	vector<class Texture*> m_vecSmallNumbers;
 	unique_ptr<Clock> m_clock = make_unique<Clock>();
 	void DrawItemList(HDC hdc, float dt);
 	void DrawCurrentTime(HDC hdc, float dt);

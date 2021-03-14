@@ -10,6 +10,17 @@ typedef struct _tagPixel
 	unsigned char b;
 }Pixel;
 
+enum COLL_CHANNEL
+{
+	CO_OBJECT,
+	CO_TILE,
+	CO_PLAYER,
+	CO_ITEM,
+	CO_UI,
+	CO_MOUSE,
+	CO_ALL,
+};
+
 enum OBJ_TYPE 
 {
 	OBJ_NORMAL = 0,
@@ -145,7 +156,7 @@ enum DIRECTION
 };
 
 struct SceneState {
-	SCENE_CREATE nextScene;
-	BEACON_TAG nextBeacon;
-	DIRECTION nextDir;
+	SCENE_CREATE nextScene = SC_NONE;
+	BEACON_TAG nextBeacon = BC_NONE;
+	DIRECTION nextDir = RIGHT;
 };

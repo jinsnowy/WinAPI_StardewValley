@@ -27,9 +27,12 @@ void ResourceManager::LoadGlyphs()
 	vector<Texture*> fonts = LoadTextureFromDirectory(L"SV/Fonts/", RGB(255, 255, 255));
 	for (Texture* pTex : fonts)
 	{
-		string strKey = pTex->GetTag();
-		char ch = (char) stoi(strKey);
-		m_mapGlyph.insert(make_pair(ch, pTex));
+		if (pTex)
+		{
+			string strKey = pTex->GetTag();
+			char ch = (char)stoi(strKey);
+			m_mapGlyph.insert(make_pair(ch, pTex));
+		}
 	}
 	Safe_Release_VecList(fonts);
 }

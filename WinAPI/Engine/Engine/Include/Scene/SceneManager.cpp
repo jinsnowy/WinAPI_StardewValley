@@ -44,6 +44,7 @@ bool SceneManager::Init()
 	INPUT->AddKey("ShowColl", VK_F3);
 	INPUT->AddKey("TimeElapse", VK_CONTROL, 'T');
 	// INPUT->AddKey("TimeReset", VK_CONTROL, 'R');
+
 	SOUND_MANAGER->LoadSound("LongBGM", false, SD_BACKGROUND, "LongBGM.mp3");
 	SOUND_MANAGER->LoadSound("BGM", true, SD_BACKGROUND, "BGM.mp3");
 

@@ -10,6 +10,8 @@ class Object : public Ref
 protected:
 	// 씬, 레이어, 텍스쳐, 콜라이더
 	OBJ_TYPE m_eObjType = OBJ_NORMAL;
+	COLL_CHANNEL    m_eAdvertiseChannel = CO_ALL;
+	COLL_CHANNEL    m_eListenChannel = CO_ALL;
 	bool m_bEnableAnimation = true;
 	class Scene* m_pScene;
 	class Layer* m_pLayer;
@@ -17,6 +19,10 @@ protected:
 	list<Collider*> m_ColliderList;
 	Animation* m_pAnimation;
 public:
+	void ListenTo(COLL_CHANNEL eChannel) { m_eListenChannel = eChannel; }
+	COLL_CHANNEL GetListenChannel() const { return m_eListenChannel; }
+	void AdvertiseFrom(COLL_CHANNEL eChannel) { m_eAdvertiseChannel = eChannel; }
+	COLL_CHANNEL GetAdvertiseChannel() const { return m_eAdvertiseChannel; }
 	OBJ_TYPE GetObjectType() const { return m_eObjType; }
 	template<typename T>
 	static T* CreateObject(const string& strTag)
@@ -170,7 +176,7 @@ public:
 	float GetTop() const { return m_tPos.y - m_tSize.y * m_tPivot.y; }
 	float GetRight() const { return GetLeft() + m_tSize.x; }
 	float GetBottom() const { return GetTop() + m_tSize.y; }
-	Pos GetCenter() { return Pos((GetLeft()+GetRight())/2.f, (GetTop()+GetBottom())/2.f); }
+	Pos GetCenter() const { return Pos((GetLeft()+GetRight())/2.f, (GetTop()+GetBottom())/2.f); }
 	Pos GetPos() const { return m_tPos; }
 	Pos GetPivot() const { return m_tPivot; }
 	Size GetSize() const { return m_tSize; }
@@ -206,8 +212,8 @@ public:
 			Size tSize = GetImageSize();
 			if (!ignorePivot)
 			{
-				px = px - m_tPivot.x * tSize.x;
-				py = py - m_tPivot.y * tSize.y;
+				px = px - int(m_tPivot.x * tSize.x);
+				py = py - int(m_tPivot.y * tSize.y);
 			}
 			m_pTexture->DrawImageAt(hdc, px, py);
 		}
@@ -223,8 +229,8 @@ public:
 			Size tSize = GetImageSize();
 			if (!ignorePivot)
 			{
-				px = px - m_tPivot.x * tSize.x;
-				py = py - m_tPivot.y * tSize.y;
+				px = px - int(m_tPivot.x * tSize.x);
+				py = py - int(m_tPivot.y * tSize.y);
 			}
 			m_pTexture->DrawImageAtFixedSize(hdc, px, py, size);
 		}

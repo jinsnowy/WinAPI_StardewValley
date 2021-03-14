@@ -27,6 +27,7 @@ public:
 	virtual void Collision(float dt);
 	virtual void Draw(HDC hDC, float dt);
 	virtual Tree* Clone();
+	virtual void LateInit();
 public:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);

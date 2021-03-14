@@ -139,7 +139,7 @@ Object* UITileSelect::SelectTile(const Pos& screenPos, bool &UITouch)
     int st_x = tPos.x + (tSize.x - m_iTotalSizeX) / 2;
     int st_y = tPos.y + (tSize.y - m_iTotalSizeY) / 2;
     int px = st_x, py = st_y, itemInd = m_iCurPageNum * m_iDrawMaxitemNumX * m_iDrawMaxitemNumY;
-    int size = m_BaseTileMap[m_eCurSelTile].size();
+    int size = (int) m_BaseTileMap[m_eCurSelTile].size();
     for (int j = 0; j < m_iDrawMaxitemNumY && itemInd < size; ++j)
     {
         for (int i = 0; i < m_iDrawMaxitemNumX && itemInd < size; ++i)
@@ -332,7 +332,7 @@ void UITileSelect::DrawTilePanel(HDC hdc, float dt)
     Pos tSize = GetSize();
     int st_x = tPos.x + (tSize.x - m_iTotalSizeX) / 2;
     int st_y = tPos.y + (tSize.y - m_iTotalSizeY) / 2;
-    int tileNum = m_BaseTileMap[int(m_eCurSelTile)].size();
+    int tileNum = (int) m_BaseTileMap[int(m_eCurSelTile)].size();
 
     int px = st_x, py = st_y;
     int itemInd = m_iCurPageNum * m_iDrawMaxitemNumX * m_iDrawMaxitemNumY;
@@ -350,7 +350,7 @@ void UITileSelect::DrawTilePanel(HDC hdc, float dt)
     // 페이지 번호
     const int pageNum = tileNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
 
-    px = tPos.x; py = tPos.y;
+    px = int(tPos.x); py = int(tPos.y);
     for (int i = 0; i < pageNum; i++)
     {
         m_NumberTiles[i]->DrawImageAtFixedSize(hdc, px, py, m_iSelButtonSize);
@@ -385,7 +385,7 @@ void UITileSelect::DrawObjectPanel(HDC hdc, float dt)
     // 페이지 번호
     const int pageNum = int(m_PrototypeContainer.size()) / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
 
-    px = tPos.x; py = tPos.y;
+    px = int(tPos.x); py = int(tPos.y);
     for (int i = 0; i < pageNum; i++)
     {
         m_NumberTiles[i]->DrawImageAtFixedSize(hdc, px, py, m_iSelButtonSize);

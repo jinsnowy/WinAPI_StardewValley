@@ -19,7 +19,6 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	EraseAllPrototypes();
 	Safe_Delete_VecList(m_LayerList);
 	Safe_Release_VecList(m_ObjList);
 }
@@ -84,53 +83,11 @@ void Scene::AddObject(Object* pObj, Layer* pLayer)
 	m_ObjList.push_back(pObj);
 }
 
-Object* Scene::CreateCloneObject(const string& strPrototypeKey, const string& strTag, Layer* pLayer)
-{
-	Object* pObj = FindPrototype(strPrototypeKey);
-	if (pObj == nullptr)
-		return nullptr;
-
-	pObj = pObj->Clone();
-	pObj->SetTag(strTag);
-
-	if (pLayer)
-	{
-		pLayer->AddObject(pObj);
-	}
-
-	AddObject(pObj);
-	return pObj;
-}
-
-Object* Scene::FindPrototype(const string& strPrototypeKey)
-{
-	auto found = m_mapProtoType.find(strPrototypeKey);
-	if (found != m_mapProtoType.end())
-	{
-		found->second->AddRef();
-		return found->second;
-	}
-	return nullptr;
-}
-
-void Scene::ErasePrototype(const string& strPrototypeKey)
-{
-	auto found = m_mapProtoType.find(strPrototypeKey);
-	if (found != m_mapProtoType.end())
-		m_mapProtoType.erase(strPrototypeKey);
-	return;
-}
-
-void Scene::EraseAllPrototypes()
-{
-	Safe_Release_Map(m_mapProtoType);
-}
-
-Layer* Scene::FindLayer(const string& tag)
+Layer* Scene::FindLayer(const string& layerTag)
 {
 	for (auto it = m_LayerList.begin(); it != m_LayerList.end(); it++)
 	{
-		if ((*it)->GetTag() == tag)
+		if ((*it)->GetTag() == layerTag)
 			return *it;
 	}
 	return nullptr;
@@ -359,6 +316,37 @@ void Scene::LoadDefaultStages(const char* fileName)
 			pObj->Load(pFile);
 			AddObject(pObj, pLayer);
 			SAFE_RELEASE(pObj);
+		}
+	}
+
+	if (pFile)
+	{
+		fclose(pFile);
+	}
+}
+
+void Scene::SaveDefaultStages(const vector<Stage*> &saveStages, const char* fileName)
+{
+	FILE* pFile = PATH_MANAGER->FileOpen(fileName, DATA_PATH, "wb");
+
+	for (Stage* stage : saveStages)
+	{
+		stage->SaveFromFile(pFile);
+	}
+
+	Layer* pLayer = FindLayer("Object");
+	const auto& objList = pLayer->GetObjList();
+	int objNum = (int)objList->size();
+	fwrite(&objNum, 4, 1, pFile);
+	if (objNum > 0)
+	{
+		list<Object*>::const_iterator iter = objList->begin();
+		list<Object*>::const_iterator iterEnd = objList->end();
+		for (; iter != iterEnd; ++iter)
+		{
+			int eType = (int)(*iter)->GetObjectType();
+			fwrite(&eType, 4, 1, pFile);
+			(*iter)->SaveFromFile(pFile);
 		}
 	}
 

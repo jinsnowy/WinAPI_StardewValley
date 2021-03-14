@@ -141,19 +141,19 @@ void Texture::SaveFromPath(const char* pFileName, const string& strPathKey)
 
 void Texture::Save(FILE* pFile)
 {
-    int iLength = m_strKey.length();
+    int iLength = (int) m_strKey.length();
 
     // key의 길이를 저장한다.
     fwrite(&iLength, 4, 1, pFile);
     fwrite(m_strKey.c_str(), 1, iLength, pFile);
 
     // FileName 저장
-    iLength = m_strFileName.length();
+    iLength = (int) m_strFileName.length();
     fwrite(&iLength, 4, 1, pFile);
     fwrite(m_strFileName.c_str(), 2, iLength, pFile);
 
     // PathKey 저장
-    iLength = m_strPathKey.length();
+    iLength = (int) m_strPathKey.length();
     fwrite(&iLength, 4, 1, pFile);
     fwrite(m_strPathKey.c_str(), 1, iLength, pFile);
 
