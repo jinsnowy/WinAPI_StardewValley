@@ -36,7 +36,6 @@ void FarmScene::Update(float dt)
 
 void FarmScene::LateUpdate(float dt)
 {
-	GameScene::LateUpdate(dt);
 	const Pos& curPos = AccessPlayer()->GetCenterPos();
 	TILE_OPTION option = GetTileOption(curPos);
 	switch (option)
@@ -49,7 +48,7 @@ void FarmScene::LateUpdate(float dt)
 
 		SOUND_MANAGER->PlaySound("DoorOpen");
 		SCENE_MANAGER->SignalizeSceneChange(state);
-		break;
+		return;
 	}
 
 	if (m_tMiddlewaySceneTrigger.IsCollideRect(AccessPlayer()->GetBodyRect()))
@@ -59,7 +58,10 @@ void FarmScene::LateUpdate(float dt)
 		state.nextBeacon = BC_TWO;
 		state.nextScene = SC_MIDDLEWAY;
 		SCENE_MANAGER->SignalizeSceneChange(state);
+		return;
 	}
+
+	GameScene::LateUpdate(dt);
 }
 
 void FarmScene::Collision(float dt)

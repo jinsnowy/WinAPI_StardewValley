@@ -392,6 +392,9 @@ void MapEditScene::SetUpTileSelectUI()
     m_pSelUI->LoadTiles(SEL_GROUND, L"SV/TileGround/Outdoor/");
     m_pSelUI->LoadTiles(SEL_GROUND, L"SV/TileGround/PelicanTown/");
     m_pSelUI->LoadTiles(SEL_STATIC, L"SV/TileStatic/");
+    m_pSelUI->LoadTiles(SEL_STATIC, L"SV/TileStatic/Inner/");
+    m_pSelUI->LoadTiles(SEL_STATIC, L"SV/TileStatic/Town/");
+
     m_pSelUI->LoadTiles(SEL_OPTION, L"SV/Option/");
     m_pSelUI->LoadTiles(SEL_TILEOBJECT, L"SV/TileObject/Background/");
     m_pSelUI->LoadTiles(SEL_TILEOBJECT, L"SV/TileObject/Building/");

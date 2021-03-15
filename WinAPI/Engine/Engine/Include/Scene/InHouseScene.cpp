@@ -44,7 +44,7 @@ void InHouseScene::LateUpdate(float dt)
 		state.nextBeacon = BC_ONE;
 		state.nextScene = SC_FARM;
 		SCENE_MANAGER->SignalizeSceneChange(state);
-		break;
+		return;
 	}
 
 	GameScene::LateUpdate(dt);

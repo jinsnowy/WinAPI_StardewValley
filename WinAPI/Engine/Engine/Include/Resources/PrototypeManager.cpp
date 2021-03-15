@@ -9,6 +9,7 @@
 #include "../Object/StaticObj/Rock.h"
 #include "../Object/StaticObj/Grass.h"
 #include "../Object/StaticObj/TreeTrunk.h"
+#include "../Object/StaticObj/Npc.h"
 
 DEFINITION_SINGLE(PrototypeManager);
 
@@ -59,6 +60,9 @@ bool PrototypeManager::Init()
 
     TreeTrunk* pTrunk = Object::CreateObject<TreeTrunk>("TreeTrunk");
     RegisterProtoType(PR_OUTDOOR, "TreeTrunk1_Prototype", pTrunk);
+
+    Npc* pObj = Object::CreateObject<Npc>("NPC");
+    RegisterProtoType(PR_OUTDOOR, "NPC_Prototype", pObj);
 
 	return true;
 }

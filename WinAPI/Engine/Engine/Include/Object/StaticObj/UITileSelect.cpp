@@ -118,7 +118,7 @@ Object* UITileSelect::GetClickObject(const Pos& screenPos, bool &UITouch)
             m_iCurPageNum = i;
             return nullptr;
         }
-        py += (m_iSelButtonSize + m_iMarginItem);
+        py += m_iSelButtonSize;
     }
 
     return m_eCurSelTile == SEL_OBJECT ?
@@ -412,11 +412,11 @@ void UITileSelect::DrawPageNumPanel(HDC hdc, float dt)
     int pageNum = itemNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
     for (int i = 0; i < pageNum; i++)
     {
-        m_NumberTiles[i]->DrawImageAtFixedSize(hdc, px, py, m_iSelButtonSize);
+        m_NumberTiles[i%10]->DrawImageAtFixedSize(hdc, px, py, m_iSelButtonSize);
         if (i == m_iCurPageNum)
         {
             DrawRedRect(hdc, MakeRect(px, py, m_iSelButtonSize, m_iSelButtonSize));
         }
-        py += (m_iSelButtonSize + m_iMarginItem);
+        py += m_iSelButtonSize;
     }
 }

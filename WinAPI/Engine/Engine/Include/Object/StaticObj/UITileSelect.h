@@ -46,7 +46,7 @@ public:
 	void LoadTiles(EDIT_MODE eSel, const wchar_t* pBaseFolderName, const string& strPathKey = TEXTURE_PATH);
 	void LoadPrototypes(PR_TYPE eType);
 	void ChangeState();
-protected:
+private:
 	UITileSelect();
 	UITileSelect(const UITileSelect& ui) = delete;
 	virtual ~UITileSelect();
@@ -68,4 +68,3 @@ private:
 	void DrawObjectPanel(HDC hdc, float dt);
 	void DrawPageNumPanel(HDC hdc, float dt);
 };
-

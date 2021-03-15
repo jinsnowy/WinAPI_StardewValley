@@ -36,7 +36,12 @@ void PelicantownScene::LateUpdate(float dt)
 	switch (option)
 	{
 	case TO_BEACON_1:
-		break;
+		SceneState state = {};
+		state.nextDir = UP;
+		state.nextBeacon = BC_ONE;
+		state.nextScene = SC_STORE;
+		SCENE_MANAGER->SignalizeSceneChange(state);
+		return;
 	}
 
 	if (m_tMiddlewayTrigger.IsCollideRect(AccessPlayer()->GetBodyRect()))
@@ -46,6 +51,7 @@ void PelicantownScene::LateUpdate(float dt)
 		state.nextBeacon = BC_ONE;
 		state.nextScene = SC_MIDDLEWAY;
 		SCENE_MANAGER->SignalizeSceneChange(state);
+		return;
 	}
 	GameScene::LateUpdate(dt);
 }

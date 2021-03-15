@@ -3,6 +3,7 @@
 #include "../MoveObj/Player.h"
 #include "../../Scene/GameScene.h"
 #include "../../Scene/Scene.h"
+#include "../../Core/PathManager.h"
 #include "../../Effect/BoundEffect.h"
 
 unordered_map<string, Item*> Item::m_mapItem;
@@ -15,6 +16,46 @@ Item* Item::FindItem(const string& strItemKey)
     if (found == m_mapItem.end())
         return nullptr;
     return found->second;
+}
+
+vector<Item*> Item::LoadItemFromDirectory(const wchar_t* folderPath, COLORREF chromaKey, const string& strPathKey)
+{
+    vector<Item*> vecItem;
+    const wchar_t* pPath = PATH_MANAGER->FindPath(strPathKey);
+    wstring strPath;
+    if (pPath)
+        strPath = pPath;
+
+    strPath += folderPath;
+    assert(strPath.back() == L'\\' || strPath.back() == L'/');
+
+    string strPathString(strPath.begin(), strPath.end());
+    for (const auto& entry : fs::directory_iterator(strPath))
+    {
+        const wchar_t* imgPath = entry.path().c_str();
+        string strItemKey = ExtractKeyFromPathString(GetChar(imgPath), lstrlen(imgPath));
+
+
+        Item* pItem = FindItem(strItemKey);
+        if (pItem)
+        {
+            pItem->AddRef();
+            vecItem.push_back(pItem);
+            continue;
+        }
+
+        pItem = Object::CreateObject<Item>(strItemKey);
+
+        pItem->SetTexture(strItemKey, imgPath, "");
+        pItem->SetAsTextureSize();
+        pItem->SetColorKey(255, 255, 255);
+
+        pItem->AddRef();
+        m_mapItem.insert(make_pair(strItemKey, pItem));
+
+        vecItem.push_back(pItem);
+    }
+    return vecItem;
 }
 
 Item* Item::CreateCloneItem(const string& strItemKey, const wchar_t* pFileName, const string& strPathKey)

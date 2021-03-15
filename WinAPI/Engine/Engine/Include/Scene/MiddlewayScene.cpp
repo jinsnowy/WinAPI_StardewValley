@@ -40,6 +40,7 @@ void MiddlewayScene::LateUpdate(float dt)
 		state.nextBeacon = BC_TWO;
 		state.nextScene = SC_FARM;
 		SCENE_MANAGER->SignalizeSceneChange(state);
+		return;
 	}
 	if (m_tTownSceneTrigger.IsCollideRect(AccessPlayer()->GetBodyRect()))
 	{
@@ -48,7 +49,9 @@ void MiddlewayScene::LateUpdate(float dt)
 		state.nextBeacon = BC_TWO;
 		state.nextScene = SC_TOWN;
 		SCENE_MANAGER->SignalizeSceneChange(state);
+		return;
 	}
+
 	GameScene::LateUpdate(dt);
 }
 

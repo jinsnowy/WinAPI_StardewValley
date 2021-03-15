@@ -16,7 +16,6 @@ private:
 	UIButton();
 	UIButton(const UIButton& ui);
 	virtual ~UIButton();
-
 private:
 	bool m_bUseMouseOnOutImage = false;
 	bool m_bUseSound;
@@ -65,7 +64,6 @@ public:
 	virtual void Collision(float dt);
 	virtual void Draw(HDC hdc, float dt);
 	virtual UIButton* Clone();
-
 public:
 	void MouseOn(class Collider* pSrc, class Collider* pDst, float dt);
 	void MouseOut(class Collider* pSrc, class Collider* pDst, float dt);

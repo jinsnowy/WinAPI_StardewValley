@@ -187,6 +187,7 @@
     <ClInclude Include="Object\Ref.h" />
     <ClInclude Include="Object\StaticObj\Grass.h" />
     <ClInclude Include="Object\StaticObj\InteractiveTile.h" />
+    <ClInclude Include="Object\StaticObj\Npc.h" />
     <ClInclude Include="Object\StaticObj\Rock.h" />
     <ClInclude Include="Object\StaticObj\Stage.h" />
     <ClInclude Include="Object\StaticObj\StaticObject.h" />
@@ -195,8 +196,12 @@
     <ClInclude Include="Object\StaticObj\TreeTrunk.h" />
     <ClInclude Include="Object\StaticObj\UI.h" />
     <ClInclude Include="Object\StaticObj\UIButton.h" />
+    <ClInclude Include="Object\StaticObj\UIFastItemList.h" />
     <ClInclude Include="Object\StaticObj\UIGameManager.h" />
+    <ClInclude Include="Object\StaticObj\UIGameTimer.h" />
     <ClInclude Include="Object\StaticObj\UIPanel.h" />
+    <ClInclude Include="Object\StaticObj\UIScrollBar.h" />
+    <ClInclude Include="Object\StaticObj\UISeedStore.h" />
     <ClInclude Include="Object\StaticObj\UITileSelect.h" />
     <ClInclude Include="Other\UserException.h" />
     <ClInclude Include="Other\WindowsMessageMap.h" />
@@ -214,6 +219,7 @@
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\StartScene.h" />
+    <ClInclude Include="Scene\TownStoreScene.h" />
     <ClInclude Include="Sound\fmod.hpp" />
     <ClInclude Include="Sound\SoundManager.h" />
     <ClInclude Include="targetver.h" />
@@ -250,6 +256,7 @@
     <ClCompile Include="Object\Ref.cpp" />
     <ClCompile Include="Object\StaticObj\Grass.cpp" />
     <ClCompile Include="Object\StaticObj\InteractiveTile.cpp" />
+    <ClCompile Include="Object\StaticObj\Npc.cpp" />
     <ClCompile Include="Object\StaticObj\Rock.cpp" />
     <ClCompile Include="Object\StaticObj\Stage.cpp" />
     <ClCompile Include="Object\StaticObj\StaticObject.cpp" />
@@ -258,8 +265,12 @@
     <ClCompile Include="Object\StaticObj\TreeTrunk.cpp" />
     <ClCompile Include="Object\StaticObj\UI.cpp" />
     <ClCompile Include="Object\StaticObj\UIButton.cpp" />
+    <ClCompile Include="Object\StaticObj\UIFastItemList.cpp" />
     <ClCompile Include="Object\StaticObj\UIGameManager.cpp" />
+    <ClCompile Include="Object\StaticObj\UIGameTimer.cpp" />
     <ClCompile Include="Object\StaticObj\UIPanel.cpp" />
+    <ClCompile Include="Object\StaticObj\UIScrollBar.cpp" />
+    <ClCompile Include="Object\StaticObj\UISeedStore.cpp" />
     <ClCompile Include="Object\StaticObj\UITileSelect.cpp" />
     <ClCompile Include="Other\UserException.cpp" />
     <ClCompile Include="Other\WindowsMessageMap.cpp" />
@@ -276,6 +287,7 @@
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\StartScene.cpp" />
+    <ClCompile Include="Scene\TownStoreScene.cpp" />
     <ClCompile Include="Sound\SoundManager.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="WinMain.cpp" />

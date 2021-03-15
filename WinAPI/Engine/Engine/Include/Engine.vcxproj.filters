@@ -85,6 +85,12 @@
     <Filter Include="Effect">
       <UniqueIdentifier>{a8911367-f0f7-4ab7-831e-f175d55ca736}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\04. UI\Base">
+      <UniqueIdentifier>{01266c24-da5a-4ad4-ba01-ed7e45e708d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\04. UI\Concrete">
+      <UniqueIdentifier>{b83906a5-7a43-4029-981a-c15125b799d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -201,23 +207,11 @@
     <ClInclude Include="Sound\fmod.hpp">
       <Filter>Sound</Filter>
     </ClInclude>
-    <ClInclude Include="Object\StaticObj\UIButton.h">
-      <Filter>Object\04. UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\StaticObj\UIPanel.h">
-      <Filter>Object\04. UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\StaticObj\UI.h">
-      <Filter>Object\04. UI</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Object\Mouse.h">
       <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\StaticObj\UITileSelect.h">
-      <Filter>Object\04. UI</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>Types</Filter>
@@ -275,6 +269,36 @@
     </ClInclude>
     <ClInclude Include="Scene\PelicantownScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TownStoreScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Npc.h">
+      <Filter>Object\02. StaticObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UI.h">
+      <Filter>Object\04. UI\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UIButton.h">
+      <Filter>Object\04. UI\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UIPanel.h">
+      <Filter>Object\04. UI\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UIScrollBar.h">
+      <Filter>Object\04. UI\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UIFastItemList.h">
+      <Filter>Object\04. UI\Concrete</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UISeedStore.h">
+      <Filter>Object\04. UI\Concrete</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UIGameTimer.h">
+      <Filter>Object\04. UI\Concrete</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UITileSelect.h">
+      <Filter>Object\04. UI\Concrete</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -374,20 +398,8 @@
     <ClCompile Include="Sound\SoundManager.cpp">
       <Filter>Sound</Filter>
     </ClCompile>
-    <ClCompile Include="Object\StaticObj\UIButton.cpp">
-      <Filter>Object\04. UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\StaticObj\UIPanel.cpp">
-      <Filter>Object\04. UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\StaticObj\UI.cpp">
-      <Filter>Object\04. UI</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Mouse.cpp">
       <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\StaticObj\UITileSelect.cpp">
-      <Filter>Object\04. UI</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>Types</Filter>
@@ -442,6 +454,36 @@
     </ClCompile>
     <ClCompile Include="Scene\PelicantownScene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TownStoreScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Npc.cpp">
+      <Filter>Object\02. StaticObj</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UI.cpp">
+      <Filter>Object\04. UI\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UIButton.cpp">
+      <Filter>Object\04. UI\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UIPanel.cpp">
+      <Filter>Object\04. UI\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UIScrollBar.cpp">
+      <Filter>Object\04. UI\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UIFastItemList.cpp">
+      <Filter>Object\04. UI\Concrete</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UISeedStore.cpp">
+      <Filter>Object\04. UI\Concrete</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UIGameTimer.cpp">
+      <Filter>Object\04. UI\Concrete</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UITileSelect.cpp">
+      <Filter>Object\04. UI\Concrete</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

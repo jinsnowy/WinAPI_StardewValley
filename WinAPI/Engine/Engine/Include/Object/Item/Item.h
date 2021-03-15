@@ -17,12 +17,15 @@ public:
 	static Item* CreateCloneItem(const string& strItemKey,
 							const wchar_t* pFileName,
 							const string& strPathKey = TEXTURE_PATH);
+	static vector<Item*> LoadItemFromDirectory(const wchar_t* folderPath, COLORREF chromaKey, const string& strPathKey = TEXTURE_PATH);
 	static void ClearItemMap()
 	{
 		Safe_Release_Map(m_mapItem);
 	}
 protected:
 	bool m_bToolItem = false;
+	int m_iPrice = 0;
+	int m_iSellPrice = 0;
 	int m_iItemNum = 1;
 	static constexpr float m_fChaseSpeed = 300.f;
 	static constexpr float m_fChaseRange = 300.f;
@@ -34,8 +37,18 @@ public:
 	bool IsToolItem() const { return m_bToolItem; }
 	void SetItemNum(int num) { m_iItemNum = num; }
 	int GetItemNum() const { return m_iItemNum; }
+
+	void SetItemSellPrice(int price) { m_iSellPrice = price; }
+	int GetItemSellPrice() const { return m_iSellPrice; }
+	void SetPrice(int price) { m_iPrice = price; m_iSellPrice = max(price - 20, 0); }
+	int GetPrice() const { return m_iPrice; }
+
 	void Increase() { ++m_iItemNum; }
 	void Decrease() {if(m_iItemNum > 0) --m_iItemNum; }
+	static bool SortByName(const Item* pItemA, const Item* pItemB)
+	{
+		return pItemA->GetTag() < pItemB->GetTag();
+	}
 protected:
 	Item();
 	Item(const Item& item);

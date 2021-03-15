@@ -19,6 +19,7 @@
 #include "StaticObj/Tree.h"
 #include "StaticObj/Rock.h"
 #include "StaticObj/TreeTrunk.h"
+#include "StaticObj/Npc.h"
 
 Object::Object() :
     m_pTexture(nullptr),
@@ -90,6 +91,8 @@ Object* Object::CreateObjectByType(OBJ_TYPE eType)
     case OBJ_TREETRUNK:
         pObj = Object::CreateObject<TreeTrunk>("TreeTrunk");
         break;
+    case OBJ_NPC:
+        pObj = Object::CreateObject<Npc>("NPC");
     }
     return pObj;
 }

@@ -35,7 +35,7 @@ public:
 		m_iShowMode ^= (1 << eShow);
 	}
 	bool NeedChangeScene(int result) { return result == m_iChangeSignal; }
-	void SignalizeSceneChange(SceneState state);
+	void SignalizeSceneChange(const SceneState& state);
 	class Scene* GetScene() const { return m_pScene; }
 public:
 	bool Init();

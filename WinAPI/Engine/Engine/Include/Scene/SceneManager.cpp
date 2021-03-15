@@ -5,6 +5,7 @@
 #include "InHouseScene.h"
 #include "FarmScene.h"
 #include "PelicantownScene.h"
+#include "TownStoreScene.h"
 #include "../Application/Window.h"
 #include "../Core/FrameTimer.h"
 #include "../Core/Camera.h"
@@ -148,6 +149,10 @@ void SceneManager::ChangeScene()
 			break;
 		case SCENE_CREATE::SC_TOWN:
 			CreateScene<PelicantownScene>(nxt);
+			break;
+		case SCENE_CREATE::SC_STORE:
+			CreateScene<TownStoreScene>(nxt);
+			break;
 		}
 	}
 
@@ -248,7 +253,7 @@ void SceneManager::FadeIn()
 	SAFE_RELEASE(pEmptyTex);
 }
 
-void SceneManager::SignalizeSceneChange(SceneState state)
+void SceneManager::SignalizeSceneChange(const SceneState& state)
 {
 	m_iSignal = m_iChangeSignal;
 	m_tNextState = state;
