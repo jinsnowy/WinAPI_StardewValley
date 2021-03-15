@@ -273,6 +273,9 @@
     <ClInclude Include="Macro.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\PelicantownScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -435,6 +438,9 @@
       <Filter>Effect</Filter>
     </ClCompile>
     <ClCompile Include="Scene\MiddlewayScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\PelicantownScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>

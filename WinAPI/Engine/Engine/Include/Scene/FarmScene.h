@@ -1,5 +1,7 @@
 #pragma once
 #include "GameScene.h"
+
+// 35 x 35
 class FarmScene : public GameScene
 {
 private:

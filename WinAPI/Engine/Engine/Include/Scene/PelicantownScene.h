@@ -1,15 +1,17 @@
 #pragma once
 #include "GameScene.h"
-// 50 x50
-class InHouseScene : public GameScene
+
+// 35 x 20
+class PelicantownScene : public GameScene
 {
 private:
     friend class SceneManager;
 private:
-    const char*  pGameDataFileName = "InHouse.map";
+    const char* pGameDataFileName = "PelicanTown.map";
+    const Rect m_tMiddlewayTrigger = {-64.f, 320.f,0.f,632.f};
 private:
-    InHouseScene();
-    ~InHouseScene();
+    PelicantownScene();
+    ~PelicantownScene();
 public:
     virtual bool Init();
     virtual void Input(float dt);

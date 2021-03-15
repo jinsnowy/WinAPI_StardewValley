@@ -4,18 +4,18 @@
 #include "MiddlewayScene.h"
 #include "InHouseScene.h"
 #include "FarmScene.h"
-#include "../Core/FrameTimer.h"
-#include "../Object/Object.h"
+#include "PelicantownScene.h"
 #include "../Application/Window.h"
-#include "../Resources/ResourceManager.h"
-#include "../Resources/Texture.h"
+#include "../Core/FrameTimer.h"
+#include "../Core/Camera.h"
 #include "../Core/Input.h"
 #include "../Collider/CollisionManager.h"
-#include "../Object/StaticObj/UIGameManager.h"
-#include "../Core/FrameTimer.h"
+#include "../Resources/ResourceManager.h"
+#include "../Resources/Texture.h"
 #include "../Sound/SoundManager.h"
+#include "../Object/Object.h"
 #include "../Object/MoveObj/Player.h"
-#include "../Core/Camera.h"
+#include "../Object/StaticObj/UIGameManager.h"
 
 DEFINITION_SINGLE(SceneManager)
 
@@ -146,6 +146,8 @@ void SceneManager::ChangeScene()
 		case SCENE_CREATE::SC_MIDDLEWAY:
 			CreateScene<MiddlewayScene>(nxt);
 			break;
+		case SCENE_CREATE::SC_TOWN:
+			CreateScene<PelicantownScene>(nxt);
 		}
 	}
 
