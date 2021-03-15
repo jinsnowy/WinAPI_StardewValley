@@ -3,7 +3,6 @@
 class Grass : public InteractiveTile
 {
 	friend class Object;
-	friend class Stage;
 private:
 	static constexpr int m_iTypeNum = 3;
 	static constexpr wchar_t m_strFolderPath[] = L"SV/Object/Outdoor/Grass/";

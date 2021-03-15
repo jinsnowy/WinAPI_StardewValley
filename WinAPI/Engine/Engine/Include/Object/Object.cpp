@@ -70,10 +70,6 @@ Object::~Object()
     Safe_Release_VecList(m_ColliderList);
 }
 
-
-// ----------- Add and Delete Object from Object List
-
-
 Object* Object::CreateObjectByType(OBJ_TYPE eType)
 {
     Object* pObj = nullptr;
@@ -97,6 +93,7 @@ Object* Object::CreateObjectByType(OBJ_TYPE eType)
     }
     return pObj;
 }
+
 void Object::SetClipColorKey(const string& strName, unsigned char r, unsigned char g, unsigned char b)
 {
     assert(m_pAnimation != nullptr);

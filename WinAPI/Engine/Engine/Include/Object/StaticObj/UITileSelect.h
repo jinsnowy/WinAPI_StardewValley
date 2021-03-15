@@ -5,8 +5,7 @@ class UITileSelect :
     public UI
 {
 private:
-	friend class Layer;
-	friend class Scene;
+	friend class Object;
 	friend class MapEditScene;
 	const vector<wstring> m_btnFileName = { L"1.GroundSelTag",
 										L"2.StaticSelTag",

@@ -15,6 +15,7 @@
 #include "../Core/FrameTimer.h"
 #include "../Sound/SoundManager.h"
 #include "../Object/MoveObj/Player.h"
+#include "../Core/Camera.h"
 
 DEFINITION_SINGLE(SceneManager)
 
@@ -156,6 +157,7 @@ void SceneManager::ChangeScene()
 		gameScene->SetUpScene(m_tNextState, m_pPlayer);
 	}
 
+	FadeIn();
 	COLLISION_MANAGER->Clear();
 	m_iSignal = 0;
 	m_tNextState.nextBeacon = BC_NONE;
@@ -184,16 +186,15 @@ void SceneManager::FadeOut()
 	const int RSW = GETRESOLUTION.x;
 	const int RSH = GETRESOLUTION.y;
 
-	Texture* pBackBuffer = RESOURCE_MANAGER->GetBackBuffer();
 	Texture* pEmptyTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), RSW, RSH);
 
 	m_fDelay = 0.f;
 	RESOURCE_MANAGER->SetAlphaChannel(0);
-	float th = m_fSceneDrawPeriod;
+	float th = 0.f;
 	while (m_fDelay < m_fSceneDelay)
 	{
 		const float dt = TIMER->Tick();
-		// 장면 전환 효과
+		// FadeOut 장면 전환 효과
 		m_fDelay += dt;
 		if (m_fDelay > th)
 		{
@@ -205,7 +206,43 @@ void SceneManager::FadeOut()
 		}
 	}
 
-	SAFE_RELEASE(pBackBuffer);
+	SAFE_RELEASE(pEmptyTex);
+}
+
+void SceneManager::FadeIn()
+{
+	if (!m_pScene)
+		return;
+
+	// 카메라 조정
+	CAMERA->Input(0.01f);
+	const int RSW = GETRESOLUTION.x;
+	const int RSH = GETRESOLUTION.y;
+
+	Texture* pEmptyTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), RSW, RSH);
+
+	m_fDelay = 0.f;
+	RESOURCE_MANAGER->SetAlphaChannel(0);
+	float th = m_fSceneDrawPeriod;
+	while (m_fDelay < m_fSceneDelay)
+	{
+		const float dt = TIMER->Tick();
+		// FadeIn 장면 전환 효과
+		m_fDelay += dt;
+		if (m_fDelay > th)
+		{
+			m_pScene->Draw(pEmptyTex->GetDC(), dt);
+			if (m_pScene->GetSceneType() != SC_START && m_pScene->GetSceneType() != SC_MAPEDIT)
+				UI_MANAGER->Draw(pEmptyTex->GetDC(), dt);
+
+			th += m_fSceneDrawPeriod;
+			int alpha = int(255.f * (m_fDelay / m_fSceneDelay));
+			RESOURCE_MANAGER->SetAlphaChannel(alpha);
+			AlphaBlend(WINDOW->GetWndDC(), 0, 0, RSW, RSH,
+				pEmptyTex->GetDC(), 0, 0, RSW, RSH, RESOURCE_MANAGER->GetBlendFunc());
+		}
+	}
+
 	SAFE_RELEASE(pEmptyTex);
 }
 

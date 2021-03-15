@@ -1,6 +1,8 @@
 #pragma once
 #include "../framework.h"
 #include "Layer.h"
+#include "../Object/Object.h"
+
 class Scene
 {
 	friend class Object;
@@ -24,15 +26,7 @@ public:
 	template<typename T>
 	T* CreateObject(const string& strTag, Layer* pLayer = nullptr)
 	{
-		T* pObj = new T;
-		pObj->SetTag(strTag);
-		pObj->SetScene(this);
-
-		if (!pObj->Init())
-		{
-			SAFE_DELETE(pObj);
-			return nullptr;
-		}
+		T* pObj = Object::CreateObject<T>(strTag);
 
 		if (pLayer)
 		{

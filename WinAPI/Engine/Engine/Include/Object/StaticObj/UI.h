@@ -3,8 +3,7 @@
 class UI : public Object
 {
 private:
-	friend class Layer;
-	friend class Scene;
+	friend class Object;
 protected:
 	UI();
 	UI(const UI& ui);
