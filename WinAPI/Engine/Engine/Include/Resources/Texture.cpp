@@ -72,7 +72,7 @@ void Texture::DrawImageFrom(int px, int py, int sx, int sy, HDC orgin_hDC, int u
 
 void Texture::TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, int v)
 {
-    // 알파 블렌딩 버그 (y가 0 보다 작으면 아에 출력안됨 혹은 최대 클라이언트 y 영역 벗어나도)
+    // 알파 블렌딩 버그 (클라이언트 영역 벗어나면 드로우 안됌)
     if (py < 0)
     {
         py = 0;
@@ -81,6 +81,15 @@ void Texture::TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, 
     else if (py + sy >= GETRESOLUTION.y)
     {
         sy -= (py + sy - GETRESOLUTION.y + 1);
+    }
+    if (px < 0)
+    {
+        px = 0;
+        sx += px;
+    }
+    else if (px + sx >= GETRESOLUTION.x)
+    {
+        sx -= (px + sx - GETRESOLUTION.x + 1);
     }
     Texture* pBack = RESOURCE_MANAGER->GetBackBuffer();
     Texture* pTemp = RESOURCE_MANAGER->GetTempBuffer();
