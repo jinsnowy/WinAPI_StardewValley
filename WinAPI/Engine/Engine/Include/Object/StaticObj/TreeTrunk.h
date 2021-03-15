@@ -2,7 +2,6 @@
 #include "InteractiveTile.h"
 class TreeTrunk : public InteractiveTile
 {
-	friend class PrototypeManager;
 	friend class Object;
 	friend class Scene;
 private:
@@ -15,7 +14,6 @@ protected:
 	virtual ~TreeTrunk();
 	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
 	virtual void Die();
-
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

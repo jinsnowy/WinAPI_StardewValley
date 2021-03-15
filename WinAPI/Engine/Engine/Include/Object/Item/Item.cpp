@@ -17,7 +17,7 @@ Item* Item::FindItem(const string& strItemKey)
     return found->second;
 }
 
-Item* Item::LoadItem(const string& strItemKey, const wchar_t* pFileName, const string& strPathKey)
+Item* Item::CreateCloneItem(const string& strItemKey, const wchar_t* pFileName, const string& strPathKey)
 {
     Item* pItem = FindItem(strItemKey);
     if (pItem)

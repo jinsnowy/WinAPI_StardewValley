@@ -14,7 +14,7 @@ private:
 	static unordered_map<string, Item*> m_mapItem;
 public:
 	static Item* FindItem(const string& strItemKey);
-	static Item* LoadItem(const string& strItemKey,
+	static Item* CreateCloneItem(const string& strItemKey,
 							const wchar_t* pFileName,
 							const string& strPathKey = TEXTURE_PATH);
 	static void ClearItemMap()

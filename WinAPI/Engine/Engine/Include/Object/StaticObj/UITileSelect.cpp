@@ -102,6 +102,7 @@ Object* UITileSelect::GetClickObject(const Pos& screenPos, bool &UITouch)
     UITouch = UITouched(screenPos);
     Pos tPos = GetPos();
     Pos tSize = GetSize();
+
     // 페이지 클릭
     int itemNum = m_eCurSelTile == SEL_OBJECT ?
         (int)m_PrototypeContainer.size()
@@ -117,7 +118,7 @@ Object* UITileSelect::GetClickObject(const Pos& screenPos, bool &UITouch)
             m_iCurPageNum = i;
             return nullptr;
         }
-        px += (m_iSelButtonSize + m_iMarginItem);
+        py += (m_iSelButtonSize + m_iMarginItem);
     }
 
     return m_eCurSelTile == SEL_OBJECT ?
@@ -244,8 +245,8 @@ void UITileSelect::Input(float dt)
 {
     UI::Input(dt);
     int itemNum = m_eCurSelTile == SEL_OBJECT ?
-        (int)m_PrototypeContainer.size()
-        : (int)m_BaseTileMap[m_eCurSelTile].size();
+        (int) m_PrototypeContainer.size()
+        : (int) m_BaseTileMap[m_eCurSelTile].size();
 
     int pageNum = itemNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
     if (KEYDOWN("NextObject"))
@@ -301,6 +302,7 @@ void UITileSelect::Draw(HDC hdc, float dt)
 {
     UI::Draw(hdc, dt);
     m_eCurSelTile == SEL_OBJECT ? DrawObjectPanel(hdc, dt) : DrawTilePanel(hdc, dt);
+    DrawPageNumPanel(hdc, dt);
 }
 
 bool UITileSelect::UITouched(const Pos& screenPos) const
@@ -371,16 +373,6 @@ void UITileSelect::DrawTilePanel(HDC hdc, float dt)
         px = st_x;
         py += (TILESIZE + m_iMarginItem);
     }
-
-    // 페이지 번호
-    const int pageNum = tileNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
-
-    px = int(tPos.x); py = int(tPos.y);
-    for (int i = 0; i < pageNum; i++)
-    {
-        m_NumberTiles[i]->DrawImageAtFixedSize(hdc, px, py, m_iSelButtonSize);
-        px += (m_iSelButtonSize + m_iMarginItem);
-    }
 }
 
 void UITileSelect::DrawObjectPanel(HDC hdc, float dt)
@@ -406,14 +398,25 @@ void UITileSelect::DrawObjectPanel(HDC hdc, float dt)
         px = st_x;
         py += (TILESIZE + m_iMarginItem);
     }
+}
 
-    // 페이지 번호
-    const int pageNum = int(m_PrototypeContainer.size()) / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
+void UITileSelect::DrawPageNumPanel(HDC hdc, float dt)
+{
+    Pos tPos = GetPos();
 
-    px = int(tPos.x); py = int(tPos.y);
+    int itemNum = m_eCurSelTile == SEL_OBJECT ?
+        (int)m_PrototypeContainer.size()
+        : (int)m_BaseTileMap[m_eCurSelTile].size();
+
+    int px = int(tPos.x), py = int(tPos.y);
+    int pageNum = itemNum / (m_iDrawMaxitemNumY * m_iDrawMaxitemNumX) + 1;
     for (int i = 0; i < pageNum; i++)
     {
         m_NumberTiles[i]->DrawImageAtFixedSize(hdc, px, py, m_iSelButtonSize);
-        px += (m_iSelButtonSize + m_iMarginItem);
+        if (i == m_iCurPageNum)
+        {
+            DrawRedRect(hdc, MakeRect(px, py, m_iSelButtonSize, m_iSelButtonSize));
+        }
+        py += (m_iSelButtonSize + m_iMarginItem);
     }
 }

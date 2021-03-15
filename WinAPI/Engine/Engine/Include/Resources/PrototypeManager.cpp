@@ -30,7 +30,7 @@ PrototypeManager::~PrototypeManager()
 
 bool PrototypeManager::Init()
 {
-    Tree* pTree = LoadObject<Tree>();
+    Tree* pTree = Object::CreateObject<Tree>("Tree");
     RegisterProtoType(PR_OUTDOOR, "Tree1_Prototype", pTree);
     pTree = pTree->Clone();
     pTree->ChangeTexture(1);
@@ -39,7 +39,7 @@ bool PrototypeManager::Init()
     pTree->ChangeTexture(2);
     RegisterProtoType(PR_OUTDOOR, "Tree3_Prototype", pTree);
 
-    Rock* pRock = LoadObject<Rock>();
+    Rock* pRock = Object::CreateObject<Rock>("Rock");
     RegisterProtoType(PR_OUTDOOR, "Rock1_Prototype", pRock);
     pRock = pRock->Clone();
     pRock->ChangeTexture(1);
@@ -48,7 +48,7 @@ bool PrototypeManager::Init()
     pRock->ChangeTexture(2);
     RegisterProtoType(PR_OUTDOOR, "Rock3_Prototype", pRock);
 
-    Grass* pGrass = LoadObject<Grass>();
+    Grass* pGrass = Object::CreateObject<Grass>("Grass");
     RegisterProtoType(PR_OUTDOOR, "Grass1_Prototype", pGrass);
     pGrass = pGrass->Clone();
     pGrass->ChangeTexture(1);
@@ -57,7 +57,7 @@ bool PrototypeManager::Init()
     pGrass->ChangeTexture(2);
     RegisterProtoType(PR_OUTDOOR, "Grass3_Prototype", pGrass);
 
-    TreeTrunk* pTrunk = LoadObject<TreeTrunk>();
+    TreeTrunk* pTrunk = Object::CreateObject<TreeTrunk>("TreeTrunk");
     RegisterProtoType(PR_OUTDOOR, "TreeTrunk1_Prototype", pTrunk);
 
 	return true;

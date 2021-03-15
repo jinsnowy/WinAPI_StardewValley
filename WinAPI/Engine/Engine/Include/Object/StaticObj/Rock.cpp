@@ -35,7 +35,7 @@ bool Rock::Init()
 
 	SetHP(50.f);
 
-	Item* pItem = Item::LoadItem("Stone", L"SV/Item/Outdoor/Stone.bmp");
+	Item* pItem = Item::CreateCloneItem("Stone", L"SV/Item/Outdoor/Stone.bmp");
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
 

@@ -15,17 +15,6 @@ private:
 	unordered_map<string, Object*>* GetPrototypes(PR_TYPE eType) const { return &m_mapObjPrototype[eType]; }
 public:
 	template<typename T>
-	static T* LoadObject()
-	{
-		T* pObj = new T;
-		if (!pObj->Init())
-		{
-			SAFE_RELEASE(pObj);
-			return nullptr;
-		}
-		return pObj;
-	}
-	template<typename T>
 	static void RegisterProtoType(PR_TYPE eType, const string& strPrototypeKey)
 	{
 		if (FindPrototype(eType, strPrototypeKey))

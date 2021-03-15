@@ -67,5 +67,6 @@ private:
 	Object* SelectTile(const Pos& screenPos);
 	void DrawTilePanel(HDC hdc, float dt);
 	void DrawObjectPanel(HDC hdc, float dt);
+	void DrawPageNumPanel(HDC hdc, float dt);
 };
 

@@ -3,7 +3,6 @@
 
 class Tree : public InteractiveTile
 {
-	friend class PrototypeManager;
 	friend class Object;
 	friend class Stage;
 private:
@@ -17,7 +16,6 @@ protected:
 	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
 	virtual void Die();
 private:
-	void ChangeTexture(int id);
 	void ShadeIn(Collider* pSrc, Collider* pDst, float dt);
 public:
 	virtual bool Init();
@@ -31,5 +29,6 @@ public:
 public:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);
+	void ChangeTexture(int id);
 };
 

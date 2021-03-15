@@ -44,6 +44,8 @@ void InteractiveTile::ItemDrop(int num)
         pItem->GenerateBoundEffect();
 
         m_pLayer->AddObject(pItem);
+
+        SAFE_RELEASE(pItem);
     }
 }
 

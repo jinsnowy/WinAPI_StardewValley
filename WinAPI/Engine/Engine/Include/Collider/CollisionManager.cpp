@@ -48,7 +48,6 @@ void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
     pPoint->SetPos(pos.x, pos.y);
 
     ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
-
     SAFE_RELEASE(pColl);
 
     m_tempCollisionObjList.push_back(pPoint);
@@ -63,7 +62,6 @@ void CollisionManager::TempLateUpdate(float dt)
     {
         (*iter)->LateUpdate(dt);
     }
-    m_tempCollisionObjList.clear();
 }
 
 void CollisionManager::Clear()
@@ -90,7 +88,7 @@ void CollisionManager::Collision(float dt)
 {
     if (m_CollisionObjList.size() < 2)
     {
-        m_CollisionObjList.clear();
+        Clear();
         return;
     }
 

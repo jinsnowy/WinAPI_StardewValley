@@ -37,7 +37,7 @@ bool TreeTrunk::Init()
 
 	SetHP(300.f);
 
-	Item* pItem = Item::LoadItem("Wood", L"SV/Item/Outdoor/Wood.bmp");
+	Item* pItem = Item::CreateCloneItem("Wood", L"SV/Item/Outdoor/Wood.bmp");
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
 

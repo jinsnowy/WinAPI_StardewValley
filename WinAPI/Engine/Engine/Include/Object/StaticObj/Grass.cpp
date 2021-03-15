@@ -35,7 +35,7 @@ bool Grass::Init()
 
 	SetHP(50.f);
 	
-	Item* pItem = Item::LoadItem("Fiber", L"SV/Item/Outdoor/Fiber.bmp");
+	Item* pItem = Item::CreateCloneItem("Fiber", L"SV/Item/Outdoor/Fiber.bmp");
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
 

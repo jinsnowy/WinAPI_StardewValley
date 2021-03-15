@@ -2,7 +2,6 @@
 #include "InteractiveTile.h"
 class Grass : public InteractiveTile
 {
-	friend class PrototypeManager;
 	friend class Object;
 	friend class Stage;
 private:
@@ -15,8 +14,6 @@ protected:
 	virtual ~Grass();
 	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
 	virtual void Die();
-private:
-	void ChangeTexture(int id);
 public:
 	virtual bool Init();
 	virtual void Input(float dt);
@@ -29,5 +26,6 @@ public:
 public:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);
+	void ChangeTexture(int id);
 };
 

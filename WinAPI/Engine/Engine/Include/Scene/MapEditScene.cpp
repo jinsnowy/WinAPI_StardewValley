@@ -74,7 +74,7 @@ void MapEditScene::Input(float dt)
 {
     Scene::Input(dt);
     CameraScroll(dt);
-    m_pSelUI->Input(dt);
+
     bool touchUI = false;
     Pos tMouseClientPos = MOUSECLIENTPOS;
     Pos tMouseWorldPos = MOUSEWORLDPOS;
@@ -86,9 +86,9 @@ void MapEditScene::Input(float dt)
         switch (m_pSelUI->GetCurSelect())
         {
         case SEL_GROUND:
-        case SEL_OPTION:
             m_eCurStage = ST_GROUND;
             break;
+        case SEL_OPTION:
         case SEL_STATIC:
             m_eCurStage = ST_STATIC;
             break;

@@ -5,14 +5,14 @@ class BoundEffect
 private:
 	bool m_bEnd = false;
 	int m_iBounceCount = 0;
-	int m_iMaxBounceNum;
-	float m_fVeloY;
-	float m_fVeloX;
+	int m_iMaxBounceNum = 5;
+	float m_fVeloY = 0.f;
+	float m_fVeloX = 0.f;
 	float m_fCoeff = 0.7f;
-	Pos m_tPos;
-	float m_fYLimit;
+	Pos m_tPos = Pos(0, 0);
+	float m_fYLimit = 0.f;
 	float m_fDeltaTime = 0.f;
-	float m_fDuration;
+	float m_fDuration = 3.f;
 public:
 	BoundEffect();
 	~BoundEffect();
