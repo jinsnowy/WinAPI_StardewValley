@@ -7,7 +7,7 @@
 
 Tile::Tile()
 {
-    m_eObjType = OBJ_TILE;
+    m_iObjType = OBJ_TILE;
 }
 
 Tile::Tile(const Tile& tile)
@@ -16,7 +16,6 @@ Tile::Tile(const Tile& tile)
 {
 	m_eOption = tile.m_eOption;
 	m_pOptionTex = tile.m_pOptionTex;
-    m_eObjType = tile.m_eObjType;
 
 	if(m_pOptionTex)
 		m_pOptionTex->AddRef();

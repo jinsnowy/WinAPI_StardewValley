@@ -10,6 +10,12 @@ typedef struct _tagPixel
 	unsigned char b;
 }Pixel;
 
+struct SceneState {
+	SCENE_CREATE nextScene = SC_NONE;
+	BEACON_TAG nextBeacon = BC_NONE;
+	DIRECTION nextDir = RIGHT;
+};
+
 enum COLL_CHANNEL
 {
 	CO_OBJECT,
@@ -21,16 +27,23 @@ enum COLL_CHANNEL
 	CO_ALL,
 };
 
-enum OBJ_TYPE 
-{
-	OBJ_NORMAL = 0,
-	OBJ_TILE,
-	OBJ_TREE,
-	OBJ_ROCK,
-	OBJ_GRASS,
-	OBJ_NPC,
-	OBJ_TREETRUNK,
-};
+extern constexpr int OBJ_NORMAL = 0;
+extern constexpr int OBJ_TILE = 1;
+extern constexpr int OBJ_TREE = 2;
+extern constexpr int OBJ_ROCK = 3;
+extern constexpr int OBJ_GRASS = 4;
+extern constexpr int OBJ_NPC = 5;
+extern constexpr int OBJ_TREETRUNK = 6;
+//enum OBJ_TYPE 
+//{
+//	OBJ_NORMAL = 0,
+//	OBJ_TILE,
+//	OBJ_TREE,
+//	OBJ_ROCK,
+//	OBJ_GRASS,
+//	OBJ_NPC,
+//	OBJ_TREETRUNK,
+//};
 
 enum PR_TYPE
 {
@@ -159,8 +172,3 @@ enum DIRECTION
 	CENTER,
 };
 
-struct SceneState {
-	SCENE_CREATE nextScene = SC_NONE;
-	BEACON_TAG nextBeacon = BC_NONE;
-	DIRECTION nextDir = RIGHT;
-};

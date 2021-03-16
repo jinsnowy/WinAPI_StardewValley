@@ -7,7 +7,7 @@ const wchar_t* const Grass::m_strBaseName[] = { L"Grass1.bmp", L"Grass2.bmp", L"
 
 Grass::Grass()
 {
-	m_eObjType = OBJ_GRASS;
+	m_iObjType = OBJ_GRASS;
 }
 
 Grass::Grass(const Grass& obj)

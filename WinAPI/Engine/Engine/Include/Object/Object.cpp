@@ -71,7 +71,7 @@ Object::~Object()
     Safe_Release_VecList(m_ColliderList);
 }
 
-Object* Object::CreateObjectByType(OBJ_TYPE eType)
+Object* Object::CreateObjectByType(int eType)
 {
     Object* pObj = nullptr;
     switch (eType)
@@ -93,6 +93,7 @@ Object* Object::CreateObjectByType(OBJ_TYPE eType)
         break;
     case OBJ_NPC:
         pObj = Object::CreateObject<Npc>("NPC");
+        break;
     }
     return pObj;
 }

@@ -7,7 +7,7 @@ const wchar_t* const Rock::m_strBaseName[] = { L"Rock1.bmp", L"Rock2.bmp", L"Roc
 
 Rock::Rock()
 {
-	m_eObjType = OBJ_ROCK;
+	m_iObjType = OBJ_ROCK;
 }
 
 Rock::Rock(const Rock& obj)

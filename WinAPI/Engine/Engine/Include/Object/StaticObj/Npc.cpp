@@ -4,7 +4,7 @@
 
 Npc::Npc()
 {
-    m_eObjType = OBJ_NPC;
+    m_iObjType = OBJ_NPC;
 }
 
 Npc::Npc(const Npc& obj)
@@ -80,8 +80,6 @@ void Npc::Save(FILE* pFile)
 void Npc::Load(FILE* pFile)
 {
     StaticObject::Load(pFile);
-
-    LateInit();
 }
 
 void Npc::LateInit()

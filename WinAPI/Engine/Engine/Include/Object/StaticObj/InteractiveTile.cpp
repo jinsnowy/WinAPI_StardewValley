@@ -89,6 +89,4 @@ void InteractiveTile::Save(FILE* pFile)
 void InteractiveTile::Load(FILE* pFile)
 {
     Tile::Load(pFile);
-
-    LateInit();
 }
