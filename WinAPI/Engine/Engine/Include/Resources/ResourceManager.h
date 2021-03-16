@@ -14,7 +14,10 @@ private:
 	BLENDFUNCTION m_tBlenFunc = {};
 	BLENDFUNCTION m_tTransparent = {};
 	void LoadGlyphs();
-
+	static bool IsExistFont(char c)
+	{
+		return m_mapGlyph.find(c) != m_mapGlyph.end();
+	}
 public:
 	class Texture* GetBackBuffer() const;
 	class Texture* GetEmptyBuffer() const;
@@ -23,27 +26,57 @@ public:
 	BLENDFUNCTION GetBlendFunc() const { return m_tBlenFunc; }
 	const BLENDFUNCTION& GetTransparentFunc() const { return m_tTransparent; }
 	void ClearBuffer(Texture* pTex, int px, int py, int w, int h);
+	static inline void DrawFontsAt(HDC hdc, const string& str, const Pos& pos, DIRECTION align = RIGHT, int padding = 0)
+	{
+		return DrawFontsAt(hdc, str, int(pos.x), int(pos.y), align, padding);
+	}
 	static inline void DrawFontsAt(HDC hdc, const string& str, int px, int py, DIRECTION align = RIGHT, int padding = 0)
 	{
 		int length = (int)str.size();
+
+		int totalWidth = 0;
+		int maxWidth = 0;
+		int maxHeight = 0;
+		for (int i = 0; i < length; ++i)
+		{
+			if (IsExistFont(str[i]))
+			{
+				Texture* pFont = m_mapGlyph[str[i]];
+				totalWidth += (int)pFont->GetWidth();
+				maxHeight = max(maxHeight, (int)pFont->GetHeight());
+				maxWidth = max(maxWidth, (int)pFont->GetWidth());
+			}
+		}
+
 		if (padding > 0) {
 			assert(padding >= length);
 			switch (align)
 			{
 			case RIGHT:
-				px += (padding - length) * GLYPHX;
+				px += (padding * maxWidth - totalWidth);
 				break;
 			case CENTER:
-				px += (padding - length) / 2;
+				px += ((padding * maxWidth - totalWidth)) / 2;
 				if ((padding - length) % 2)
-					px += GLYPHX / 2;
+					px += maxWidth / 2;
 				break;
 			}
 		}
+
 		for (int i = 0; i < length; ++i)
 		{
-			m_mapGlyph[str[i]]->DrawImageAt(hdc, px, py);
-			px += GLYPHX;
+			if (str[i] == ' ' || str[i] == '_')
+			{
+				px += maxWidth;
+				continue;
+			}
+			if (IsExistFont(str[i]))
+			{
+				Texture* pFont = m_mapGlyph[str[i]];
+				int marginY = maxHeight - (int)pFont->GetHeight();
+				pFont->DrawImageAt(hdc, px, py + marginY);
+				px += pFont->GetWidth();
+			}
 		}
 	}
 	static inline void DrawFontsAtFixedSize(HDC hdc, const string& str, const Pos& pos, int size_x, int size_y, DIRECTION align = RIGHT, int padding = 0)
@@ -53,24 +86,48 @@ public:
 	static inline void DrawFontsAtFixedSize(HDC hdc, const string& str, int px, int py, int size_x, int size_y, DIRECTION align = RIGHT, int padding = 0)
 	{
 		int length = (int)str.size();
+
+		int totalWidth = 0;
+		int maxWidth = 0;
+		int maxHeight = 0;
+		for (int i = 0; i < length; ++i)
+		{
+			if (IsExistFont(str[i]))
+			{
+				Texture* pFont = m_mapGlyph[str[i]];
+				totalWidth += (int)pFont->GetWidth();
+				maxHeight = max(maxHeight, (int)pFont->GetHeight());
+				maxWidth = max(maxWidth, (int)pFont->GetWidth());
+			}
+		}
+
 		if (padding > 0) {
 			assert(padding >= length);
 			switch (align)
 			{
 			case RIGHT:
-				px += (padding - length) * size_x;
+				px += (padding * maxWidth - totalWidth);
 				break;
 			case CENTER:
-				px += (padding - length) / 2;
+				px += ((padding * maxWidth - totalWidth)) / 2;
 				if ((padding - length) % 2)
-					px += size_x / 2;
+					px += maxWidth / 2;
 				break;
 			}
 		}
+
 		for (int i = 0; i < length; ++i)
 		{
-			m_mapGlyph[str[i]]->DrawImageAtFixedSize(hdc, px, py, size_x, size_y);
-			px += size_x;
+			if (str[i] == ' ' || str[i] == '_')
+			{
+				px += size_x;
+				continue;
+			}
+			if (IsExistFont(str[i]))
+			{
+				m_mapGlyph[str[i]]->DrawImageAtFixedSize(hdc, px, py, size_x, size_y);
+				px += size_x;
+			}
 		}
 	}
 public:

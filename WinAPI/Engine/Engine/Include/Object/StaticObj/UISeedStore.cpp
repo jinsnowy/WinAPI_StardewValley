@@ -31,14 +31,14 @@ bool UISeedStore::Init()
 	SetAsTextureSize();
 	SetPos(100.f, 100.f);
 
-	Item::FindItem("CauliflowerSeed")->SetPrice(200);
-	Item::FindItem("GarlicSeed")->SetPrice(80);
-	Item::FindItem("ParsnipSeed")->SetPrice(40);
-	Item::FindItem("PotatoSeed")->SetPrice(100);
-	Item::FindItem("PepperSeed")->SetPrice(40);
-	Item::FindItem("RadishSeed")->SetPrice(40);
-	Item::FindItem("RhubarbSeed")->SetPrice(60);
-	Item::FindItem("TomatoSeed")->SetPrice(60);
+	Item::FindItem("Cauliflower_Seed")->SetPrice(200);
+	Item::FindItem("Garlic_Seed")->SetPrice(80);
+	Item::FindItem("Parsnip_Seed")->SetPrice(40);
+	Item::FindItem("Potato_Seed")->SetPrice(100);
+	Item::FindItem("Pepper_Seed")->SetPrice(40);
+	Item::FindItem("Radish_Seed")->SetPrice(40);
+	Item::FindItem("Rhubarb_Seed")->SetPrice(60);
+	Item::FindItem("Tomato_Seed")->SetPrice(60);
 
 	sort(m_vecSellingSeeds.begin(), m_vecSellingSeeds.end(), Item::SortByName);
 
@@ -129,6 +129,10 @@ void UISeedStore::Draw(HDC hdc, float dt)
 		string price = to_string(m_vecSellingSeeds[i]->GetPrice());
 		RESOURCE_MANAGER->DrawFontsAtFixedSize(hdc, 
 					price, Pos(num_st_x, st_y + m_iMargin + 5.f), 30, 40, RIGHT, 4);
+
+		string itemName = m_vecSellingSeeds[i]->GetTag();
+		RESOURCE_MANAGER->DrawFontsAt(hdc,
+			itemName, Pos(st_x + m_iMargin + 100, st_y + m_iMargin + 5.f), LEFT);
 		st_y += 95;
 	}
 }

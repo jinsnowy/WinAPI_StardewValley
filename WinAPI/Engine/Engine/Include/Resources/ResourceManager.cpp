@@ -4,6 +4,7 @@
 #include "../Application/Window.h"
 #include "../Core/PathManager.h"
 
+
 DEFINITION_SINGLE(ResourceManager)
 unordered_map<char, class Texture*> ResourceManager::m_mapGlyph;
 
@@ -36,6 +37,55 @@ void ResourceManager::LoadGlyphs()
 		}
 	}
 	Safe_Release_VecList(fonts);
+
+	Texture* pFontSheet = LoadTexture("FontSheet", L"SV/Fonts.bmp");
+	
+	wstring strPath = PATH_MANAGER->FindPath(TEXTURE_PATH);
+	strPath += L"SV/FontOffset.csv";
+	
+	ifstream file(GetChar(strPath.c_str()));
+
+	if (file.fail())
+	{
+		throw EXCEPT(L"Font Offset file not found");
+	}
+
+	string line;
+	getline(file, line);
+
+	while (file.good())
+	{
+		getline(file, line);
+	
+		vector<string> elements;
+		size_t prev = 0, cur = line.find(',');
+		while(true)
+		{
+			elements.emplace_back(line.substr(prev, cur - prev));
+
+			if (cur == string::npos)
+				break;
+
+			prev = cur + 1;
+			cur = line.find(',', prev);
+		} 
+
+		if (elements.size() == 5)
+		{
+			char ch = elements[0][0];
+			int offsetX = stoi(elements[1]), offsetY = stoi(elements[2]);
+			int width = stoi(elements[3]), height = stoi(elements[4]);
+
+			Texture* pFontTex = Texture::CreateEmptyTexture(m_hDC, width, height);
+			pFontTex->DrawImageFrom(0, 0, width, height, pFontSheet->GetDC(), offsetX, offsetY);
+			pFontTex->SetColorKey(255, 255, 255);
+			pFontTex->SetWidth((long)width);
+			pFontTex->SetHeight((long)height);
+			m_mapGlyph.insert(make_pair(ch, pFontTex));
+		}
+	}
+
+	SAFE_RELEASE(pFontSheet);
 }
 
 

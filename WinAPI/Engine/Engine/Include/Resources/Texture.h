@@ -104,6 +104,14 @@ public:
     {
         return m_tInfo.bmHeight;
     }
+    void SetWidth(long width)
+    {
+        m_tInfo.bmWidth = width;
+    }
+    void SetHeight(long height)
+    {
+        m_tInfo.bmHeight = height;
+    }
     void SaveFromPath(const char* pFileName, const string& strPathKey);
     void Save(FILE* pFile);
     void LoadFromPath(const char* pFileName, const string& strPathKey);

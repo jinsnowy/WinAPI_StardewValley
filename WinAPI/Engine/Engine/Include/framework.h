@@ -68,6 +68,8 @@
 #include <sstream>
 #include <typeinfo>
 #include <filesystem>
+#include <istream>
+#include <fstream>
 #include <utility>
 
 // 자료구조
