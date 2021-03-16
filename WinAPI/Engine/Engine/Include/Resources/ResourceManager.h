@@ -46,6 +46,10 @@ public:
 			px += GLYPHX;
 		}
 	}
+	static inline void DrawFontsAtFixedSize(HDC hdc, const string& str, const Pos& pos, int size_x, int size_y, DIRECTION align = RIGHT, int padding = 0)
+	{
+		return DrawFontsAtFixedSize(hdc, str, int(pos.x), int(pos.y), size_x, size_y, align, padding);
+	}
 	static inline void DrawFontsAtFixedSize(HDC hdc, const string& str, int px, int py, int size_x, int size_y, DIRECTION align = RIGHT, int padding = 0)
 	{
 		int length = (int)str.size();

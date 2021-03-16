@@ -154,6 +154,10 @@ LRESULT Window::HandleMsg(HWND m_hWnd, UINT msg, WPARAM wParam, LPARAM lParam) n
 			INPUT->SetUnCatchedKey(char(wParam));
 		}
 		break;
+	case WM_MOUSEWHEEL:
+	{
+		INPUT->AddMouseScroll(GET_WHEEL_DELTA_WPARAM(wParam));
+	}break;
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;

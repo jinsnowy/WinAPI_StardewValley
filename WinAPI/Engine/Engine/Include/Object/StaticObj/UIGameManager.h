@@ -28,5 +28,6 @@ public:
 	void StartTick() { m_bTickStart = true; }
 	void IncreaseTime() { m_clockPanel->IncreaseTenMinutes(); }
 	void SetPlayer(Player* pPlayer);
+	bool IsStoreSelect() const { return m_bSeedStoreSelect; }
 };
 

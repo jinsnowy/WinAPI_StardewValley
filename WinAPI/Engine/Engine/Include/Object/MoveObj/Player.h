@@ -32,6 +32,7 @@ private:
 	Player(const Player& obj) = delete;
 	~Player();
 private:
+	static constexpr int m_iMaxItemNum = 36;
 	static constexpr float m_fPlayerSpeed = 400.f;
 	float m_iHP = 1000.f;
 	float m_iMP = 1000.f;
@@ -43,6 +44,9 @@ public:
 	const vector<class Item*>& AccessItemList() const { return m_vecItem; }
 	int GetCurItemSel() const { return m_iCurItemSel; }
 	int GetMoney() const { return m_iMoney; }
+	bool Affordable(int cost) { return m_iMoney >= cost; }
+	bool IsFull() const { return m_vecItem.size() == m_iMaxItemNum; }
+	void BuyItem(class Item* pItem);
 	PlayerState GetState() const { return m_eState; }
 	inline Pos GetCenterPos() const
 	{

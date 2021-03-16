@@ -18,11 +18,18 @@ private:
 	virtual void Draw(HDC hdc, float dt);
 	virtual UI* Clone() { throw EXCEPT(L"UISeedStore cloned"); return nullptr; }
 private:
-	int m_iCurSel = 0;
 	class Player* m_pPlayer = nullptr;
 	class UIButton* m_pExitButton = nullptr;
+	class UIScrollBar* m_pScrollBar = nullptr;
+	class vector<UIButton*> m_vecSellingPanelBodies;
 	vector<class Item*> m_vecSellingSeeds;
+	static constexpr float m_iMargin = 5.f;
+	// 패널 한 칸에 대한 정보
+	static constexpr float m_fPanelWidth = 938.f;
+	static constexpr float m_fPanelHeight = 88.f;
 private:
+	void BuyingCallback(float dt, int id);
+	void SetUpItemBuyColliders();
 	void SetPlayer(class Player* pPlayer);
 	void Exit(float dt);
 };

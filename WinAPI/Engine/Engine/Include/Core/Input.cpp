@@ -42,6 +42,7 @@ bool Input::Init(HWND hWnd)
 
 	RegisterUnCatchedKey('-');
 	RegisterUnCatchedKey('=');
+
 	// 마우스 위치를 얻어오는 함수이다.
 	GetCursorPos(&m_tMousePos);
 
@@ -106,6 +107,13 @@ void Input::Update(float dt)
 				iter->second->bUp = false;
 			}
 		}
+	}
+
+	m_iMouseScroll = 0;
+	if (m_vecScroll.size())
+	{
+		for (int delta : m_vecScroll) m_iMouseScroll += delta;
+		m_vecScroll.clear();
 	}
 
 	m_pMouse->Update(dt);

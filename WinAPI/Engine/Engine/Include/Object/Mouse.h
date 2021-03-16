@@ -15,6 +15,7 @@ private:
 public:
 	Pos GetMove() const { return m_tMove; }
 	Pos GetWorldPos() const { return m_tWorldPos; }
+
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

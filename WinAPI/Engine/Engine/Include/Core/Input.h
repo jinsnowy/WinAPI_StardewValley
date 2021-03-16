@@ -29,6 +29,8 @@ private:
 	KeyInfo*						m_pCreateKey;
 	POINT							m_tMousePos;
 	POINT							m_tMouseMove;
+	vector<int> m_vecScroll;
+	int m_iMouseScroll = 0;
 	class Mouse* m_pMouse;
 private:
 	void SetUnCatchedKey(char c) { m_unCatchedKeyMap[c] = true; }
@@ -45,7 +47,8 @@ public:
 	Pos GetMouseClientPos() const;
 	Pos GetMouseWorldPos() const;
 	Pos GetMouseMove() const;
-
+	int GetMouseScroll() const { return m_iMouseScroll; }
+	void AddMouseScroll(int scroll) { m_vecScroll.push_back(scroll / 120); }
 public:
 	template<typename T>
 	bool AddKey(const T& data)

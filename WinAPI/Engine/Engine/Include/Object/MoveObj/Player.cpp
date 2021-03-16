@@ -295,6 +295,16 @@ float Player::GetToolPower() const
 	return 0.f;
 }
 
+void Player::BuyItem(Item* pItem)
+{
+	if (!Affordable(pItem->GetPrice()) || IsFull())
+	{
+		return;
+	}
+	m_iMoney -= pItem->GetPrice();
+	AddItem(pItem);
+}
+
 Rect Player::BuildSwingAttack(int dx, int dy)
 {
 	Rect rect = {};
@@ -606,7 +616,10 @@ void Player::Hit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pDst->GetTag() == "ItemBody")
 	{
-		AddItem(static_cast<Item*>(pDst->GetObj()));
+		Item* pItem = static_cast<Item*>(pDst->GetObj());
+		AddItem(pItem);
+		SOUND_MANAGER->PlaySound("ItemGet");
+		pItem->Die();
 	}
 }
 
@@ -703,7 +716,4 @@ void Player::AddItem(Item* pItem)
 	{
 		exist->Increase();
 	}
-
-	SOUND_MANAGER->PlaySound("ItemGet");
-	pItem->Die();
 }

@@ -20,7 +20,7 @@ private:
 	class Player* m_pPlayer = nullptr;
 	vector<class Texture*> m_vecSmallNumbers;
 	static constexpr float m_iItemListMargin = 8.f;
-	static constexpr float m_fSmallNumberSize = 8.f;
+	static constexpr float m_fSmallNumberSize = 12.f;
 	static constexpr int m_iItemListOffsetX = 20;
 	static constexpr int m_iItemListOffsetY = 20;
 private:

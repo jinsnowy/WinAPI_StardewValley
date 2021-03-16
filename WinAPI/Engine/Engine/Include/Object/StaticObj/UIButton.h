@@ -31,16 +31,15 @@ public:
 	void SetMouseOnImageOffset(const Pos& offset) { m_tMouseOnImageOffset = offset; }
 	void SetMouseOutImageOffset(float x, float y) { m_tMouseOutImageOffset = Pos(x, y); }
 	void SetMouseOutImageOffset(const Pos& offset) { m_tMouseOutImageOffset = offset; }
+	void SetCallback(function<void(float fTime)> func)
+	{
+		m_BtnCallback = func;
+		m_bEnableCallback = true;
+	}
 	template<typename T>
 	void SetCallback(T* pObj, void(T::* pFunc)(float))
 	{
 		m_BtnCallback = bind(pFunc, pObj, placeholders::_1);
-		m_bEnableCallback = true;
-	}
-	template<typename T>
-	void SetCallbackByType(T* pObj, UIButton* btn, int type, void(T::* pFunc)(UIButton*, int, float))
-	{
-		m_BtnCallback = bind(pFunc, pObj, btn, type, placeholders::_1);
 		m_bEnableCallback = true;
 	}
 	void SetCallback(void (*pFunc)(float))
