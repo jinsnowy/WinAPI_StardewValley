@@ -22,7 +22,7 @@ bool UIGameTimer::Init()
     SetTexture("ClockBase", L"SV/Scene/ClockBase.bmp");
     SetColorKey(255, 255, 255);
     SetAsTextureSize();
-    SetPos(GETRESOLUTION.x - GetSize().x, m_fUpperMargin);
+	SetNormalPos();
 
     COLORREF chromaKey = RGB(255, 255, 255);
     m_vecNeedleTex = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/ClockNeedle/", chromaKey);
@@ -131,6 +131,11 @@ void UIGameTimer::SetPlayer(Player* pPlayer)
 	m_pPlayer = pPlayer;
 	if (m_pPlayer)
 		m_pPlayer->AddRef();
+}
+
+void UIGameTimer::SetNormalPos()
+{
+	SetPos(GETRESOLUTION.x - GetSize().x, m_fUpperMargin);
 }
 
 void UIGameTimer::GameClock::Tick(float dt)

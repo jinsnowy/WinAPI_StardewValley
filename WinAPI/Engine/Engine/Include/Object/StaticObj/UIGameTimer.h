@@ -56,5 +56,6 @@ private:
 	vector<class Texture*> m_vecWeekDays;
 	vector<class Texture*> m_vecNoon;
 	void SetPlayer(class Player* pPlayer);
+	void SetNormalPos();
 	void IncreaseTenMinutes() { m_clock->Tick(m_fTimeUnit); }
 };

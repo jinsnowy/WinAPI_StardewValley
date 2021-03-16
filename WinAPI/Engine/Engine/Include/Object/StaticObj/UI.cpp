@@ -86,25 +86,28 @@ void UI::Draw(HDC hdc, float dt)
         }
     }
 
-    list<Collider*>::iterator iter;
-    list<Collider*>::iterator iterEnd = m_ColliderList.end();
-
-    for (iter = m_ColliderList.begin(); iter != iterEnd;)
+    if (SHOWCHECK(SHOW_COLL))
     {
-        if (!(*iter)->GetEnable())
-        {
-            ++iter;
-            continue;
-        }
+        list<Collider*>::iterator iter;
+        list<Collider*>::iterator iterEnd = m_ColliderList.end();
 
-        (*iter)->Draw(hdc, dt);
-
-        if (!(*iter)->GetLife())
+        for (iter = m_ColliderList.begin(); iter != iterEnd;)
         {
-            SAFE_RELEASE((*iter));
-            iter = m_ColliderList.erase(iter);
-            iterEnd = m_ColliderList.end();
+            if (!(*iter)->GetEnable())
+            {
+                ++iter;
+                continue;
+            }
+
+            (*iter)->Draw(hdc, dt);
+
+            if (!(*iter)->GetLife())
+            {
+                SAFE_RELEASE((*iter));
+                iter = m_ColliderList.erase(iter);
+                iterEnd = m_ColliderList.end();
+            }
+            else ++iter;
         }
-        else ++iter;
     }
 }

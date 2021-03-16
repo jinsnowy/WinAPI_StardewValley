@@ -110,7 +110,11 @@ void Input::Update(float dt)
 
 	m_pMouse->Update(dt);
 	m_pMouse->LateUpdate(dt);
-	COLLISION_MANAGER->AddObject(m_pMouse);
+	if(KEYDOWN("MouseLButton"))
+	{
+		COLLISION_MANAGER->AddObject(m_pMouse);
+	}
+
 	InitUnCatchedKeyState();
 }
 

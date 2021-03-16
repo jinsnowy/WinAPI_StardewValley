@@ -118,6 +118,26 @@ void Texture::DrawImage(HDC hdc, int px, int py, int sx, int sy, int u, int v)
     }
 }
 
+void Texture::DrawImageAtFixedSize(HDC hdc, int px, int py, int size_x, int size_y)
+{
+    Size tSize = GetSize();
+    if (GetColorKeyEnable())
+    {
+        Texture* pEmpty = RESOURCE_MANAGER->GetEmptyBuffer();
+        pEmpty->ClearBuffer(0, 0, size_x, size_y);
+        StretchBlt(pEmpty->GetDC(), 0, 0, size_x, size_y, GetDC(), 0, 0, int(tSize.x), int(tSize.y), SRCCOPY);
+        TransparentBlt(hdc, px, py, size_x, size_y,
+                            pEmpty->GetDC(), 0, 0,
+                            size_x, size_y,
+                            GetColorKey());
+        SAFE_RELEASE(pEmpty);
+    }
+    else
+    {
+        StretchBlt(hdc, px, py, size_x, size_y, GetDC(), 0, 0, int(tSize.x), int(tSize.y), SRCCOPY);
+    }
+}
+
 Texture* Texture::CreateEmptyTexture(HDC hDC, int w, int h, COLORREF color)
 {
     Texture* pTexture = new Texture;

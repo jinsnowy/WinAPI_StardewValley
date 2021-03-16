@@ -24,7 +24,7 @@ private:
 	bool m_bSeedStoreSelect = false;
 	bool m_bFastItemListSelect = true;
 public:
-	void SelectSeedStore(bool bSelect) { m_bSeedStoreSelect = bSelect; }
+	void SetSeedStore(bool bSelect);
 	void StartTick() { m_bTickStart = true; }
 	void IncreaseTime() { m_clockPanel->IncreaseTenMinutes(); }
 	void SetPlayer(Player* pPlayer);

@@ -481,7 +481,12 @@ void Player::Input(float dt)
 			StateTransit(IDLE_DOWN);
 			break;
 		}
-	
+		
+		if (KEYDOWN("MouseLButton"))
+		{
+			COLLISION_MANAGER->ClickPoint();
+		}
+
 		if (KEYDOWN("MouseLButton") && IsIdleState() && IsToolSelected())
 		{
 			Pos tMousePos = MOUSEWORLDPOS;

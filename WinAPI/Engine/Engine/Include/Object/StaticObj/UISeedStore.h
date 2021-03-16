@@ -18,8 +18,11 @@ private:
 	virtual void Draw(HDC hdc, float dt);
 	virtual UI* Clone() { throw EXCEPT(L"UISeedStore cloned"); return nullptr; }
 private:
+	int m_iCurSel = 0;
 	class Player* m_pPlayer = nullptr;
+	class UIButton* m_pExitButton = nullptr;
 	vector<class Item*> m_vecSellingSeeds;
 private:
 	void SetPlayer(class Player* pPlayer);
+	void Exit(float dt);
 };

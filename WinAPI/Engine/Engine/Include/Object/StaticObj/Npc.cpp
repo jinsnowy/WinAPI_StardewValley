@@ -23,9 +23,6 @@ bool Npc::Init()
     SetColorKey(255, 255, 255);
     SetPivot(0.f, 1.0f);
 
-    AdvertiseFrom(CO_UI);
-    ListenTo(CO_PLAYER);
-
     ColliderRect* pRC = AddCollider<ColliderRect>("NPCBody");
     pRC->SetRect(0.f, -128.f, 64.f, 0.f);
     SAFE_RELEASE(pRC);
@@ -66,9 +63,9 @@ Npc* Npc::Clone()
 
 void Npc::Click(Collider* pSrc, Collider* pDst, float dt)
 {
-    if (pDst->GetTag() == "Mouse")
+   if (pDst->GetTag() == "Click")
     {
-        UI_MANAGER->SelectSeedStore(true);
+        UI_MANAGER->SetSeedStore(true);
     }
 }
 
@@ -84,4 +81,11 @@ void Npc::Load(FILE* pFile)
 
 void Npc::LateInit()
 {
+    AdvertiseFrom(CO_UI);
+    ListenTo(CO_PLAYER);
+
+    Collider* pRC = GetCollider("NPCBody");
+    pRC->AddCollisionFunction(CS_ENTER, this, &Npc::Click);
+    pRC->AddCollisionFunction(CS_STAY, this, &Npc::Click);
+    SAFE_RELEASE(pRC);
 }

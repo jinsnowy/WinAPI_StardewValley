@@ -146,14 +146,12 @@ void Tree::LateInit()
 	Size imgSize = GetImageSize();
 
 
-	ColliderRect* pRC = static_cast<ColliderRect*>(GetCollider("TreeBody"));
+	Collider* pRC = GetCollider("TreeBody");
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::ShadeIn);
 	pRC->AddCollisionFunction(CS_STAY, this, &Tree::ShadeIn);
-
 	SAFE_RELEASE(pRC);
 
-
-	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
+	pRC = GetCollider("TileBlock");
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::TileHit);
 	pRC->AddCollisionFunction(CS_STAY, this, &Tree::TileHit);
 	SAFE_RELEASE(pRC);

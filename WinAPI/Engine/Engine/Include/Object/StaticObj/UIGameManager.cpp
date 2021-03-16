@@ -18,6 +18,9 @@ bool UIGameManager::Init()
 
 void UIGameManager::Input(float dt)
 {
+	m_clockPanel->Input(dt);
+	m_itemPanel->Input(dt);
+	m_storePanel->Input(dt);
 }
 
 int UIGameManager::Update(float dt)
@@ -27,6 +30,7 @@ int UIGameManager::Update(float dt)
 		m_clockPanel->Update(dt);
 	}
 	m_itemPanel->Update(dt);
+	m_storePanel->Update(dt);
     return 0;
 }
 
@@ -34,6 +38,7 @@ int UIGameManager::LateUpdate(float dt)
 {
 	m_clockPanel->LateUpdate(dt);
 	m_itemPanel->LateUpdate(dt);
+	m_storePanel->LateUpdate(dt);
     return 0;
 }
 
@@ -41,6 +46,7 @@ void UIGameManager::Collision(float dt)
 {
 	m_clockPanel->Collision(dt);
 	m_itemPanel->Collision(dt);
+	m_storePanel->Collision(dt);
 }
 
 void UIGameManager::Draw(HDC hdc, float dt)
@@ -49,6 +55,25 @@ void UIGameManager::Draw(HDC hdc, float dt)
 	if (m_bFastItemListSelect)
 	{
 		m_itemPanel->Draw(hdc, dt);
+	}
+	if (m_bSeedStoreSelect)
+	{
+		m_storePanel->Draw(hdc, dt);
+	}
+}
+
+void UIGameManager::SetSeedStore(bool bSelect)
+{
+	m_bSeedStoreSelect = bSelect;
+	if (m_bSeedStoreSelect)
+	{
+		Pos tPos = m_storePanel->GetPos();
+		tPos.y += m_storePanel->GetSize().y;
+		tPos.y -= m_clockPanel->GetSize().y - 70.f;
+		m_clockPanel->SetPos(tPos);
+	}
+	else {
+		m_clockPanel->SetNormalPos();
 	}
 }
 
