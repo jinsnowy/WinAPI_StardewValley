@@ -23,6 +23,18 @@ Scene::~Scene()
 	Safe_Release_VecList(m_ObjList);
 }
 
+Object* Scene::FindObjectByIndex(const INDEX& index)
+{
+	auto iterEnd = m_ObjList.end();
+	for (auto it = m_ObjList.begin(); it != iterEnd; ++it)
+	{
+		const Pos& tPos = (*it)->GetPos();
+		if (int(tPos.x) == index.x * TILESIZE && int(tPos.y) == index.y * TILESIZE)
+			return (*it);
+	}
+	return nullptr;
+}
+
 Object* Scene::FindObject(const string& tag)
 {
 	auto iterEnd = m_ObjList.end();
@@ -310,7 +322,7 @@ void Scene::LoadDefaultStages(const char* fileName)
 	for (int i = 0; i < objNum; ++i)
 	{
 		fread(&objType, 4, 1, pFile);
-		Object* pObj = Object::CreateObjectByType(objType);
+		Object* pObj = Object::CreateObjectByType(static_cast<OBJ_TYPE>(objType));
 		if (pObj)
 		{
 			pObj->Load(pFile);

@@ -64,7 +64,10 @@ int UIButton::LateUpdate(float dt)
 	if (m_eState == BS_CLICK && KEYUP("MouseLButton"))
 	{
 		if (m_bEnableCallback)
+		{
 			m_BtnCallback(dt);
+			m_eState = BS_NONE;
+		}
 	}
 
 	return 0;

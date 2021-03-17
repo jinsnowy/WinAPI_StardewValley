@@ -77,9 +77,11 @@ void UIGameManager::SetSeedStore(bool bSelect)
 		tPos.y += m_storePanel->GetSize().y;
 		tPos.y -= m_clockPanel->GetSize().y - 70.f;
 		m_clockPanel->SetPos(tPos);
+		m_pPlayer->DisableMovement();
 	}
 	else {
 		m_clockPanel->SetNormalPos();
+		m_pPlayer->EnableMovement();
 	}
 }
 

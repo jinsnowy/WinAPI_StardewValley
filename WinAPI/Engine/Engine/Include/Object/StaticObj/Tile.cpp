@@ -7,7 +7,7 @@
 
 Tile::Tile()
 {
-    m_iObjType = OBJ_TILE;
+    m_eObjType = OBJ_TILE;
 }
 
 Tile::Tile(const Tile& tile)

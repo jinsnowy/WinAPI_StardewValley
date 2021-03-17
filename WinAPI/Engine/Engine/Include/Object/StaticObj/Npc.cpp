@@ -4,7 +4,7 @@
 
 Npc::Npc()
 {
-    m_iObjType = OBJ_NPC;
+    m_eObjType = OBJ_NPC;
 }
 
 Npc::Npc(const Npc& obj)
@@ -82,7 +82,7 @@ void Npc::Load(FILE* pFile)
 void Npc::LateInit()
 {
     AdvertiseFrom(CO_UI);
-    ListenTo(CO_PLAYER);
+    ListenTo(CO_MOUSE);
 
     Collider* pRC = GetCollider("NPCBody");
     pRC->AddCollisionFunction(CS_ENTER, this, &Npc::Click);

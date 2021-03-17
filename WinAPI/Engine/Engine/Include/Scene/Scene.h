@@ -18,6 +18,7 @@ private:
 	list <Object*> m_ObjList;
 public:
 	const list<Object*>* AccessObjList() const { return &m_ObjList; }
+	Object* FindObjectByIndex(const INDEX& index);
 	Object* FindObject(const string& tag);
 	void AddObject(Object* pObj, Layer* pLayer = nullptr);
 	void EraseObject(Object* pObj);

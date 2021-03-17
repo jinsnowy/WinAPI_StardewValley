@@ -101,22 +101,23 @@ bool GameScene::IsBlockTile(const Pos& worldPos) const
 
 void GameScene::DigTile(const Pos& worldPos)
 {
+    // 농장 씬이 아닐 경우 (가정)
     if (GetSceneType() != SC_FARM)
         return;
 
     int index = GetTileIndex(worldPos);
-    if (index == -1) return;
+
+    // 오브젝트가 타일에 있는 경우
+    INDEX rcIndex = GetTileRowColIndex(worldPos);
+    if (FindObjectByIndex(rcIndex))
+        return;
 
     const string& texTag = m_pGroundStage->AccessTile(index)->AccessTexture()->GetTag();
-    if (texTag.starts_with("Dirt") && 
-        m_pStaticStage->AccessTile(index)->GetTileOption() == TO_CROP_GROUND)
+    if (texTag.starts_with("Dirt"))
     {
         Tile* tile = m_pGroundStage->GetTile(index);
-        if (tile->GetTileOption() == TO_CROP_GROUND)
-        {
-            tile->SetTexture("Dirt_Dig");
-            SOUND_MANAGER->PlaySound("DirtDig");
-        }
+        tile->SetTexture("Dirt_Dig");
+        SOUND_MANAGER->PlaySound("DirtDig");
         SAFE_RELEASE(tile);
     }
 }

@@ -9,7 +9,7 @@ const wchar_t* const TreeTrunk::m_strBaseName[] = { L"TreeTrunk1.bmp"};
 
 TreeTrunk::TreeTrunk()
 {
-	m_iObjType = OBJ_TREETRUNK;
+	m_eObjType = OBJ_TREETRUNK;
 }
 
 TreeTrunk::TreeTrunk(const TreeTrunk& obj)

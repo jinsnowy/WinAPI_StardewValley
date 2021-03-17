@@ -22,24 +22,16 @@ enum COLL_CHANNEL
 	CO_ALL,
 };
 
-extern constexpr int OBJ_NORMAL = 0;
-extern constexpr int OBJ_TILE = 1;
-extern constexpr int OBJ_TREE = 2;
-extern constexpr int OBJ_ROCK = 3;
-extern constexpr int OBJ_GRASS = 4;
-extern constexpr int OBJ_NPC = 5;
-extern constexpr int OBJ_TREETRUNK = 6;
-
-//enum OBJ_TYPE 
-//{
-//	OBJ_NORMAL = 0,
-//	OBJ_TILE,
-//	OBJ_TREE,
-//	OBJ_ROCK,
-//	OBJ_GRASS,
-//	OBJ_NPC,
-//	OBJ_TREETRUNK,
-//};
+enum OBJ_TYPE 
+{
+	OBJ_NORMAL = 0,
+	OBJ_TILE = 1,
+	OBJ_TREE = 2,
+	OBJ_ROCK = 3,
+	OBJ_GRASS = 4,
+	OBJ_NPC = 5,
+	OBJ_TREETRUNK = 6,
+};
 
 enum PR_TYPE
 {

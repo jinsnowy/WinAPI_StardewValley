@@ -118,7 +118,7 @@ void Input::Update(float dt)
 
 	m_pMouse->Update(dt);
 	m_pMouse->LateUpdate(dt);
-	if(KEYDOWN("MouseLButton"))
+	if(KEYPRESS("MouseLButton"))
 	{
 		COLLISION_MANAGER->AddObject(m_pMouse);
 	}

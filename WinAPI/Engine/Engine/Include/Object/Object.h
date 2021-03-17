@@ -9,7 +9,7 @@ class Object : public Ref
 	friend class PrototypeManager;
 protected:
 	// 씬, 레이어, 텍스쳐, 콜라이더
-	int m_iObjType = OBJ_NORMAL;
+	OBJ_TYPE m_eObjType = OBJ_NORMAL;
 	COLL_CHANNEL    m_eAdvertiseChannel = CO_ALL;
 	COLL_CHANNEL    m_eListenChannel = CO_ALL;
 	bool m_bEnableAnimation = true;
@@ -23,7 +23,7 @@ public:
 	COLL_CHANNEL GetListenChannel() const { return m_eListenChannel; }
 	void AdvertiseFrom(COLL_CHANNEL eChannel) { m_eAdvertiseChannel = eChannel; }
 	COLL_CHANNEL GetAdvertiseChannel() const { return m_eAdvertiseChannel; }
-	int GetObjectType() const { return m_iObjType; }
+	OBJ_TYPE GetObjectType() const { return m_eObjType; }
 	template<typename T>
 	static T* CreateObject(const string& strTag)
 	{
@@ -36,7 +36,7 @@ public:
 		}
 		return pObj;
 	}
-	static Object* CreateObjectByType(int eType);
+	static Object* CreateObjectByType(OBJ_TYPE eType);
 
 	void SetAnimationVisibility(bool enabled) { m_bEnableAnimation = enabled; }
 	void SetClipColorKey(const string& strName, unsigned char r, unsigned char g, unsigned char b);

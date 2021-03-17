@@ -440,25 +440,28 @@ void Player::Input(float dt)
 	m_tPrev = GetPos();
 	const GameScene* gameScene = static_cast<GameScene*>(m_pScene);
 
-	if (KEYPRESS("MoveUp"))
+	if (m_bMoveEnabled)
 	{
-		MoveYFromSpeed(dt, MD_BACK);
-		StateTransit(WALK_UP);
-	}
-	else if (KEYPRESS("MoveDown"))
-	{
-		MoveYFromSpeed(dt, MD_FRONT);
-		StateTransit(WALK_DOWN);
-	}
-	else if (KEYPRESS("MoveLeft"))
-	{
-		MoveXFromSpeed(dt, MD_BACK);
-		StateTransit(WALK_LEFT);
-	}
-	else if (KEYPRESS("MoveRight"))
-	{
-		MoveXFromSpeed(dt, MD_FRONT);
-		StateTransit(WALK_RIGHT);
+		if (KEYPRESS("MoveUp"))
+		{
+			MoveYFromSpeed(dt, MD_BACK);
+			StateTransit(WALK_UP);
+		}
+		else if (KEYPRESS("MoveDown"))
+		{
+			MoveYFromSpeed(dt, MD_FRONT);
+			StateTransit(WALK_DOWN);
+		}
+		else if (KEYPRESS("MoveLeft"))
+		{
+			MoveXFromSpeed(dt, MD_BACK);
+			StateTransit(WALK_LEFT);
+		}
+		else if (KEYPRESS("MoveRight"))
+		{
+			MoveXFromSpeed(dt, MD_FRONT);
+			StateTransit(WALK_RIGHT);
+		}
 	}
 	
 	if (m_bMove)
@@ -593,8 +596,17 @@ void Player::Draw(HDC hDC, float dt)
 	Pos tPos = m_tPos - m_tSize * m_tPivot;
 	tPos -= CAMERA->GetTopLeft();
 	TextOut(hDC, tPos.x, tPos.y - 10, playerPos, lstrlen(playerPos));
-#endif
 
+	INDEX rcIndex = static_cast<GameScene*>(m_pScene)->GetTileRowColIndex(MOUSEWORLDPOS);
+	Object* pObj = m_pScene->FindObjectByIndex(rcIndex);
+	if (pObj)
+	{
+		string str = "Object: " + pObj->AccessTexture()->GetTag();
+		size_t length = str.size();
+		TextOut(hDC, MOUSECLIENTPOS.x, MOUSECLIENTPOS.y + 20, GetWChar(str.c_str()), length);
+	}
+
+#endif
 	if (SHOWCHECK(SHOW_TILEOPTION))
 	{
 		Pos tilePos = static_cast<GameScene*>(m_pScene)->GetTilePos(GetCenterPos());

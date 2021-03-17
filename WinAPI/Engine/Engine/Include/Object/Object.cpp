@@ -71,7 +71,7 @@ Object::~Object()
     Safe_Release_VecList(m_ColliderList);
 }
 
-Object* Object::CreateObjectByType(int eType)
+Object* Object::CreateObjectByType(OBJ_TYPE eType)
 {
     Object* pObj = nullptr;
     switch (eType)

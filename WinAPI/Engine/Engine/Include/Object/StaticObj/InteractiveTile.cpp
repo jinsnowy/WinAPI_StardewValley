@@ -10,7 +10,6 @@ InteractiveTile::InteractiveTile(const InteractiveTile& obj)
     : Tile(obj)
 {
     m_iHP = obj.m_iHP;
- 
 }
 
 InteractiveTile::~InteractiveTile()
