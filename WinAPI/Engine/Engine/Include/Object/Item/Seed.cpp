@@ -1,5 +1,8 @@
 #include "Seed.h"
 #include "../StaticObj/Parsnip.h"
+#include "../StaticObj/Garlic.h"
+#include "../StaticObj/Cauliflower.h"
+#include "../StaticObj/Radish.h"
 
 Seed::Seed()
 {
@@ -61,11 +64,11 @@ Plant* Seed::SpawnPlant() const
 	}
 	if (m_strPlantTag == "Cauliflower_Plant")
 	{
-		return Object::CreateObject<Parsnip>(m_strPlantTag);
+		return Object::CreateObject<Cauliflower>(m_strPlantTag);
 	}
 	if (m_strPlantTag == "Garlic_Plant")
 	{
-		return Object::CreateObject<Parsnip>(m_strPlantTag);
+		return Object::CreateObject<Garlic>(m_strPlantTag);
 	}
 	if (m_strPlantTag == "Pepper_Plant")
 	{
@@ -73,7 +76,7 @@ Plant* Seed::SpawnPlant() const
 	}
 	if (m_strPlantTag == "Radish_Plant")
 	{
-		return Object::CreateObject<Parsnip>(m_strPlantTag);
+		return Object::CreateObject<Radish>(m_strPlantTag);
 	}
 	if (m_strPlantTag == "Tomato_Seed")
     {

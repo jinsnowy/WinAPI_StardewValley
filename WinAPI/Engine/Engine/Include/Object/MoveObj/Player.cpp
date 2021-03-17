@@ -436,7 +436,7 @@ bool Player::Init()
 
 	Seed* pSeed = static_cast<Seed*>(Item::FindItem("Parsnip_Seed"));
 	for(int i =0;i<100;++i)
-		AddItem(pSeed->Clone());
+		AddItem(pSeed);
 	SAFE_RELEASE(pSeed);
 	return true;
 }
@@ -748,6 +748,7 @@ Item* Player::FindItem(const string& itemTag)
 	{
 		if (pItem->GetTag() == itemTag)
 		{
+			pItem->AddRef();
 			return pItem;
 		}
 	}
@@ -766,6 +767,7 @@ void Player::AddItem(Item* pItem)
 	else 
 	{
 		exist->Increase();
+		SAFE_RELEASE(exist);
 	}
 }
 

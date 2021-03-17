@@ -318,6 +318,12 @@
     <ClInclude Include="Object\StaticObj\Cauliflower.h">
       <Filter>Object\05. Plant\Plant</Filter>
     </ClInclude>
+    <ClInclude Include="Object\StaticObj\Radish.h">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Garlic.h">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -513,6 +519,12 @@
       <Filter>Object\05. Plant\Plant</Filter>
     </ClCompile>
     <ClCompile Include="Object\StaticObj\Cauliflower.cpp">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Radish.cpp">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Garlic.cpp">
       <Filter>Object\05. Plant\Plant</Filter>
     </ClCompile>
   </ItemGroup>

@@ -187,11 +187,13 @@
     <ClInclude Include="Object\PointObject.h" />
     <ClInclude Include="Object\Ref.h" />
     <ClInclude Include="Object\StaticObj\Cauliflower.h" />
+    <ClInclude Include="Object\StaticObj\Garlic.h" />
     <ClInclude Include="Object\StaticObj\Grass.h" />
     <ClInclude Include="Object\StaticObj\InteractiveTile.h" />
     <ClInclude Include="Object\StaticObj\Npc.h" />
     <ClInclude Include="Object\StaticObj\Parsnip.h" />
     <ClInclude Include="Object\StaticObj\Plant.h" />
+    <ClInclude Include="Object\StaticObj\Radish.h" />
     <ClInclude Include="Object\StaticObj\Rock.h" />
     <ClInclude Include="Object\StaticObj\Stage.h" />
     <ClInclude Include="Object\StaticObj\StaticObject.h" />
@@ -260,11 +262,13 @@
     <ClCompile Include="Object\PointObject.cpp" />
     <ClCompile Include="Object\Ref.cpp" />
     <ClCompile Include="Object\StaticObj\Cauliflower.cpp" />
+    <ClCompile Include="Object\StaticObj\Garlic.cpp" />
     <ClCompile Include="Object\StaticObj\Grass.cpp" />
     <ClCompile Include="Object\StaticObj\InteractiveTile.cpp" />
     <ClCompile Include="Object\StaticObj\Npc.cpp" />
     <ClCompile Include="Object\StaticObj\Parsnip.cpp" />
     <ClCompile Include="Object\StaticObj\Plant.cpp" />
+    <ClCompile Include="Object\StaticObj\Radish.cpp" />
     <ClCompile Include="Object\StaticObj\Rock.cpp" />
     <ClCompile Include="Object\StaticObj\Stage.cpp" />
     <ClCompile Include="Object\StaticObj\StaticObject.cpp" />

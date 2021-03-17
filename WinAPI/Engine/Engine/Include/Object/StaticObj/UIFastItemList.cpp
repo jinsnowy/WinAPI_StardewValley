@@ -2,6 +2,7 @@
 #include "GameManager.h"
 #include "../../Application/Window.h"
 #include "../MoveObj/Player.h"
+#include "../../Core/Input.h"
 #include "../../Resources/ResourceManager.h"
 
 UIFastItemList::UIFastItemList()
@@ -24,12 +25,18 @@ bool UIFastItemList::Init()
 
 	COLORREF chromaKey = RGB(255, 255, 255);
 	m_vecSmallNumbers = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/SmallNumbers/", chromaKey);
-    return true;
+	INPUT->AddKey("NextItemList", VK_TAB);
+
+	return true;
 }
 
 void UIFastItemList::Input(float dt)
 {
     UI::Input(dt);
+	if (KEYDOWN("NextItemList"))
+	{
+		m_iItemListOffset = (m_iItemListOffset + 12) % 36;
+	}
 }
 
 int UIFastItemList::Update(float dt)
@@ -61,8 +68,8 @@ void UIFastItemList::Draw(HDC hdc, float dt)
 	DrawRedRect(hdc, MakeRect(tOffset.x + itemSelect * (m_iItemListMargin + 56.f), tOffset.y, 56, 56));
 
 	const auto& itemList = PLAYER->AccessItemList();
-	int size = min(12, int(itemList.size()));
-	for (int i = 0; i < size; ++i)
+	int size = min(m_iItemListOffset + 12, (int)itemList.size());
+	for (int i = m_iItemListOffset; i < size; ++i)
 	{
 		float itemImgMargin = (56.f - itemList[i]->GetSize().x) / 2.f;
 		itemList[i]->DrawImageAt(hdc, tOffset.x + itemImgMargin, tOffset.y + itemImgMargin, true);

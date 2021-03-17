@@ -22,4 +22,5 @@ private:
 	static constexpr float m_fSmallNumberSize = 12.f;
 	static constexpr int m_iItemListOffsetX = 20;
 	static constexpr int m_iItemListOffsetY = 20;
+	int m_iItemListOffset = 0;
 };

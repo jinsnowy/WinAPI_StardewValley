@@ -26,16 +26,21 @@ public:
 							const string& strPathKey = TEXTURE_PATH)
 	{
 		Item* pItem = FindItem(strItemKey);
-		if (pItem)
-			return pItem->Clone();
 
-		pItem = Object::CreateObject<T>(strItemKey);
-		pItem->SetTexture(strItemKey, pFileName);
-		pItem->SetAsTextureSize();
-		pItem->SetColorKey(255, 255, 255);
-		m_mapItem.insert(make_pair(strItemKey, pItem));
+		if (!pItem)
+		{
+			pItem = Object::CreateObject<T>(strItemKey);
+			pItem->SetTexture(strItemKey, pFileName);
+			pItem->SetAsTextureSize();
+			pItem->SetColorKey(255, 255, 255);
 
-		return pItem->Clone();
+			pItem->AddRef();
+			m_mapItem.insert(make_pair(strItemKey, pItem));
+		}
+
+		Item* pClone = pItem->Clone();
+		SAFE_RELEASE(pItem);
+		return pClone;
 	}
 	template<typename T>
 	static vector<T*> LoadItemFromDirectory(const wchar_t* folderPath, COLORREF chromaKey, const string& strPathKey = TEXTURE_PATH)
@@ -55,23 +60,18 @@ public:
 			const wchar_t* imgPath = entry.path().c_str();
 			string strItemKey = ExtractKeyFromPathString(GetChar(imgPath), lstrlen(imgPath));
 
-
 			Item* pItem = FindItem(strItemKey);
-			if (pItem)
+			if (!pItem)
 			{
+				pItem = Object::CreateObject<T>(strItemKey);
+
+				pItem->SetTexture(strItemKey, imgPath, "");
+				pItem->SetAsTextureSize();
+				pItem->SetColorKey(255, 255, 255);
+
 				pItem->AddRef();
-				vecItem.push_back(static_cast<T*>(pItem));
-				continue;
+				m_mapItem.insert(make_pair(strItemKey, pItem));
 			}
-
-			pItem = Object::CreateObject<T>(strItemKey);
-
-			pItem->SetTexture(strItemKey, imgPath, "");
-			pItem->SetAsTextureSize();
-			pItem->SetColorKey(255, 255, 255);
-
-			pItem->AddRef();
-			m_mapItem.insert(make_pair(strItemKey, pItem));
 
 			vecItem.push_back(static_cast<T*>(pItem));
 		}
