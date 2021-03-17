@@ -30,7 +30,7 @@ void ResourceManager::LoadGlyphs()
 	{
 		if (pTex)
 		{
-			string strKey = pTex->GetTag();
+			string strKey = pTex->GetTexTag();
 			char ch = (char)stoi(strKey);
 			pTex->AddRef();
 			m_mapGlyph.insert(make_pair(ch, pTex));
@@ -179,18 +179,8 @@ vector<Texture*> ResourceManager::LoadTextureFromDirectory(const wchar_t* folder
 	{
 		const wchar_t* imgPath = entry.path().c_str();
 		string strTexkey = ExtractKeyFromPathString(GetChar(imgPath), lstrlen(imgPath));
-		Texture* pTexture = new Texture;
-
-		if (!pTexture->LoadTexture(m_hInst, m_hDC, strTexkey, imgPath, ""))
-		{
-			SAFE_RELEASE(pTexture);
-			continue;
-		}
-
-		m_mapTexture.insert(make_pair(strTexkey, pTexture));
-		pTexture->AddRef();
+		Texture* pTexture = LoadTexture(strTexkey, imgPath, "");
 		pTexture->SetColorKey(chromaKey);
-
 		vecTex.push_back(pTexture);
 	}
 	return vecTex;

@@ -35,12 +35,10 @@ bool Rock::Init()
 
 	SetHP(50.f);
 
-	Item* pItem = Item::CreateCloneItem("Stone", L"SV/Item/Outdoor/Stone.bmp");
+	Item* pItem = Item::CreateCloneItem<Item>("Stone", L"SV/Item/Outdoor/Stone.bmp");
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
 
-	AdvertiseFrom(CO_OBJECT);
-	ListenTo(CO_PLAYER);
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileBlock");
 	pBlock->SetRect(5.f, 5.f, TILESIZE-5.f, TILESIZE-5.f);
 	SAFE_RELEASE(pBlock);

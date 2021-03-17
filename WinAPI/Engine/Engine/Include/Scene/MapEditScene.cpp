@@ -105,7 +105,7 @@ void MapEditScene::Input(float dt)
         if (!touchUI && m_pSelObject)
         {
             Object* pClone = EditCloneObject(m_pSelObject, tMouseWorldPos);
-            const string& texTag = m_pSelObject->AccessTexture()->GetTag();
+            const string& texTag = m_pSelObject->GetTexTag();
             switch (m_pSelUI->GetCurSelect())
             {
             case SEL_GROUND:
@@ -341,7 +341,7 @@ TILE_OPTION MapEditScene::GetCurOption() const
 {
     if (m_pSelObject)
     {
-        return m_pSelUI->GetOpt(m_pSelObject->AccessTexture()->GetTag());
+        return m_pSelUI->GetOpt(m_pSelObject->GetTexTag());
     }
     return TO_NONE;
 }
@@ -471,7 +471,7 @@ Object* MapEditScene::EditCloneObject(Object* const pObj, const Pos& worldPos)
             break;
         }
 
-        const string& texTag = tileClone->AccessTexture()->GetTag();
+        const string& texTag = tileClone->GetTexTag();
         if (texTag.starts_with("farmhouse"))
         {
             tileClone->SetPivot(0.f,0.f);

@@ -9,7 +9,10 @@ private:
     Texture();
     ~Texture();
 public:
-
+    static bool TexSort(const Texture* lhs, const Texture* rhs)
+    {
+        return lhs->GetTexTag() < rhs->GetTexTag();
+    }
     bool LoadTexture(HINSTANCE hInst,
                      HDC hDC,
                      const string& strKey,
@@ -73,7 +76,11 @@ private:
     string      m_strKey;
     string      m_strPathKey;
 public:
-    string GetTag() const override
+    void SetTexTag(const string& str)
+    {
+        m_strKey = str;
+    }
+    string GetTexTag() const
     {
         return m_strKey;
     }

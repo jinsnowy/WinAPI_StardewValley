@@ -37,12 +37,9 @@ bool TreeTrunk::Init()
 
 	SetHP(300.f);
 
-	Item* pItem = Item::CreateCloneItem("Wood", L"SV/Item/Outdoor/Wood.bmp");
+	Item* pItem = Item::CreateCloneItem<Item>("Wood", L"SV/Item/Outdoor/Wood.bmp");
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
-
-	AdvertiseFrom(CO_OBJECT);
-	ListenTo(CO_PLAYER);
 
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileBlock");
 	pBlock->SetRect(5.f, 5.f, TILESIZE - 5.f, TILESIZE - 5.f);

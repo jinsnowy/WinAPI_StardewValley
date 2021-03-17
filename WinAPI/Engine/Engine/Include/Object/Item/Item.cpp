@@ -15,62 +15,8 @@ Item* Item::FindItem(const string& strItemKey)
     auto found = m_mapItem.find(strItemKey);
     if (found == m_mapItem.end())
         return nullptr;
+    found->second->AddRef();
     return found->second;
-}
-
-vector<Item*> Item::LoadItemFromDirectory(const wchar_t* folderPath, COLORREF chromaKey, const string& strPathKey)
-{
-    vector<Item*> vecItem;
-    const wchar_t* pPath = PATH_MANAGER->FindPath(strPathKey);
-    wstring strPath;
-    if (pPath)
-        strPath = pPath;
-
-    strPath += folderPath;
-    assert(strPath.back() == L'\\' || strPath.back() == L'/');
-
-    string strPathString(strPath.begin(), strPath.end());
-    for (const auto& entry : fs::directory_iterator(strPath))
-    {
-        const wchar_t* imgPath = entry.path().c_str();
-        string strItemKey = ExtractKeyFromPathString(GetChar(imgPath), lstrlen(imgPath));
-
-
-        Item* pItem = FindItem(strItemKey);
-        if (pItem)
-        {
-            pItem->AddRef();
-            vecItem.push_back(pItem);
-            continue;
-        }
-
-        pItem = Object::CreateObject<Item>(strItemKey);
-
-        pItem->SetTexture(strItemKey, imgPath, "");
-        pItem->SetAsTextureSize();
-        pItem->SetColorKey(255, 255, 255);
-
-        pItem->AddRef();
-        m_mapItem.insert(make_pair(strItemKey, pItem));
-
-        vecItem.push_back(pItem);
-    }
-    return vecItem;
-}
-
-Item* Item::CreateCloneItem(const string& strItemKey, const wchar_t* pFileName, const string& strPathKey)
-{
-    Item* pItem = FindItem(strItemKey);
-    if (pItem)
-        return pItem->Clone();
-
-    pItem = Object::CreateObject<Item>(strItemKey);
-    pItem->SetTexture(strItemKey, pFileName);
-    pItem->SetAsTextureSize();
-    pItem->SetColorKey(255, 255, 255);
-    m_mapItem.insert(make_pair(strItemKey, pItem));
-
-    return pItem->Clone();
 }
 
 void Item::ChasePlayer(float dt)
@@ -100,19 +46,28 @@ void Item::GenerateBoundEffect()
 
 Item::Item()
 {
-    m_eAdvertiseChannel = CO_ITEM;
-    m_eListenChannel = CO_PLAYER;
+    m_eColliderChannel = CO_PLAYER;
 }
 
 Item::Item(const Item& item)
     : Object(item)
 {
     m_iItemNum = 1;
+    m_eItemType = item.m_eItemType;
 }
 
 Item::~Item()
 {
     SAFE_DELETE(m_Effect);
+}
+
+void Item::Decrease()
+{
+    --m_iItemNum; 
+    if (m_iItemNum == 0)
+    {
+        Die();
+    }
 }
 
 bool Item::Init()

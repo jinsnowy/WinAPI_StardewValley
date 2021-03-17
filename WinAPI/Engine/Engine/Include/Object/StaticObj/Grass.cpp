@@ -35,12 +35,9 @@ bool Grass::Init()
 
 	SetHP(50.f);
 	
-	Item* pItem = Item::CreateCloneItem("Fiber", L"SV/Item/Outdoor/Fiber.bmp");
+	Item* pItem = Item::CreateCloneItem<Item>("Fiber", L"SV/Item/Outdoor/Fiber.bmp");
 	SetDropItem(pItem);
 	SAFE_RELEASE(pItem);
-
-	AdvertiseFrom(CO_OBJECT);
-	ListenTo(CO_PLAYER);
 
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileIdleBlock");
 	pBlock->SetRect(5.f, 5.f, TILESIZE - 5.f, TILESIZE - 5.f);

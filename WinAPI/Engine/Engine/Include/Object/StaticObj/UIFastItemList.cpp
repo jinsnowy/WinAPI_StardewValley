@@ -1,4 +1,5 @@
 #include "UIFastItemList.h"
+#include "GameManager.h"
 #include "../../Application/Window.h"
 #include "../MoveObj/Player.h"
 #include "../../Resources/ResourceManager.h"
@@ -10,7 +11,6 @@ UIFastItemList::UIFastItemList()
 
 UIFastItemList::~UIFastItemList()
 {
-	SAFE_RELEASE(m_pPlayer);
 	Safe_Release_VecList(m_vecSmallNumbers);
 }
 
@@ -49,12 +49,6 @@ void UIFastItemList::Collision(float dt)
     UI::Collision(dt);
 }
 
-void UIFastItemList::SetPlayer(Player* pPlayer)
-{
-	m_pPlayer = pPlayer;
-	m_pPlayer->AddRef();
-}
-
 void UIFastItemList::Draw(HDC hdc, float dt)
 {
     UI::Draw(hdc, dt);
@@ -63,10 +57,10 @@ void UIFastItemList::Draw(HDC hdc, float dt)
 	tOffset.x += m_iItemListOffsetX;
 	tOffset.y += m_iItemListOffsetY;
 
-	int itemSelect = m_pPlayer->GetCurItemSel();
+	int itemSelect = PLAYER->GetCurItemSel();
 	DrawRedRect(hdc, MakeRect(tOffset.x + itemSelect * (m_iItemListMargin + 56.f), tOffset.y, 56, 56));
 
-	const auto& itemList = m_pPlayer->AccessItemList();
+	const auto& itemList = PLAYER->AccessItemList();
 	int size = min(12, int(itemList.size()));
 	for (int i = 0; i < size; ++i)
 	{

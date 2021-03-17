@@ -16,6 +16,7 @@
 #endif
 
 // 매크로
+#define TIME_UNIT 7.166f
 #define SWINGSPEED 0.3f
 #define TOOLSPEED 0.6f
 #define GLYPHX 20
@@ -25,6 +26,8 @@
 #define TILESIZE 64
 #define RAD2DEG(X) (X/PI*180.0f)
 #define DEG2RAD(X) (X*PI/180.f)
+#define HOURS(X) (X*6)
+#define DAYS(X)  (HOURS(24*X))
 // Path Key
 #define ROOT_PATH		"RootPath"
 #define TEXTURE_PATH	"TexturePath"
@@ -48,7 +51,7 @@
 #define CAMERA Camera::Instance()
 #define INPUT Input::Instance()
 #define SOUND_MANAGER SoundManager::Instance()
-#define UI_MANAGER UIGameManager::Instance()
+#define GAME_MANAGER GameManager::Instance()
 
 
 // C 런타임 헤더 파일입니다.
@@ -76,6 +79,7 @@
 #include <bitset>
 #include <vector>
 #include <queue>
+#include <deque>
 #include <list>
 #include <unordered_map>
 
@@ -156,7 +160,7 @@ void Safe_Release_Map(T& p)
 
 	for (iter = p.begin(); iter != iterEnd; ++iter)
 	{
-		SAFE_RELEASE(iter->second)
+		SAFE_RELEASE(iter->second);
 	}
 	p.clear();
 }

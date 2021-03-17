@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "../Object/StaticObj/GameManager.h"
 #include "../Object/StaticObj/Stage.h"
 #include "../Resources/PrototypeManager.h"
 #include "../Object/Object.h"
@@ -8,6 +9,8 @@
 #include "../Object/MoveObj/Player.h"
 #include "../Sound/SoundManager.h"
 #include "../Object/StaticObj/Tile.h"
+#include "../Object/StaticObj/Plant.h"
+#include "../Object/Item/Seed.h"
 #include "Layer.h"
 
 GameScene::GameScene()
@@ -112,14 +115,84 @@ void GameScene::DigTile(const Pos& worldPos)
     if (FindObjectByIndex(rcIndex))
         return;
 
-    const string& texTag = m_pGroundStage->AccessTile(index)->AccessTexture()->GetTag();
-    if (texTag.starts_with("Dirt"))
+    const string& texTag = m_pGroundStage->AccessTile(index)->GetTexTag();
+    bool isDrought = texTag.starts_with("Dirt_Dig");
+    bool isWet = texTag.starts_with("Dirt_Wet");
+    if (texTag.starts_with("Dirt") && !isDrought && !isWet)
     {
         Tile* tile = m_pGroundStage->GetTile(index);
         tile->SetTexture("Dirt_Dig");
         SOUND_MANAGER->PlaySound("DirtDig");
         SAFE_RELEASE(tile);
     }
+}
+
+void GameScene::WaterTile(const Pos& worldPos)
+{ 
+    // 농장 씬이 아닐 경우 (가정)
+    if (GetSceneType() != SC_FARM)
+        return;
+
+    int index = GetTileIndex(worldPos);
+
+    const string& texTag = m_pGroundStage->AccessTile(index)->GetTexTag();
+    bool isDrought = texTag.starts_with("Dirt_Dig");
+    bool isWet = texTag.starts_with("Dirt_Wet");
+    if (isDrought || isWet)
+    {
+        if (isDrought)
+        {
+            Tile* tile = m_pGroundStage->GetTile(index);
+            tile->SetTexture("Dirt_Wet");
+            SAFE_RELEASE(tile);
+        }
+        GAME_MANAGER->AddWateredTile(index);
+        SOUND_MANAGER->PlaySound("WaterTile");
+    }
+}
+
+void GameScene::SpawnPlant(const Pos& worldPos)
+{
+    // 농장 씬이 아닐 경우 (가정)
+    if (GetSceneType() != SC_FARM)
+        return;
+
+    int index = GetTileIndex(worldPos);
+
+    // 오브젝트가 타일에 있는 경우
+    INDEX rcIndex = GetTileRowColIndex(worldPos);
+    if (FindObjectByIndex(rcIndex))
+        return;
+
+    // 파져있는 r우
+    const string& texTag = m_pGroundStage->AccessTile(index)->GetTexTag();
+    bool isDrought = texTag.starts_with("Dirt_Dig");
+    bool isWet = texTag.starts_with("Dirt_Wet");
+    if (isDrought || isWet)
+    {
+        Seed* pSeed = static_cast<Seed*>(m_pPlayer->GetCurItem());
+
+        Plant* pPlant = pSeed->SpawnPlant();
+        if (pPlant)
+        {
+            pPlant->SetPosByIndex(rcIndex);
+            pPlant->SetTileIndex(index);
+
+            GAME_MANAGER->AddPlantList(pPlant);
+
+            AddObject(pPlant, FindLayer("Object"));
+            SAFE_RELEASE(pPlant);
+        }
+
+        pSeed->Decrease();
+        // 씨앗을 다 썻을 경우
+        if (!pSeed->GetLife())
+        {
+            m_pPlayer->EraseItem(pSeed);
+        }
+        SAFE_RELEASE(pSeed);
+    }
+
 }
 
 bool GameScene::Init()

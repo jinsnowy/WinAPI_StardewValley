@@ -1,7 +1,9 @@
 #include "UIGameTimer.h"
+#include "GameManager.h"
 #include "../../Application/Window.h"
 #include "../../Resources/ResourceManager.h"
 #include "../MoveObj/Player.h"
+
 
 UIGameTimer::UIGameTimer()
 {
@@ -10,7 +12,6 @@ UIGameTimer::UIGameTimer()
 
 UIGameTimer::~UIGameTimer()
 {
-	SAFE_RELEASE(m_pPlayer);
 	Safe_Release_VecList(m_vecMoneyTex);
 	Safe_Release_VecList(m_vecNeedleTex);
 	Safe_Release_VecList(m_vecWeekDays);
@@ -42,7 +43,7 @@ int UIGameTimer::Update(float dt)
 {
     UI::Update(dt);
 
-	m_clock->Tick(dt);
+	m_bTicked = m_clock->Tick(dt);
 
     return 0;
 }
@@ -107,7 +108,7 @@ void UIGameTimer::Draw(HDC hdc, float dt)
 
 	// µ·
 	vector<int> currentMoney;
-	int money = m_pPlayer->GetMoney();
+	int money = PLAYER->GetMoney();
 	int digit = 0;
 	do {
 		digit = money % 10;
@@ -126,25 +127,21 @@ void UIGameTimer::Draw(HDC hdc, float dt)
 	}
 }
 
-void UIGameTimer::SetPlayer(Player* pPlayer)
-{
-	m_pPlayer = pPlayer;
-	if (m_pPlayer)
-		m_pPlayer->AddRef();
-}
-
 void UIGameTimer::SetNormalPos()
 {
 	SetPos(GETRESOLUTION.x - GetSize().x, m_fUpperMargin);
 }
 
-void UIGameTimer::GameClock::Tick(float dt)
+bool UIGameTimer::GameClock::Tick(float dt)
 {
+	bool tick = false;
 	m_fTimeCur += dt;
 	if (m_fTimeCur >= m_fTimeUnit)
 	{
+		tick = true;
 		m_fTimeCur -= m_fTimeUnit;
 		m_iMinutes += 10;
+		++m_iWorldTime;
 		if (m_iMinutes == 60)
 		{
 			++m_iHours;
@@ -159,4 +156,10 @@ void UIGameTimer::GameClock::Tick(float dt)
 			m_bAfterNoon = m_iHours >= 12 ? true : false;
 		}
 	}
+	return tick;
+}
+
+unsigned long long UIGameTimer::GetWorldTime() const
+{
+	return m_clock->m_iWorldTime;
 }

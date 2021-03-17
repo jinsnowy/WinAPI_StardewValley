@@ -16,7 +16,7 @@
 #include "../Sound/SoundManager.h"
 #include "../Object/Object.h"
 #include "../Object/MoveObj/Player.h"
-#include "../Object/StaticObj/UIGameManager.h"
+#include "../Object/StaticObj/GameManager.h"
 
 DEFINITION_SINGLE(SceneManager)
 
@@ -36,8 +36,7 @@ SceneManager::~SceneManager()
 	m_vecScene.clear();
 	SAFE_RELEASE(m_pPlayer);
 
-	UI_MANAGER->Release();
-	Item::ClearItemMap();
+	GAME_MANAGER->Release();
 }
 
 bool SceneManager::Init()
@@ -61,13 +60,13 @@ bool SceneManager::Init()
 	m_pPlayer->SetTag("Player");
 	m_pPlayer->Init();
 
-	UI_MANAGER->SetPlayer(m_pPlayer);
+	GAME_MANAGER->SetPlayer(m_pPlayer);
 
 	m_tNextState.nextScene = SC_NONE;
 	m_tNextState.nextBeacon = BC_NONE;
 	m_tNextState.nextDir = RIGHT;
 
-	if (!UI_MANAGER->Init())
+	if (!GAME_MANAGER->Init())
 	{
 		throw EXCEPT(L"UI init failed.\n");
 	}
@@ -80,10 +79,10 @@ void SceneManager::Input(float dt)
 	ChangeShowMode();
 	if (KEYPRESS("TimeElapse"))
 	{
-		UI_MANAGER->IncreaseTime();
+		GAME_MANAGER->GameTimerTick();
 	}
 	m_pScene->Input(dt);
-	UI_MANAGER->Input(dt);
+	GAME_MANAGER->Input(dt);
 
 	//if (SOUND_MANAGER->IsEnd("StartLongBGM") && SOUND_MANAGER->IsEnd(SD_BACKGROUND))
 	//{
@@ -94,7 +93,7 @@ void SceneManager::Input(float dt)
 int SceneManager::Update(float dt)
 {
 	m_pScene->Update(dt);
-	UI_MANAGER->Update(dt);
+	GAME_MANAGER->Update(dt);
 	return m_iSignal;
 }
 
@@ -114,7 +113,7 @@ void SceneManager::Draw(HDC hdc, float dt)
 	m_pScene->Draw(hdc, dt);
 
 	if(m_pScene->GetSceneType() != SC_START && m_pScene->GetSceneType() != SC_MAPEDIT)
-		UI_MANAGER->Draw(hdc, dt);
+		GAME_MANAGER->Draw(hdc, dt);
 }
 
 void SceneManager::ChangeScene()
@@ -136,7 +135,7 @@ void SceneManager::ChangeScene()
 		{
 		case SCENE_CREATE::SC_INHOUSE:
 			CreateScene<InHouseScene>(nxt);
-			UI_MANAGER->StartTick();
+			GAME_MANAGER->StartTick();
 			break;
 		case SCENE_CREATE::SC_MAPEDIT:
 			CreateScene<MapEditScene>(nxt);
@@ -240,7 +239,7 @@ void SceneManager::FadeIn()
 		{
 			m_pScene->Draw(pEmptyTex->GetDC(), dt);
 			if (m_pScene->GetSceneType() != SC_START && m_pScene->GetSceneType() != SC_MAPEDIT)
-				UI_MANAGER->Draw(pEmptyTex->GetDC(), dt);
+				GAME_MANAGER->Draw(pEmptyTex->GetDC(), dt);
 
 			th += m_fSceneDrawPeriod;
 			int alpha = int(255.f * (m_fDelay / m_fSceneDelay));

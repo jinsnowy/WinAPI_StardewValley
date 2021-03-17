@@ -274,7 +274,7 @@ string Scene::GetNearObjectName(Scene* pScene, const Pos& worldPos)
 	{
 		char buffer[30] = { 0 };
 		sprintf_s(buffer, "Pos (%.1f,%.1f)", pObj->GetPos().x, pObj->GetPos().y);
-		return pObj->GetTag() + string(buffer);
+		return pObj->GetTexTag() + string(buffer);
 	}
 	return "";
 

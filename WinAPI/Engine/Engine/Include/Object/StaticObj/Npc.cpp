@@ -1,10 +1,11 @@
 #include "Npc.h"
 #include "../../Collider/ColliderRect.h"
-#include "UIGameManager.h"
+#include "GameManager.h"
 
 Npc::Npc()
 {
     m_eObjType = OBJ_NPC;
+    m_eColliderChannel = CO_PLAYER;
 }
 
 Npc::Npc(const Npc& obj)
@@ -63,9 +64,9 @@ Npc* Npc::Clone()
 
 void Npc::Click(Collider* pSrc, Collider* pDst, float dt)
 {
-   if (pDst->GetTag() == "Click")
+    if (pDst->GetTag() == "Click")
     {
-        UI_MANAGER->SetSeedStore(true);
+        GAME_MANAGER->SetSeedStore(true);
     }
 }
 
@@ -81,8 +82,6 @@ void Npc::Load(FILE* pFile)
 
 void Npc::LateInit()
 {
-    AdvertiseFrom(CO_UI);
-    ListenTo(CO_MOUSE);
 
     Collider* pRC = GetCollider("NPCBody");
     pRC->AddCollisionFunction(CS_ENTER, this, &Npc::Click);

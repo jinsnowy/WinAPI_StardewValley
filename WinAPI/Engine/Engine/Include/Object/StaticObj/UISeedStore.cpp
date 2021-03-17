@@ -2,12 +2,13 @@
 #include "UIPanel.h"
 #include "UIButton.h"
 #include "UIScrollBar.h"
-#include "UIGameManager.h"
+#include "GameManager.h"
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderRect.h"
 #include "../../Collider/CollisionManager.h"
 #include "../MoveObj/Player.h"
 #include "../Item/Item.h"
+#include "../Item/Seed.h"
 
 UISeedStore::UISeedStore()
 {
@@ -16,7 +17,6 @@ UISeedStore::UISeedStore()
 
 UISeedStore::~UISeedStore()
 {
-	SAFE_RELEASE(m_pPlayer);
 	SAFE_RELEASE(m_pExitButton);
 	SAFE_RELEASE(m_pScrollBar);
 	Safe_Release_VecList(m_vecSellingSeeds);
@@ -25,20 +25,11 @@ UISeedStore::~UISeedStore()
 
 bool UISeedStore::Init()
 {
-	m_vecSellingSeeds = Item::LoadItemFromDirectory(L"SV/Item/Seed/", RGB(255, 255, 255));
+	m_vecSellingSeeds = Item::LoadItemFromDirectory<Seed>(L"SV/Item/Seed/", RGB(255, 255, 255));
 
 	SetTexture("SeedStore", L"SV/Scene/SeedStoreUIMain.bmp");
 	SetAsTextureSize();
 	SetPos(100.f, 100.f);
-
-	Item::FindItem("Cauliflower_Seed")->SetPrice(200);
-	Item::FindItem("Garlic_Seed")->SetPrice(80);
-	Item::FindItem("Parsnip_Seed")->SetPrice(40);
-	Item::FindItem("Potato_Seed")->SetPrice(100);
-	Item::FindItem("Pepper_Seed")->SetPrice(40);
-	Item::FindItem("Radish_Seed")->SetPrice(40);
-	Item::FindItem("Rhubarb_Seed")->SetPrice(60);
-	Item::FindItem("Tomato_Seed")->SetPrice(60);
 
 	sort(m_vecSellingSeeds.begin(), m_vecSellingSeeds.end(), Item::SortByName);
 
@@ -47,6 +38,7 @@ bool UISeedStore::Init()
 	m_pExitButton->SetAsTextureSize();
 	m_pExitButton->SetPos(GetPos().x + GetSize().x + 50.f, GetPos().y);
 	m_pExitButton->SetCallback(this, &UISeedStore::Exit);
+	m_pExitButton->SetColliderChannel(CO_UI);
 
 	Size tSize = m_pExitButton->GetSize();
 	ColliderRect* pRC = static_cast<ColliderRect*>(m_pExitButton->GetCollider("ButtonBody"));
@@ -64,11 +56,6 @@ bool UISeedStore::Init()
 	pObj->SetTexture("Scroller", L"SV/Scene/Scroller.bmp");
 	pObj->SetAsTextureSize();
 	pObj->SetPos(m_pScrollBar->GetPos());
-
-	tSize = pObj->GetSize();
-	//pRC = static_cast<ColliderRect*>(pObj->GetCollider("ButtonBody"));
-	//pRC->SetRect(0, 0, tSize.x, tSize.y);
-	//SAFE_RELEASE(pRC);
 	SAFE_RELEASE(pObj);
 
 	SetUpItemBuyColliders();
@@ -139,9 +126,14 @@ void UISeedStore::Draw(HDC hdc, float dt)
 
 void UISeedStore::BuyingCallback(float dt, int id)
 {
+	if (m_fClickDelay > 0.f)
+	{
+		m_fClickDelay -= dt;
+		return;
+	}
 	int curBlock = m_pScrollBar->GetCurBlock() + id;
 	Item* curItem = m_vecSellingSeeds[curBlock];
-	m_pPlayer->BuyItem(curItem);
+	PLAYER->BuyItem(curItem);
 }
 
 void UISeedStore::SetUpItemBuyColliders()
@@ -158,7 +150,7 @@ void UISeedStore::SetUpItemBuyColliders()
 		function<void(float)> clickCallBack =
 			bind(&UISeedStore::BuyingCallback, this, std::placeholders::_1, i);
 		m_vecSellingPanelBodies[i]->SetCallback(clickCallBack);
-
+		m_vecSellingPanelBodies[i]->SetColliderChannel(CO_UI);
 		ColliderRect* pRC = static_cast<ColliderRect*>(m_vecSellingPanelBodies[i]->GetCollider("ButtonBody"));
 		pRC->SetRect(0.f, 0.f, m_fPanelWidth, m_fPanelHeight);
 		SAFE_RELEASE(pRC);
@@ -166,14 +158,8 @@ void UISeedStore::SetUpItemBuyColliders()
 	}
 }
 
-void UISeedStore::SetPlayer(Player* pPlayer)
-{
-	m_pPlayer = pPlayer;
-	if (m_pPlayer)
-		m_pPlayer->AddRef();
-}
-
 void UISeedStore::Exit(float dt)
 {
-	UI_MANAGER->SetSeedStore(false);
+	GAME_MANAGER->SetSeedStore(false);
+	m_fClickDelay = 0.5f;
 }

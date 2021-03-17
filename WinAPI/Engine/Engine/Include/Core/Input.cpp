@@ -49,6 +49,7 @@ bool Input::Init(HWND hWnd)
 	// 마우스 생성
 	m_pMouse = Object::CreateObject<Mouse>("Mouse");
 
+
 	m_pMouse->SetTexture("MouseTexture", L"mouse.bmp");
 	m_pMouse->SetSize(32, 19);
 	m_pMouse->SetColorKey(255, 255, 255);
@@ -118,10 +119,8 @@ void Input::Update(float dt)
 
 	m_pMouse->Update(dt);
 	m_pMouse->LateUpdate(dt);
-	if(KEYPRESS("MouseLButton"))
-	{
-		COLLISION_MANAGER->AddObject(m_pMouse);
-	}
+
+	COLLISION_MANAGER->AddObject(m_pMouse);
 
 	InitUnCatchedKeyState();
 }

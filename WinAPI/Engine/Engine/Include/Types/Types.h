@@ -10,15 +10,18 @@ typedef struct _tagPixel
 	unsigned char b;
 }Pixel;
 
-
+enum ITEM_TYPE
+{
+	ITEM_NONE = 0,
+	ITEM_TOOL = 1,
+	ITEM_SEED = 2,
+};
 enum COLL_CHANNEL
 {
 	CO_OBJECT,
 	CO_TILE,
 	CO_PLAYER,
-	CO_ITEM,
 	CO_UI,
-	CO_MOUSE,
 	CO_ALL,
 };
 

@@ -179,6 +179,13 @@ Size Object::GetImageSize() const
     return Size(0, 0);
 }
 
+string Object::GetTexTag() const
+{
+    if (m_pTexture)
+        return m_pTexture->GetTexTag();
+    return "";
+}
+
 void Object::SetAsTextureSize()
 {
     assert(m_pTexture);

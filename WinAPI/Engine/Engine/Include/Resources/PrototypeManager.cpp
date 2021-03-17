@@ -10,6 +10,8 @@
 #include "../Object/StaticObj/Grass.h"
 #include "../Object/StaticObj/TreeTrunk.h"
 #include "../Object/StaticObj/Npc.h"
+#include "../Object/Item/Item.h"
+#include "../Object/Item/Seed.h"
 
 DEFINITION_SINGLE(PrototypeManager);
 
@@ -31,6 +33,60 @@ PrototypeManager::~PrototypeManager()
 
 bool PrototypeManager::Init()
 {
+    Texture* pTex = RESOURCE_MANAGER->LoadTexture("Dirt_Wet", L"SV/TileGround/Outdoor/Dirt_Wet.bmp");
+    SAFE_RELEASE(pTex);
+
+    vector<Seed*> m_seedItem = Item::LoadItemFromDirectory<Seed>(L"SV/Item/Seed/", RGB(255, 255, 255));
+    for (Seed* pSeed : m_seedItem)
+    {
+        const string& seedName = pSeed->GetTag();
+        if (seedName == "Cauliflower_Seed")
+        {
+            pSeed->SetPrice(200);
+            pSeed->SetPlantTag("Cauliflower_Plant");
+        }
+        else if (seedName == "Garlic_Seed")
+        {
+            pSeed->SetPrice(80);
+            pSeed->SetPlantTag("Garlic_Plant");
+        }
+        else if (seedName == "Parsnip_Seed")
+        {
+            pSeed->SetPrice(40);
+            pSeed->SetPlantTag("Parsnip_Plant");
+        }
+        else if (seedName == "Potato_Seed")
+        {
+            pSeed->SetPrice(100);
+            pSeed->SetPlantTag("Potato_Plant");
+        }
+        else if (seedName == "Pepper_Seed")
+        {
+            pSeed->SetPrice(40);
+            pSeed->SetPlantTag("Pepper_Plant");
+        }
+        else if (seedName == "Radish_Seed")
+        {
+            pSeed->SetPrice(40);
+            pSeed->SetPlantTag("Radish_Plant");
+        }
+        else if (seedName == "Rhubarb_Seed")
+        {
+            pSeed->SetPrice(60);
+            pSeed->SetPlantTag("Rhubarb_Plant");
+        }
+        else if (seedName == "Tomato_Seed")
+        {
+            pSeed->SetPrice(60);
+            pSeed->SetPlantTag("Tomato_Plant");
+        }
+    }
+    Safe_Release_VecList(m_seedItem);
+
+
+    vector<Item*>m_vecItem = Item::LoadItemFromDirectory<Item>(L"SV/Item/Fruit/", RGB(255, 255, 255));
+    Safe_Release_VecList(m_vecItem);
+
     Tree* pTree = Object::CreateObject<Tree>("Tree");
     RegisterProtoType(PR_OUTDOOR, "Tree1_Prototype", pTree);
     pTree = pTree->Clone();

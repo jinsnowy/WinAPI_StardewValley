@@ -15,12 +15,14 @@
 #include "../../Sound/SoundManager.h"
 #include "PlayerTool.h"
 #include "../Item/Item.h"
+#include "../Item/Seed.h"
 #include "../Item/Tool.h"
 
 Player::Player()
 	:
 	m_tPrev(Pos())
 {
+	m_eColliderChannel = CO_PLAYER;
 }
 
 Player::~Player()
@@ -295,6 +297,16 @@ float Player::GetToolPower() const
 	return 0.f;
 }
 
+Item* Player::GetCurItem() const
+{
+	if (m_iCurItemSel >= m_vecItem.size())
+	{
+		return nullptr;
+	}
+	m_vecItem[m_iCurItemSel]->AddRef();
+	return m_vecItem[m_iCurItemSel];
+}
+
 void Player::BuyItem(Item* pItem)
 {
 	if (!Affordable(pItem->GetPrice()) || IsFull())
@@ -393,8 +405,6 @@ bool Player::Init()
 	InitTexture();
 	InitAnimation();
 
-	AdvertiseFrom(CO_PLAYER);
-
 	StateTransit(IDLE_RIGHT);
 
 	ColliderRect* pRC = AddCollider<ColliderRect>("PlayerBody");
@@ -424,6 +434,10 @@ bool Player::Init()
 	INPUT->AddKey("Item-", char(0x2d));
 	INPUT->AddKey("Item=", char(0x3d));
 
+	Seed* pSeed = static_cast<Seed*>(Item::FindItem("Parsnip_Seed"));
+	for(int i =0;i<100;++i)
+		AddItem(pSeed->Clone());
+	SAFE_RELEASE(pSeed);
 	return true;
 }
 
@@ -500,7 +514,7 @@ void Player::Input(float dt)
 			COLLISION_MANAGER->ClickPoint();
 		}
 
-		if (KEYDOWN("MouseLButton") && IsIdleState() && IsToolSelected())
+		if (KEYDOWN("MouseLButton") && IsIdleState())
 		{
 			Pos tMousePos = MOUSEWORLDPOS;
 			Pos tCenterPos = GetCenterPos();
@@ -508,55 +522,67 @@ void Player::Input(float dt)
 			INDEX index = gameScene->GetIndexDiff(tMousePos, tCenterPos);
 			if (max(abs(index.x), abs(index.y)) <= 1)
 			{
-				bool bSwingTool = IsSwingTool();
-				if (index.x > 0)
+				if (IsToolSelected())
 				{
-					bSwingTool ? m_pAnimation->ChangeClip("SwingRight") :
-								m_pAnimation->ChangeClip("ToolRight");
-					StateTransit(IDLE_RIGHT);
-				}
-				else if (index.x < 0)
-				{
-					bSwingTool ? m_pAnimation->ChangeClip("SwingLeft") :
-								m_pAnimation->ChangeClip("ToolLeft");
-					StateTransit(IDLE_LEFT);
-				}
-				else if (index.y < 0)
-				{
-					bSwingTool ? m_pAnimation->ChangeClip("SwingUp") :
-								m_pAnimation->ChangeClip("ToolUp");
-					StateTransit(IDLE_UP);
-				}
-				else if (index.y >= 0)
-				{
-					bSwingTool ? m_pAnimation->ChangeClip("SwingDown") :
-								m_pAnimation->ChangeClip("ToolDown");
-					StateTransit(IDLE_DOWN);
-				}
-					
-				m_pPlayerTool->Play();
-				StateTransit(TOOL_USE);
+					bool bSwingTool = IsSwingTool();
+					if (index.x > 0)
+					{
+						bSwingTool ? m_pAnimation->ChangeClip("SwingRight") :
+							m_pAnimation->ChangeClip("ToolRight");
+						StateTransit(IDLE_RIGHT);
+					}
+					else if (index.x < 0)
+					{
+						bSwingTool ? m_pAnimation->ChangeClip("SwingLeft") :
+							m_pAnimation->ChangeClip("ToolLeft");
+						StateTransit(IDLE_LEFT);
+					}
+					else if (index.y < 0)
+					{
+						bSwingTool ? m_pAnimation->ChangeClip("SwingUp") :
+							m_pAnimation->ChangeClip("ToolUp");
+						StateTransit(IDLE_UP);
+					}
+					else if (index.y >= 0)
+					{
+						bSwingTool ? m_pAnimation->ChangeClip("SwingDown") :
+							m_pAnimation->ChangeClip("ToolDown");
+						StateTransit(IDLE_DOWN);
+					}
 
-				if (bSwingTool)
-				{
-					// ³´/°Ë Ã¼Å©
-					Rect attackRange = BuildSwingAttack(index.x, index.y);
-					TRIGGER_RECTEVENT(GetCenterPos(), attackRange, "SwingTool");
+					m_pPlayerTool->Play();
+					StateTransit(TOOL_USE);
+
+					if (bSwingTool)
+					{
+						// ³´/°Ë Ã¼Å©
+						Rect attackRange = BuildSwingAttack(index.x, index.y);
+						TRIGGER_RECTEVENT(GetCenterPos(), attackRange, "SwingTool");
+					}
+					else {
+						// µµ³¢/°î±ªÀÌ/È£¹Ì Ã¼Å©
+						if (HasTool(PlayerTool::TOOL_AXE))
+						{
+							TRIGGER_CLICKEVENT(tMousePos, "AxeTool");
+						}
+						else if (HasTool(PlayerTool::TOOL_PICK))
+						{
+							TRIGGER_CLICKEVENT(tMousePos, "PickTool");
+						}
+						else if (HasTool(PlayerTool::TOOL_HOE))
+						{
+							static_cast<GameScene*>(m_pScene)->DigTile(tMousePos);
+						}
+						else if (HasTool(PlayerTool::TOOL_WATER))
+						{
+							static_cast<GameScene*>(m_pScene)->WaterTile(tMousePos);
+						}
+					}
 				}
-				else {
-					// µµ³¢/°î±ªÀÌ/È£¹Ì Ã¼Å©
-					if (HasTool(PlayerTool::TOOL_AXE))
-					{
-						TRIGGER_CLICKEVENT(tMousePos, "AxeTool");
-					}
-					else if (HasTool(PlayerTool::TOOL_PICK))
-					{
-						TRIGGER_CLICKEVENT(tMousePos, "PickTool");
-					}
-					else if (HasTool(PlayerTool::TOOL_HOE))
-					{
-						static_cast<GameScene*>(m_pScene)->DigTile(tMousePos);
-					}
+				
+				if (IsSeedSelected())
+				{
+					static_cast<GameScene*>(m_pScene)->SpawnPlant(tMousePos);
 				}
 			}
 		}
@@ -589,6 +615,19 @@ void Player::Draw(HDC hDC, float dt)
   	MovableObject::Draw(hDC, dt);
 
 	m_pPlayerTool->Draw(hDC, dt);
+	if (m_eState != TOOL_USE)
+	{
+		Item* pItem = GetCurItem();
+		if (pItem && !pItem->IsToolItem())
+		{
+			Pos tPos = GetCenterPos();
+			tPos -= CAMERA->GetTopLeft();
+			tPos.x -= pItem->GetSize().x / 2;
+			tPos.y -= GetSize().y + (pItem->GetSize().y) * 0.8f;
+			pItem->DrawImageAt(hDC, tPos, true);
+		}
+		SAFE_RELEASE(pItem);
+	}
 
 #ifdef _DEBUG
 	wchar_t playerPos[32] = {};
@@ -601,7 +640,7 @@ void Player::Draw(HDC hDC, float dt)
 	Object* pObj = m_pScene->FindObjectByIndex(rcIndex);
 	if (pObj)
 	{
-		string str = "Object: " + pObj->AccessTexture()->GetTag();
+		string str = "Object: " + pObj->GetTexTag();
 		size_t length = str.size();
 		TextOut(hDC, MOUSECLIENTPOS.x, MOUSECLIENTPOS.y + 20, GetWChar(str.c_str()), length);
 	}
@@ -728,4 +767,11 @@ void Player::AddItem(Item* pItem)
 	{
 		exist->Increase();
 	}
+}
+
+void Player::EraseItem(Item* pItem)
+{
+	auto iter = find(m_vecItem.begin(), m_vecItem.end(), pItem);
+	SAFE_RELEASE((*iter));
+	m_vecItem.erase(iter);
 }

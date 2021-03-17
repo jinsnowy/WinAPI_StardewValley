@@ -177,6 +177,7 @@
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Object\Item\Item.h" />
+    <ClInclude Include="Object\Item\Seed.h" />
     <ClInclude Include="Object\Item\Tool.h" />
     <ClInclude Include="Object\Mouse.h" />
     <ClInclude Include="Object\MoveObj\MovableObject.h" />
@@ -185,9 +186,12 @@
     <ClInclude Include="Object\Object.h" />
     <ClInclude Include="Object\PointObject.h" />
     <ClInclude Include="Object\Ref.h" />
+    <ClInclude Include="Object\StaticObj\Cauliflower.h" />
     <ClInclude Include="Object\StaticObj\Grass.h" />
     <ClInclude Include="Object\StaticObj\InteractiveTile.h" />
     <ClInclude Include="Object\StaticObj\Npc.h" />
+    <ClInclude Include="Object\StaticObj\Parsnip.h" />
+    <ClInclude Include="Object\StaticObj\Plant.h" />
     <ClInclude Include="Object\StaticObj\Rock.h" />
     <ClInclude Include="Object\StaticObj\Stage.h" />
     <ClInclude Include="Object\StaticObj\StaticObject.h" />
@@ -197,7 +201,7 @@
     <ClInclude Include="Object\StaticObj\UI.h" />
     <ClInclude Include="Object\StaticObj\UIButton.h" />
     <ClInclude Include="Object\StaticObj\UIFastItemList.h" />
-    <ClInclude Include="Object\StaticObj\UIGameManager.h" />
+    <ClInclude Include="Object\StaticObj\GameManager.h" />
     <ClInclude Include="Object\StaticObj\UIGameTimer.h" />
     <ClInclude Include="Object\StaticObj\UIPanel.h" />
     <ClInclude Include="Object\StaticObj\UIScrollBar.h" />
@@ -246,6 +250,7 @@
     <ClCompile Include="Effect\BoundEffect.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
+    <ClCompile Include="Object\Item\Seed.cpp" />
     <ClCompile Include="Object\Item\Tool.cpp" />
     <ClCompile Include="Object\Mouse.cpp" />
     <ClCompile Include="Object\MoveObj\MovableObject.cpp" />
@@ -254,9 +259,12 @@
     <ClCompile Include="Object\Object.cpp" />
     <ClCompile Include="Object\PointObject.cpp" />
     <ClCompile Include="Object\Ref.cpp" />
+    <ClCompile Include="Object\StaticObj\Cauliflower.cpp" />
     <ClCompile Include="Object\StaticObj\Grass.cpp" />
     <ClCompile Include="Object\StaticObj\InteractiveTile.cpp" />
     <ClCompile Include="Object\StaticObj\Npc.cpp" />
+    <ClCompile Include="Object\StaticObj\Parsnip.cpp" />
+    <ClCompile Include="Object\StaticObj\Plant.cpp" />
     <ClCompile Include="Object\StaticObj\Rock.cpp" />
     <ClCompile Include="Object\StaticObj\Stage.cpp" />
     <ClCompile Include="Object\StaticObj\StaticObject.cpp" />
@@ -266,7 +274,7 @@
     <ClCompile Include="Object\StaticObj\UI.cpp" />
     <ClCompile Include="Object\StaticObj\UIButton.cpp" />
     <ClCompile Include="Object\StaticObj\UIFastItemList.cpp" />
-    <ClCompile Include="Object\StaticObj\UIGameManager.cpp" />
+    <ClCompile Include="Object\StaticObj\GameManager.cpp" />
     <ClCompile Include="Object\StaticObj\UIGameTimer.cpp" />
     <ClCompile Include="Object\StaticObj\UIPanel.cpp" />
     <ClCompile Include="Object\StaticObj\UIScrollBar.cpp" />

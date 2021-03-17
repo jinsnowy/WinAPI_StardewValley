@@ -228,7 +228,7 @@ void UITileSelect::LoadPrototypes(PR_TYPE eType)
 
     const auto sort_by = [](Object* pa, Object* pb)
     {
-        return pa->AccessTexture()->GetTag() < pb->AccessTexture()->GetTag();
+        return pa->GetTexTag() < pb->GetTexTag();
     };
     sort(m_PrototypeContainer.begin(), m_PrototypeContainer.end(), sort_by);
 }

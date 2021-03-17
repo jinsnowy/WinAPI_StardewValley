@@ -9,7 +9,7 @@ class InteractiveTile :
 	friend class Object;
 	friend class Stage;
 private:
-	float m_iHP = 0.f;
+	float m_iHP = 100.f;
 	class Item* m_pItem = nullptr;
 protected:
 	InteractiveTile();
@@ -19,10 +19,15 @@ protected:
 public:
 	void SetHP(float hp) { m_iHP = hp; }
 	void GetDamage(float power) { m_iHP -= power; }
-	bool IsDie() const { return m_iHP <= 0.f; }
+	bool IsDie() const { return m_iHP <= 0.f || !GetLife(); }
 	void SetDropItem(class Item* pItem);
-	virtual void ItemDrop(int num);
+	virtual void ItemDrop(int num, bool effect = true);
 	virtual void Die() = 0;
+	void SetPosByIndex(const INDEX& index)
+	{
+		float sz = (TILESIZE - GetSize().x) / 2;
+		SetPos(float(index.x * TILESIZE + sz), float(index.y * TILESIZE + sz));
+	}
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

@@ -1,12 +1,7 @@
 #pragma once
 #include "UI.h"
 
-enum BUTTON_STATE
-{
-	BS_NONE,
-	BS_MOUSEON,
-	BS_CLICK
-};
+
 
 class UIButton : public UI
 {
@@ -17,6 +12,12 @@ private:
 	UIButton(const UIButton& ui);
 	virtual ~UIButton();
 private:
+	enum class BUTTON_STATE
+	{
+		BS_NONE = 0,
+		BS_MOUSEON,
+		BS_CLICK
+	};
 	bool m_bUseMouseOnOutImage = false;
 	bool m_bUseSound;
 	string m_strSoundTag;
@@ -26,6 +27,7 @@ private:
 	bool	m_bEnableCallback;
 	BUTTON_STATE m_eState;
 public:
+	void Reset() { m_eState = BUTTON_STATE::BS_NONE; }
 	void SetMouseOnOutImage(bool bSet) { m_bUseMouseOnOutImage = bSet; }
 	void SetMouseOnImageOffset(float x, float y) { m_tMouseOnImageOffset = Pos(x, y); }
 	void SetMouseOnImageOffset(const Pos& offset) { m_tMouseOnImageOffset = offset; }

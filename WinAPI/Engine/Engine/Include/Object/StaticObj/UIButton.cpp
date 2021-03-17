@@ -6,7 +6,7 @@
 UIButton::UIButton()
 	: m_bEnableCallback(false),
 	m_bUseSound(false),
-	m_eState(BS_NONE),
+	m_eState(BUTTON_STATE::BS_NONE),
 	m_tMouseOnImageOffset(),
 	m_tMouseOutImageOffset()
 {
@@ -19,7 +19,7 @@ UIButton::UIButton(const UIButton& ui)
 	m_tMouseOnImageOffset = ui.m_tMouseOnImageOffset;
 	m_tMouseOutImageOffset = ui.m_tMouseOutImageOffset;
 	m_bEnableCallback = ui.m_bEnableCallback;
-	m_eState = BS_NONE;
+	m_eState = BUTTON_STATE::BS_NONE;
 }
 
 UIButton::~UIButton()
@@ -53,20 +53,19 @@ int UIButton::LateUpdate(float dt)
 {
 	UI::LateUpdate(dt);
 	
-	if (m_eState != BS_NONE)
+	if (m_eState != BUTTON_STATE::BS_NONE)
 	{
 		if (KEYPRESS("MouseLButton"))
 		{
-			m_eState = BS_CLICK;
+			m_eState = BUTTON_STATE::BS_CLICK;
 		}
 	}
 
-	if (m_eState == BS_CLICK && KEYUP("MouseLButton"))
+	if (m_eState == BUTTON_STATE::BS_CLICK && KEYUP("MouseLButton"))
 	{
 		if (m_bEnableCallback)
 		{
 			m_BtnCallback(dt);
-			m_eState = BS_NONE;
 		}
 	}
 
@@ -92,7 +91,7 @@ void UIButton::MouseOn(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pDst->GetTag() == "Mouse")
 	{
-		m_eState = BS_MOUSEON;
+		m_eState = BUTTON_STATE::BS_MOUSEON;
 		if(m_bUseMouseOnOutImage)
 			SetImageOffset(m_tMouseOnImageOffset);
 		if (m_bUseSound)
@@ -106,7 +105,7 @@ void UIButton::MouseOut(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pDst->GetTag() == "Mouse")
 	{
-		m_eState = BS_NONE;
+		m_eState = BUTTON_STATE::BS_NONE;
 		if (m_bUseMouseOnOutImage)
 			SetImageOffset(m_tMouseOutImageOffset);
 	}

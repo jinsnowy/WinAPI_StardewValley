@@ -34,7 +34,7 @@ private:
 private:
 	bool m_bMoveEnabled = true;
 	static constexpr int m_iMaxItemNum = 36;
-	static constexpr float m_fPlayerSpeed = 400.f;
+	static constexpr float m_fPlayerSpeed = 800.f;
 	float m_iHP = 1000.f;
 	float m_iMP = 1000.f;
 	float m_fAttackRange = TILESIZE;
@@ -46,6 +46,7 @@ public:
 	float GetToolPower() const;
 	const vector<class Item*>& AccessItemList() const { return m_vecItem; }
 	int GetCurItemSel() const { return m_iCurItemSel; }
+	Item* GetCurItem() const;
 	int GetMoney() const { return m_iMoney; }
 	bool Affordable(int cost) { return m_iMoney >= cost; }
 	bool IsFull() const { return m_vecItem.size() == m_iMaxItemNum; }
@@ -80,6 +81,7 @@ private:
 	void ChangePlayerTool(float dt);
 	Item* FindItem(const string& itemTag);
 	void AddItem(class Item* pItem);
+	void EraseItem(class Item* pItem);
 private:
 	bool HasTool(PlayerTool::ToolState tool) const
 	{
@@ -96,6 +98,11 @@ private:
 	{
 		if (m_iCurItemSel >= m_vecItem.size()) return false;
 		 return m_vecItem[m_iCurItemSel]->IsToolItem();
+	}
+	bool IsSeedSelected() const
+	{
+		if (m_iCurItemSel >= m_vecItem.size()) return false;
+		return m_vecItem[m_iCurItemSel]->IsSeedItem();
 	}
 	bool IsIdleState() const
 	{

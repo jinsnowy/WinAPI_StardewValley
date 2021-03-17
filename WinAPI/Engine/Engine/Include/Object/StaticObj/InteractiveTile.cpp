@@ -4,6 +4,7 @@
 #include "../Item/Item.h"
 InteractiveTile::InteractiveTile()
 {
+    m_eColliderChannel = CO_PLAYER;
 }
 
 InteractiveTile::InteractiveTile(const InteractiveTile& obj)
@@ -29,7 +30,7 @@ void InteractiveTile::SetDropItem(Item* pItem)
         m_pItem->AddRef();
 }
 
-void InteractiveTile::ItemDrop(int num)
+void InteractiveTile::ItemDrop(int num, bool effect)
 {
     if (!m_pItem)
         return;
@@ -40,7 +41,11 @@ void InteractiveTile::ItemDrop(int num)
         Item* pItem = m_pItem->Clone();
         
         pItem->SetPos(tPos);
-        pItem->GenerateBoundEffect();
+
+        if (effect)
+        {
+            pItem->GenerateBoundEffect();
+        }
 
         m_pLayer->AddObject(pItem);
 

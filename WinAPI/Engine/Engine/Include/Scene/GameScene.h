@@ -3,7 +3,7 @@
 class GameScene : public Scene
 {
     friend class SceneManager;
-private:
+protected:
     class Stage* m_pGroundStage = nullptr;
     class Stage* m_pStaticStage = nullptr;
     class Player* m_pPlayer = nullptr;
@@ -23,6 +23,8 @@ public:
 
     bool IsBlockTile(const Pos& worldPos) const;
     void DigTile(const Pos& worldPos);
+    void WaterTile(const Pos& worldPos);
+    void SpawnPlant(const Pos& worldPos);
 public:
     virtual void SetUpScene(const char* fileName);
     virtual bool Init();

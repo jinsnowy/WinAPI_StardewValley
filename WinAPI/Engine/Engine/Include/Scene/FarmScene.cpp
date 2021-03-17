@@ -1,5 +1,8 @@
 #include "FarmScene.h"
 #include "../Object/MoveObj/Player.h"
+#include "../Object/StaticObj/GameManager.h"
+#include "../Object/StaticObj/Stage.h"
+#include "../Object/StaticObj/Tile.h"
 #include "SceneManager.h"
 #include"../Sound/SoundManager.h"
 FarmScene::FarmScene()
@@ -21,12 +24,22 @@ bool FarmScene::Init()
 	SOUND_MANAGER->LoadSound("RockOver", false, SD_EFFECT, "Object/RockOver.mp3");
 	SOUND_MANAGER->LoadSound("GrassOver", false, SD_EFFECT, "Object/GrassOver.mp3");
 	SOUND_MANAGER->LoadSound("DirtDig", false, SD_EFFECT, "Object/DirtDig.mp3");
+	SOUND_MANAGER->LoadSound("WaterTile", false, SD_EFFECT, "Object/WaterTile.mp3");
+
 	return true;
 }
 
 void FarmScene::Input(float dt)
 {
 	GameScene::Input(dt);
+
+	vector<int> droughtTileIndices = GAME_MANAGER->GetDroughtTiles();
+	for (int index : droughtTileIndices)
+	{
+		Tile* pTile = m_pGroundStage->GetTile(index);
+		pTile->SetTexture("Dirt_Dig");
+		SAFE_RELEASE(pTile);
+	}
 }
 
 void FarmScene::Update(float dt)

@@ -26,9 +26,8 @@ bool Mouse::Init()
     GetCursorPos(&pt);
     ScreenToClient(WINDOWHANDLE, &pt);
 
+    SetColliderChannel(CO_UI);
     ShowCursor(FALSE);
-
-    AdvertiseFrom(CO_MOUSE);
 
     m_tPos.x = (float) pt.x;
     m_tPos.y = (float) pt.y;

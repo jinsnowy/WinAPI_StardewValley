@@ -91,6 +91,12 @@
     <Filter Include="Object\04. UI\Concrete">
       <UniqueIdentifier>{b83906a5-7a43-4029-981a-c15125b799d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\05. Plant\TileObject">
+      <UniqueIdentifier>{04494a3a-2be1-4cfc-9f49-a637408fdbc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\05. Plant\Plant">
+      <UniqueIdentifier>{0f8210ed-7091-48e0-9b67-79e33eca63af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -225,17 +231,11 @@
     <ClInclude Include="Resources\PrototypeManager.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Object\StaticObj\Tree.h">
-      <Filter>Object\05. Plant</Filter>
-    </ClInclude>
     <ClInclude Include="Object\MoveObj\PlayerTool.h">
       <Filter>Object\01. MoveObj</Filter>
     </ClInclude>
     <ClInclude Include="Scene\FarmScene.h">
       <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\StaticObj\UIGameManager.h">
-      <Filter>Object\04. UI</Filter>
     </ClInclude>
     <ClInclude Include="Object\Item\Item.h">
       <Filter>Object\06.Item</Filter>
@@ -245,18 +245,6 @@
     </ClInclude>
     <ClInclude Include="Object\PointObject.h">
       <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\StaticObj\InteractiveTile.h">
-      <Filter>Object\05. Plant</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\StaticObj\Rock.h">
-      <Filter>Object\05. Plant</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\StaticObj\Grass.h">
-      <Filter>Object\05. Plant</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\StaticObj\TreeTrunk.h">
-      <Filter>Object\05. Plant</Filter>
     </ClInclude>
     <ClInclude Include="Effect\BoundEffect.h">
       <Filter>Effect</Filter>
@@ -299,6 +287,36 @@
     </ClInclude>
     <ClInclude Include="Object\StaticObj\UITileSelect.h">
       <Filter>Object\04. UI\Concrete</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\GameManager.h">
+      <Filter>Object\04. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Grass.h">
+      <Filter>Object\05. Plant\TileObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Rock.h">
+      <Filter>Object\05. Plant\TileObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Tree.h">
+      <Filter>Object\05. Plant\TileObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\TreeTrunk.h">
+      <Filter>Object\05. Plant\TileObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\InteractiveTile.h">
+      <Filter>Object\05. Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Parsnip.h">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Item\Seed.h">
+      <Filter>Object\06.Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Plant.h">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Cauliflower.h">
+      <Filter>Object\05. Plant\Plant</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -413,17 +431,11 @@
     <ClCompile Include="Resources\PrototypeManager.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Object\StaticObj\Tree.cpp">
-      <Filter>Object\05. Plant</Filter>
-    </ClCompile>
     <ClCompile Include="Object\MoveObj\PlayerTool.cpp">
       <Filter>Object\01. MoveObj</Filter>
     </ClCompile>
     <ClCompile Include="Scene\FarmScene.cpp">
       <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\StaticObj\UIGameManager.cpp">
-      <Filter>Object\04. UI</Filter>
     </ClCompile>
     <ClCompile Include="Object\Item\Item.cpp">
       <Filter>Object\06.Item</Filter>
@@ -433,18 +445,6 @@
     </ClCompile>
     <ClCompile Include="Object\PointObject.cpp">
       <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\StaticObj\InteractiveTile.cpp">
-      <Filter>Object\05. Plant</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\StaticObj\Rock.cpp">
-      <Filter>Object\05. Plant</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\StaticObj\Grass.cpp">
-      <Filter>Object\05. Plant</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\StaticObj\TreeTrunk.cpp">
-      <Filter>Object\05. Plant</Filter>
     </ClCompile>
     <ClCompile Include="Effect\BoundEffect.cpp">
       <Filter>Effect</Filter>
@@ -484,6 +484,36 @@
     </ClCompile>
     <ClCompile Include="Object\StaticObj\UITileSelect.cpp">
       <Filter>Object\04. UI\Concrete</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\GameManager.cpp">
+      <Filter>Object\04. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Grass.cpp">
+      <Filter>Object\05. Plant\TileObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Rock.cpp">
+      <Filter>Object\05. Plant\TileObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Tree.cpp">
+      <Filter>Object\05. Plant\TileObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\TreeTrunk.cpp">
+      <Filter>Object\05. Plant\TileObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\InteractiveTile.cpp">
+      <Filter>Object\05. Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Parsnip.cpp">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Item\Seed.cpp">
+      <Filter>Object\06.Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Plant.cpp">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Cauliflower.cpp">
+      <Filter>Object\05. Plant\Plant</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

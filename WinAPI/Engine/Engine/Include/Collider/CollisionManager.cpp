@@ -32,6 +32,7 @@ void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const st
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
     pPoint->SetPos(pos.x, pos.y);
+    pPoint->SetColliderChannel(CO_PLAYER);
 
     ColliderRect* pColl = pPoint->AddCollider<ColliderRect>(strTag);
     pColl->SetRect(rect.left, rect.top, rect.right, rect.bottom);
@@ -46,6 +47,7 @@ void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
     pPoint->SetPos(pos.x, pos.y);
+    pPoint->SetColliderChannel(CO_PLAYER);
 
     ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
     SAFE_RELEASE(pColl);
@@ -107,12 +109,26 @@ void CollisionManager::Collision(float dt)
         list<Object*>::iterator jterEnd = m_CollisionObjList.end();
         for (; jter != jterEnd; ++jter)
         {
-            COLL_CHANNEL eListen = (*iter)->GetListenChannel();
-            if (eListen != CO_ALL && eListen != (*jter)->GetAdvertiseChannel())
+            if ((*iter)->GetTag() == "Click" && (*jter)->GetTag() == "NPC")
             {
-                continue;
+                int a = 10;
             }
-            CheckCollision(*iter, *jter, dt);
+
+            if ((*iter)->GetTag() == "NPC" && (*jter)->GetTag() ==  "Click")
+            {
+                int a = 10;
+            }
+            COLL_CHANNEL eListenSrc = (*iter)->GetColliderChannel();
+            COLL_CHANNEL eListenDst = (*jter)->GetColliderChannel();
+
+            if (eListenSrc == CO_ALL || eListenDst == CO_ALL)
+            {
+                CheckCollision(*iter, *jter, dt);
+            }
+            else if(eListenSrc == eListenDst)
+            {
+                CheckCollision(*iter, *jter, dt);
+            }
         }
     }
     

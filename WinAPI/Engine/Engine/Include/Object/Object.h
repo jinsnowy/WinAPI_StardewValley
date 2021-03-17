@@ -10,8 +10,7 @@ class Object : public Ref
 protected:
 	// 씬, 레이어, 텍스쳐, 콜라이더
 	OBJ_TYPE m_eObjType = OBJ_NORMAL;
-	COLL_CHANNEL    m_eAdvertiseChannel = CO_ALL;
-	COLL_CHANNEL    m_eListenChannel = CO_ALL;
+	COLL_CHANNEL    m_eColliderChannel = CO_ALL;
 	bool m_bEnableAnimation = true;
 	class Scene* m_pScene;
 	class Layer* m_pLayer;
@@ -19,10 +18,8 @@ protected:
 	list<Collider*> m_ColliderList;
 	Animation* m_pAnimation;
 public:
-	void ListenTo(COLL_CHANNEL eChannel) { m_eListenChannel = eChannel; }
-	COLL_CHANNEL GetListenChannel() const { return m_eListenChannel; }
-	void AdvertiseFrom(COLL_CHANNEL eChannel) { m_eAdvertiseChannel = eChannel; }
-	COLL_CHANNEL GetAdvertiseChannel() const { return m_eAdvertiseChannel; }
+	void SetColliderChannel(COLL_CHANNEL eChannel) { m_eColliderChannel = eChannel; }
+	COLL_CHANNEL GetColliderChannel() const { return m_eColliderChannel; }
 	OBJ_TYPE GetObjectType() const { return m_eObjType; }
 	template<typename T>
 	static T* CreateObject(const string& strTag)
@@ -183,6 +180,7 @@ public:
 	Size GetImageSize() const;
 	Size GetImageOffset() const { return m_tImageOffset; }
 	Texture* AccessTexture() const { return m_pTexture; }
+	string GetTexTag() const;
 
 	void SetAsTextureSize();
 	void AddOffset(float x, float y) { m_tPos.x += x; m_tPos.y += y; }

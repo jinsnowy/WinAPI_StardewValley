@@ -12,6 +12,8 @@
 #define MOUSEWORLDPOS   Input::Instance()->GetMouseWorldPos()
 #define MOUSEMOVE       Input::Instance()->GetMouseMove()
 #define MOUSE			Input::Instance()->GetMouse()
+#define PLAYER			GameManager::Instance()->AccessPlayer()
+#define GAMEWORLDTIME	GameManager::Instance()->GetWorldTime()
 #define SCENECHANGE(X)  SceneManager::Instance()->NeedChangeScene(X)
 #define SHOWCHECK(X)    SceneManager::Instance()->CheckShowMode(X)
 #define DRAWGLYPH(hdc, c, x, y) ResourceManager::Instance()->DrawGlyph(hdc, c, x, y)
