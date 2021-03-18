@@ -35,8 +35,10 @@ private:
 	bool m_bMoveEnabled = true;
 	static constexpr int m_iMaxItemNum = 36;
 	static constexpr float m_fPlayerSpeed = 800.f;
+	static constexpr float m_iMaxMP = 1000.f;
+	static constexpr float m_iUseMPUnit = 20.f;
 	float m_iHP = 1000.f;
-	float m_iMP = 1000.f;
+	float m_iMP = m_iMaxMP;
 	float m_fAttackRange = TILESIZE;
 	int m_iCurItemSel = 0;
 	int m_iMoney = 5000;
@@ -46,6 +48,7 @@ public:
 	float GetToolPower() const;
 	const vector<class Item*>& AccessItemList() const { return m_vecItem; }
 	int GetCurItemSel() const { return m_iCurItemSel; }
+	void SetCurItemSel(int sel) { m_iCurItemSel = sel; }
 	Item* GetCurItem() const;
 	int GetMoney() const { return m_iMoney; }
 	bool Affordable(int cost) { return m_iMoney >= cost; }
@@ -59,6 +62,10 @@ public:
 	inline Rect GetBodyRect() const
 	{
 		return Rect(GetLeft(), GetTop(), GetRight(), GetBottom());
+	}
+	float GetMPRemainRatio() const
+	{
+		return m_iMP / m_iMaxMP;
 	}
 public:
 	virtual void StateTransit(int iNext);
@@ -88,12 +95,11 @@ private:
 		if (m_iCurItemSel >= m_vecItem.size()) return false;
 		return m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[tool];
 	}
-	bool IsSwingTool() const
+	bool HasSwingTool() const
 	{
-		if (m_iCurItemSel >= m_vecItem.size()) return false;
-		return (m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[PlayerTool::TOOL_SICKLE]
-			|| m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[PlayerTool::TOOL_BLADE]);
+		return HasTool(PlayerTool::TOOL_SICKLE) || HasTool(PlayerTool::TOOL_BLADE);
 	}
+	bool IsUsingTool() const { return m_eState == TOOL_USE; }
 	bool IsToolSelected() const
 	{
 		if (m_iCurItemSel >= m_vecItem.size()) return false;
@@ -110,5 +116,12 @@ private:
 			|| (m_eState == IDLE_LEFT) || (m_eState == IDLE_RIGHT);
 	}
 	Rect BuildSwingAttack(int dx, int dy);
+	void PlayToolAnimation(const INDEX& index);
+	void MovePlayer(float dt);
+	void AfterMove();
+	void AfterStop();
+	void ClickEventHandling();
+	bool HasEnoughMP() const;
+	void UseMP();
 };
 

@@ -1,13 +1,13 @@
 #pragma once
 #include "Plant.h"
-class Parsnip :
-    public Plant
+class Tomato :
+	public Plant
 {
-    friend class Object;
-	static constexpr char m_plantTag[] = "Parsnip";
+	friend class Object;
+	static constexpr char m_plantTag[] = "Tomato";
 protected:
-	Parsnip();
-	virtual ~Parsnip();
+	Tomato();
+	virtual ~Tomato();
 	virtual void Die();
 public:
 	virtual bool Init();

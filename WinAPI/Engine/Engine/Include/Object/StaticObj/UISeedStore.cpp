@@ -161,5 +161,4 @@ void UISeedStore::SetUpItemBuyColliders()
 void UISeedStore::Exit(float dt)
 {
 	GAME_MANAGER->SetSeedStore(false);
-	m_fClickDelay = 0.5f;
 }

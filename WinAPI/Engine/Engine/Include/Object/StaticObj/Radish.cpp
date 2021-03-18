@@ -8,9 +8,6 @@ Radish::~Radish()
 {
 }
 
-void Radish::TileHit(Collider* pSrc, Collider* pDst, float dt)
-{
-}
 
 void Radish::Die()
 {

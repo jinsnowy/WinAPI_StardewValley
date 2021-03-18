@@ -59,7 +59,8 @@ void Grass::ChangeTexture(int id)
 
 void Grass::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
-	if (pDst->GetTag() == "SwingTool")
+	const string& toolTag = pDst->GetTag();
+	if (toolTag == "SwingTool" || toolTag == "AxeTool" || toolTag == "PickTool")
 	{
 		Die();
 	}

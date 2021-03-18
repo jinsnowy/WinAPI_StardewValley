@@ -8,10 +8,6 @@ Parsnip::~Parsnip()
 {
 }
 
-void Parsnip::TileHit(Collider* pSrc, Collider* pDst, float dt)
-{
-}
-
 void Parsnip::Die()
 {
     Plant::Die();

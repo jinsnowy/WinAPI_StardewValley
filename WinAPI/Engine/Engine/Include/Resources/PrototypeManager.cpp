@@ -47,7 +47,7 @@ bool PrototypeManager::Init()
         }
         else if (seedName == "Garlic_Seed")
         {
-            pSeed->SetPrice(80);
+            pSeed->SetPrice(60);
             pSeed->SetPlantTag("Garlic_Plant");
         }
         else if (seedName == "Parsnip_Seed")
@@ -55,29 +55,24 @@ bool PrototypeManager::Init()
             pSeed->SetPrice(40);
             pSeed->SetPlantTag("Parsnip_Plant");
         }
-        else if (seedName == "Potato_Seed")
-        {
-            pSeed->SetPrice(100);
-            pSeed->SetPlantTag("Potato_Plant");
-        }
-        else if (seedName == "Pepper_Seed")
-        {
-            pSeed->SetPrice(40);
-            pSeed->SetPlantTag("Pepper_Plant");
-        }
         else if (seedName == "Radish_Seed")
         {
             pSeed->SetPrice(40);
             pSeed->SetPlantTag("Radish_Plant");
         }
-        else if (seedName == "Rhubarb_Seed")
+        else if (seedName == "Pepper_Seed")
         {
-            pSeed->SetPrice(60);
-            pSeed->SetPlantTag("Rhubarb_Plant");
+            pSeed->SetPrice(80);
+            pSeed->SetPlantTag("Pepper_Plant");
+        }
+        else if (seedName == "BlueBerry_Seed")
+        {
+            pSeed->SetPrice(100);
+            pSeed->SetPlantTag("BlueBerry_Plant");
         }
         else if (seedName == "Tomato_Seed")
         {
-            pSeed->SetPrice(60);
+            pSeed->SetPrice(80);
             pSeed->SetPlantTag("Tomato_Plant");
         }
     }

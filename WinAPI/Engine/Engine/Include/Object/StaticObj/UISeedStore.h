@@ -28,6 +28,7 @@ private:
 	static constexpr float m_fPanelHeight = 88.f;
 	float m_fClickDelay = 0.f;
 private:
+	void SetClickDelay() { m_fClickDelay = 0.5f; }
 	void BuyingCallback(float dt, int id);
 	void SetUpItemBuyColliders();
 	void Exit(float dt);

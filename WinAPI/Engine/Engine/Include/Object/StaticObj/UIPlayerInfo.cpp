@@ -1,21 +1,23 @@
-#include "UIFastItemList.h"
+#include "UIPlayerInfo.h"
+#include "UIPanel.h";
 #include "GameManager.h"
 #include "../../Application/Window.h"
 #include "../MoveObj/Player.h"
 #include "../../Core/Input.h"
 #include "../../Resources/ResourceManager.h"
 
-UIFastItemList::UIFastItemList()
+UIPlayerInfo::UIPlayerInfo()
 {
 	Init();
 }
 
-UIFastItemList::~UIFastItemList()
+UIPlayerInfo::~UIPlayerInfo()
 {
 	Safe_Release_VecList(m_vecSmallNumbers);
+	SAFE_RELEASE(m_pPlayerMPPanel);
 }
 
-bool UIFastItemList::Init()
+bool UIPlayerInfo::Init()
 {
     SetTexture("FastItemList", L"SV/Scene/FastItemList.bmp");
     SetColorKey(255, 255, 255);
@@ -27,44 +29,65 @@ bool UIFastItemList::Init()
 	m_vecSmallNumbers = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/SmallNumbers/", chromaKey);
 	INPUT->AddKey("NextItemList", VK_TAB);
 
+	m_pPlayerMPPanel = Object::CreateObject<UIPanel>("PlayerMPUI");
+	m_pPlayerMPPanel->SetTexture("PlayerMPUI", L"SV/Scene/Gauge.bmp");
+	m_pPlayerMPPanel->SetColorKey(255,255,255);
+	m_pPlayerMPPanel->SetAsTextureSize();
+	Size tSize = m_pPlayerMPPanel->GetSize();
+	m_pPlayerMPPanel->SetPos(float(GETRESOLUTION.x) - tSize.x - 30.f, float(GETRESOLUTION.y) - tSize.y - 30.f);
 	return true;
 }
 
-void UIFastItemList::Input(float dt)
+void UIPlayerInfo::Input(float dt)
 {
     UI::Input(dt);
 	if (KEYDOWN("NextItemList"))
 	{
 		m_iItemListOffset = (m_iItemListOffset + 12) % 36;
+		PLAYER->SetCurItemSel((PLAYER->GetCurItemSel() + 12) % 36);
 	}
 }
 
-int UIFastItemList::Update(float dt)
+int UIPlayerInfo::Update(float dt)
 {
     UI::Update(dt);
     return 0;
 }
 
-int UIFastItemList::LateUpdate(float dt)
+int UIPlayerInfo::LateUpdate(float dt)
 {
     UI::LateUpdate(dt);
     return 0;
 }
 
-void UIFastItemList::Collision(float dt)
+void UIPlayerInfo::Collision(float dt)
 {
     UI::Collision(dt);
 }
 
-void UIFastItemList::Draw(HDC hdc, float dt)
+void UIPlayerInfo::Draw(HDC hdc, float dt)
 {
     UI::Draw(hdc, dt);
+
+	m_pPlayerMPPanel->Draw(hdc, dt);
+
+	// Ã¼·Â ¹Ù
+	Pos tPos = m_pPlayerMPPanel->GetPos();
+	float ratio = PLAYER->GetMPRemainRatio();
+	RECT rc = {};
+	rc.left = tPos.x + m_iMPPanelStartX;
+	rc.top = tPos.y + m_iMPPanelStartY + int((1 - ratio) * m_iMPPanelSizeY);
+	rc.right = rc.left + m_iMPPanelSizeX;
+	rc.bottom = rc.top + int(ratio * m_iMPPanelSizeY);
+
+	COLORREF blend = RGB(max(int((1 - ratio) * 255.f), 10), max(int((ratio) * 255.f), 10), 0);
+	DrawColorRectWithOutBorder(hdc, rc, blend);
 
 	Pos tOffset = GetPos();
 	tOffset.x += m_iItemListOffsetX;
 	tOffset.y += m_iItemListOffsetY;
 
-	int itemSelect = PLAYER->GetCurItemSel();
+	int itemSelect = PLAYER->GetCurItemSel() % 12;
 	DrawRedRect(hdc, MakeRect(tOffset.x + itemSelect * (m_iItemListMargin + 56.f), tOffset.y, 56, 56));
 
 	const auto& itemList = PLAYER->AccessItemList();

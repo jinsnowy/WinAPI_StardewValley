@@ -15,7 +15,7 @@ protected:
 	InteractiveTile();
 	InteractiveTile(const InteractiveTile& obj);
 	virtual ~InteractiveTile();
-	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt) = 0;
+	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
 public:
 	void SetHP(float hp) { m_iHP = hp; }
 	void GetDamage(float power) { m_iHP -= power; }

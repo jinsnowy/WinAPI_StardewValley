@@ -19,7 +19,7 @@ bool GameManager::Init()
 void GameManager::Input(float dt)
 {
 	m_clockPanel->Input(dt);
-	m_itemPanel->Input(dt);
+	m_infoPanel->Input(dt);
 	if (m_bSeedStoreSelect)
 	{
 		m_storePanel->Input(dt);
@@ -39,7 +39,7 @@ int GameManager::Update(float dt)
 		}
 	}
 
-	m_itemPanel->Update(dt);
+	m_infoPanel->Update(dt);
 
 	if (m_bSeedStoreSelect)
 	{
@@ -52,7 +52,7 @@ int GameManager::Update(float dt)
 int GameManager::LateUpdate(float dt)
 {
 	m_clockPanel->LateUpdate(dt);
-	m_itemPanel->LateUpdate(dt);
+	m_infoPanel->LateUpdate(dt);
 	if (m_bSeedStoreSelect)
 	{
 		m_storePanel->LateUpdate(dt);
@@ -69,7 +69,7 @@ void GameManager::Draw(HDC hdc, float dt)
 	m_clockPanel->Draw(hdc, dt);
 	if (m_bFastItemListSelect)
 	{
-		m_itemPanel->Draw(hdc, dt);
+		m_infoPanel->Draw(hdc, dt);
 	}
 	if (m_bSeedStoreSelect)
 	{
@@ -168,6 +168,7 @@ void GameManager::SetSeedStore(bool bSelect)
 		tPos.y += m_storePanel->GetSize().y;
 		tPos.y -= m_clockPanel->GetSize().y - 70.f;
 		m_clockPanel->SetPos(tPos);
+		m_storePanel->SetClickDelay();
 		m_pPlayer->DisableMovement();
 	}
 	else {

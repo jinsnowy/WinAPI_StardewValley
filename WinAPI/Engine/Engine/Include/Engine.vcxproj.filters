@@ -276,9 +276,6 @@
     <ClInclude Include="Object\StaticObj\UIScrollBar.h">
       <Filter>Object\04. UI\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Object\StaticObj\UIFastItemList.h">
-      <Filter>Object\04. UI\Concrete</Filter>
-    </ClInclude>
     <ClInclude Include="Object\StaticObj\UISeedStore.h">
       <Filter>Object\04. UI\Concrete</Filter>
     </ClInclude>
@@ -323,6 +320,24 @@
     </ClInclude>
     <ClInclude Include="Object\StaticObj\Garlic.h">
       <Filter>Object\05. Plant\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Pepper.h">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\Tomato.h">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\BlueBerry.h">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\StaticObj\UIPlayerInfo.h">
+      <Filter>Object\04. UI\Concrete</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\ShakeEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\Effect.h">
+      <Filter>Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -479,9 +494,6 @@
     <ClCompile Include="Object\StaticObj\UIScrollBar.cpp">
       <Filter>Object\04. UI\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Object\StaticObj\UIFastItemList.cpp">
-      <Filter>Object\04. UI\Concrete</Filter>
-    </ClCompile>
     <ClCompile Include="Object\StaticObj\UISeedStore.cpp">
       <Filter>Object\04. UI\Concrete</Filter>
     </ClCompile>
@@ -526,6 +538,24 @@
     </ClCompile>
     <ClCompile Include="Object\StaticObj\Garlic.cpp">
       <Filter>Object\05. Plant\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Pepper.cpp">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\Tomato.cpp">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\BlueBerry.cpp">
+      <Filter>Object\05. Plant\Plant</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\UIPlayerInfo.cpp">
+      <Filter>Object\04. UI\Concrete</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\ShakeEffect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\Effect.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

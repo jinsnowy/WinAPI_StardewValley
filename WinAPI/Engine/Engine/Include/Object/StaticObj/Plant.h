@@ -13,6 +13,8 @@ private:
 	static void ClearPlantMap();
 protected:
 	bool m_bPeriodic = false;
+	int m_iDropItemNum = 1;
+	int m_iHarvestNum = 1;
 	int m_iGrowPeriod = 0;
 	int m_iCurLevel = 0;
 	int m_iMaxLevel = 0;
@@ -22,11 +24,16 @@ protected:
 	static bool IsExist(const string& plantTag);
 	static void LoadGrowTexture(const string& plantTag, const wchar_t* folderPath, const string& strPathKey = TEXTURE_PATH);
 	void SetGrowTexture(const string& plantTag);
-	void SetPeriodicPlant() { m_bPeriodic = true; }
 	void SetGrowPeriod(int period) { m_iGrowPeriod = period; }
 	void SetTileIndex(int index) { m_iTileIndex = index; }
+	void SetDropItemNum(int num) { m_iDropItemNum = num; }
+	void SetPeriodicPlantHarvestNum(int num) { m_iHarvestNum = num; if (m_iHarvestNum > 1) m_bPeriodic = true; }
 private:
+	void HarvestFruit();
 	void GrowAsNextPlant();
+	void AddHarvestCollider();
+	void PeriodicPlantHit(Collider* pSrc, Collider* pDst, float dt);
+	void PlantHit(Collider* pSrc, Collider* pDst, float dt);
 public:
 	int GetTileIndex() const { return m_iTileIndex; }
 	int GetCurLevel() const { return m_iCurLevel; }
@@ -35,7 +42,6 @@ protected:
 	Plant();
 	Plant(const Plant& obj) = delete;
 	virtual ~Plant();
-	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt) = 0;
 	virtual void Die() = 0;
 public:
 	virtual bool Init();

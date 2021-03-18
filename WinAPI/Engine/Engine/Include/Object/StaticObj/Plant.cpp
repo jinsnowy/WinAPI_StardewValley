@@ -1,4 +1,5 @@
 #include "Plant.h"
+#include "../../Collider/ColliderRect.h"
 #include "../../Core/PathManager.h"
 #include "../../Resources/Texture.h"
 #include "../../Resources/ResourceManager.h"
@@ -51,25 +52,90 @@ void Plant::SetGrowTexture(const string& plantTag)
         GrowAsNextPlant();
     }
 }
+
+void Plant::AddHarvestCollider()
+{
+    EraseAllColiders();
+    ColliderRect* pRC = AddCollider<ColliderRect>("HarvestBody");
+    pRC->SetRect(0.f, 0.f, TILESIZE, TILESIZE);
+    pRC->AddCollisionFunction(CS_ENTER, this, &Plant::PlantHit);
+    pRC->AddCollisionFunction(CS_STAY, this, &Plant::PlantHit);
+    SAFE_RELEASE(pRC);
+}
+
+void Plant::HarvestFruit()
+{
+    if (!m_bPeriodic)
+    {
+        assert(m_iHarvestNum == 1);
+    }
+
+    if (m_iHarvestNum > 0)
+    {
+        --m_iHarvestNum;
+        if (m_bPeriodic)
+        {
+            ItemDrop(m_iDropItemNum);
+        }
+        else
+        {
+            ItemDrop(m_iDropItemNum, false);
+        }
+        // 다 수확했을 경우
+        if (m_iHarvestNum == 0)
+        {
+            Die();
+        }
+    }
+}
+
+void Plant::PlantHit(Collider* pSrc, Collider* pDst, float dt)
+{
+    if (pDst->GetTag() == "SwingTool" || pDst->GetTag() == "Harvest")
+    {
+        if (m_iCurLevel == m_iMaxLevel - 2)
+        {
+            HarvestFruit();
+            m_iGrowTime = GAMEWORLDTIME;
+            ++m_iCurLevel;
+            GrowAsNextPlant();
+        }
+    }
+}
+
 void Plant::Grow()
 {
-    if (!IsDie() && m_iCurLevel < m_iMaxLevel)
+    if (!IsDie())
     {
         if (GAMEWORLDTIME - m_iGrowTime >= m_iGrowPeriod)
         {
             m_iGrowTime = GAMEWORLDTIME;
-            ++m_iCurLevel;
-            if (m_iCurLevel == m_iMaxLevel)
+            if (m_bPeriodic)
             {
-                if (!m_bPeriodic)
+               if (m_iCurLevel < m_iMaxLevel - 2)
                 {
-                    ItemDrop(1, false);
-                    Die();
+                    ++m_iCurLevel;
+                    GrowAsNextPlant();
+                    if (m_iCurLevel == m_iMaxLevel - 2)
+                    {
+                        AddHarvestCollider();
+                    }
+                }
+                else if (m_iCurLevel == m_iMaxLevel - 1)
+                {
+                    --m_iCurLevel;
+                    GrowAsNextPlant();
+                    AddHarvestCollider();
                 }
             }
-            else 
+            else
             {
+                ++m_iCurLevel;
                 GrowAsNextPlant();
+                if (m_iCurLevel == m_iMaxLevel - 1)
+                {
+                    HarvestFruit();
+                }
             }
         }
     }
@@ -78,6 +144,7 @@ void Plant::Grow()
 Plant::Plant()
     :m_iGrowTime(GAMEWORLDTIME)
 {
+    m_eColliderChannel = CO_PLAYER;
 }
 
 Plant::~Plant()

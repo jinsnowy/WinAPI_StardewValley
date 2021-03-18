@@ -351,6 +351,164 @@ Rect Player::BuildSwingAttack(int dx, int dy)
 	return rect;
 }
 
+void Player::PlayToolAnimation(const INDEX& index)
+{
+	bool bSwingTool = HasSwingTool();
+	if (index.x > 0)
+	{
+		bSwingTool ? m_pAnimation->ChangeClip("SwingRight") :
+			m_pAnimation->ChangeClip("ToolRight");
+		StateTransit(IDLE_RIGHT);
+	}
+	else if (index.x < 0)
+	{
+		bSwingTool ? m_pAnimation->ChangeClip("SwingLeft") :
+			m_pAnimation->ChangeClip("ToolLeft");
+		StateTransit(IDLE_LEFT);
+	}
+	else if (index.y < 0)
+	{
+		bSwingTool ? m_pAnimation->ChangeClip("SwingUp") :
+			m_pAnimation->ChangeClip("ToolUp");
+		StateTransit(IDLE_UP);
+	}
+	else if (index.y >= 0)
+	{
+		bSwingTool ? m_pAnimation->ChangeClip("SwingDown") :
+			m_pAnimation->ChangeClip("ToolDown");
+		StateTransit(IDLE_DOWN);
+	}
+	m_pPlayerTool->Play();
+}
+
+void Player::MovePlayer(float dt)
+{
+	if (KEYPRESS("MoveUp"))
+	{
+		MoveYFromSpeed(dt, MD_BACK);
+		StateTransit(WALK_UP);
+	}
+	else if (KEYPRESS("MoveDown"))
+	{
+		MoveYFromSpeed(dt, MD_FRONT);
+		StateTransit(WALK_DOWN);
+	}
+	else if (KEYPRESS("MoveLeft"))
+	{
+		MoveXFromSpeed(dt, MD_BACK);
+		StateTransit(WALK_LEFT);
+	}
+	else if (KEYPRESS("MoveRight"))
+	{
+		MoveXFromSpeed(dt, MD_FRONT);
+		StateTransit(WALK_RIGHT);
+	}
+}
+
+void Player::AfterMove()
+{
+	// 다음 타일이 갈 수 없다면,
+	const GameScene* gameScene = static_cast<GameScene*>(m_pScene);
+	if (gameScene->IsBlockTile(GetCenterPos()))
+	{
+		SetPos(m_tPrev);
+	}
+	if (gameScene->GetSceneType() == SC_INHOUSE && SOUND_MANAGER->IsEnd(SD_EFFECT))
+	{
+		SOUND_MANAGER->PlaySound("InHouse_Walking");
+	}
+}
+
+void Player::AfterStop()
+{
+	// 움직이지 않았다면,
+	switch (m_eState)
+	{
+	case WALK_RIGHT:
+		StateTransit(IDLE_RIGHT);
+		break;
+	case WALK_LEFT:
+		StateTransit(IDLE_LEFT);
+		break;
+	case WALK_UP:
+		StateTransit(IDLE_UP);
+		break;
+	case WALK_DOWN:
+		StateTransit(IDLE_DOWN);
+		break;
+	}
+}
+
+void Player::ClickEventHandling()
+{
+	if (KEYDOWN("MouseLButton"))
+	{
+		COLLISION_MANAGER->ClickPoint();
+	}
+	if (KEYDOWN("MouseLButton") && IsIdleState())
+	{
+		Pos tMousePos = MOUSEWORLDPOS;
+		Pos tCenterPos = GetCenterPos();
+		Pos tPos = GetPos();
+		const GameScene* gameScene = static_cast<GameScene*>(m_pScene);
+		INDEX index = gameScene->GetIndexDiff(tMousePos, tCenterPos);
+		if (max(abs(index.x), abs(index.y)) <= 1)
+		{
+			if (IsToolSelected())
+			{
+				if (HasEnoughMP())
+				{
+					UseMP();
+					PlayToolAnimation(index);
+					StateTransit(TOOL_USE);
+
+					if (HasSwingTool())
+					{
+						// 낫/검 체크
+						Rect attackRange = BuildSwingAttack(index.x, index.y);
+						TRIGGER_RECTEVENT(GetCenterPos(), attackRange, "SwingTool");
+					}
+					else {
+						// 도끼/곡괭이/호미 체크
+						if (HasTool(PlayerTool::TOOL_AXE))
+						{
+							TRIGGER_CLICKEVENT(tMousePos, "AxeTool");
+						}
+						else if (HasTool(PlayerTool::TOOL_PICK))
+						{
+							TRIGGER_CLICKEVENT(tMousePos, "PickTool");
+						}
+						else if (HasTool(PlayerTool::TOOL_HOE))
+						{
+							static_cast<GameScene*>(m_pScene)->DigTile(tMousePos);
+						}
+						else if (HasTool(PlayerTool::TOOL_WATER))
+						{
+							static_cast<GameScene*>(m_pScene)->WaterTile(tMousePos);
+						}
+					}
+
+				}
+			}
+			else if (IsSeedSelected())
+			{
+				static_cast<GameScene*>(m_pScene)->SpawnPlant(tMousePos);
+			}
+			TRIGGER_CLICKEVENT(tMousePos, "Harvest");
+		}
+	}
+}
+
+bool Player::HasEnoughMP() const
+{
+	return m_iMP >= 50.f;
+}
+
+void Player::UseMP()
+{
+	m_iMP -= m_iUseMPUnit;
+}
+
 void Player::StateTransit(int iNext)
 {
 	m_eState = static_cast<PlayerState>(iNext);
@@ -434,8 +592,16 @@ bool Player::Init()
 	INPUT->AddKey("Item-", char(0x2d));
 	INPUT->AddKey("Item=", char(0x3d));
 
-	Seed* pSeed = static_cast<Seed*>(Item::FindItem("Parsnip_Seed"));
-	for(int i =0;i<100;++i)
+	Seed* pSeed = static_cast<Seed*>(Item::FindItem("BlueBerry_Seed"));
+	for(int i =0;i<10;++i)
+		AddItem(pSeed);
+	SAFE_RELEASE(pSeed);
+	pSeed = static_cast<Seed*>(Item::FindItem("Tomato_Seed"));
+	for (int i = 0; i < 10; ++i)
+		AddItem(pSeed);
+	SAFE_RELEASE(pSeed);
+	pSeed = static_cast<Seed*>(Item::FindItem("Pepper_Seed"));
+	for (int i = 0; i < 10; ++i)
 		AddItem(pSeed);
 	SAFE_RELEASE(pSeed);
 	return true;
@@ -443,149 +609,26 @@ bool Player::Init()
 
 void Player::Input(float dt)
 {
-	MovableObject::Input(dt);
-	ChangePlayerTool(dt);
-
-	if (m_eState == TOOL_USE)
+	if (IsUsingTool())
 	{
 		return;
 	}
+	MovableObject::Input(dt);
+	ChangePlayerTool(dt);
 
 	m_tPrev = GetPos();
-	const GameScene* gameScene = static_cast<GameScene*>(m_pScene);
-
 	if (m_bMoveEnabled)
 	{
-		if (KEYPRESS("MoveUp"))
-		{
-			MoveYFromSpeed(dt, MD_BACK);
-			StateTransit(WALK_UP);
-		}
-		else if (KEYPRESS("MoveDown"))
-		{
-			MoveYFromSpeed(dt, MD_FRONT);
-			StateTransit(WALK_DOWN);
-		}
-		else if (KEYPRESS("MoveLeft"))
-		{
-			MoveXFromSpeed(dt, MD_BACK);
-			StateTransit(WALK_LEFT);
-		}
-		else if (KEYPRESS("MoveRight"))
-		{
-			MoveXFromSpeed(dt, MD_FRONT);
-			StateTransit(WALK_RIGHT);
-		}
+		MovePlayer(dt);
 	}
-	
 	if (m_bMove)
 	{
-		// 다음 타일이 갈 수 없다면,
-		if(gameScene->IsBlockTile(GetCenterPos()))
-		{
-			SetPos(m_tPrev);
-		}
-		if (gameScene->GetSceneType() == SC_INHOUSE && SOUND_MANAGER->IsEnd(SD_EFFECT))
-		{
-			SOUND_MANAGER->PlaySound("InHouse_Walking");
-		}
+		AfterMove();
 	}
 	else
 	{
-		// 움직이지 않았다면,
-		switch (m_eState)
-		{
-		case WALK_RIGHT:
-			StateTransit(IDLE_RIGHT);
-			break;
-		case WALK_LEFT:
-			StateTransit(IDLE_LEFT);
-			break;
-		case WALK_UP:
-			StateTransit(IDLE_UP);
-			break;
-		case WALK_DOWN:
-			StateTransit(IDLE_DOWN);
-			break;
-		}
-		
-		if (KEYDOWN("MouseLButton"))
-		{
-			COLLISION_MANAGER->ClickPoint();
-		}
-
-		if (KEYDOWN("MouseLButton") && IsIdleState())
-		{
-			Pos tMousePos = MOUSEWORLDPOS;
-			Pos tCenterPos = GetCenterPos();
-			Pos tPos = GetPos();
-			INDEX index = gameScene->GetIndexDiff(tMousePos, tCenterPos);
-			if (max(abs(index.x), abs(index.y)) <= 1)
-			{
-				if (IsToolSelected())
-				{
-					bool bSwingTool = IsSwingTool();
-					if (index.x > 0)
-					{
-						bSwingTool ? m_pAnimation->ChangeClip("SwingRight") :
-							m_pAnimation->ChangeClip("ToolRight");
-						StateTransit(IDLE_RIGHT);
-					}
-					else if (index.x < 0)
-					{
-						bSwingTool ? m_pAnimation->ChangeClip("SwingLeft") :
-							m_pAnimation->ChangeClip("ToolLeft");
-						StateTransit(IDLE_LEFT);
-					}
-					else if (index.y < 0)
-					{
-						bSwingTool ? m_pAnimation->ChangeClip("SwingUp") :
-							m_pAnimation->ChangeClip("ToolUp");
-						StateTransit(IDLE_UP);
-					}
-					else if (index.y >= 0)
-					{
-						bSwingTool ? m_pAnimation->ChangeClip("SwingDown") :
-							m_pAnimation->ChangeClip("ToolDown");
-						StateTransit(IDLE_DOWN);
-					}
-
-					m_pPlayerTool->Play();
-					StateTransit(TOOL_USE);
-
-					if (bSwingTool)
-					{
-						// 낫/검 체크
-						Rect attackRange = BuildSwingAttack(index.x, index.y);
-						TRIGGER_RECTEVENT(GetCenterPos(), attackRange, "SwingTool");
-					}
-					else {
-						// 도끼/곡괭이/호미 체크
-						if (HasTool(PlayerTool::TOOL_AXE))
-						{
-							TRIGGER_CLICKEVENT(tMousePos, "AxeTool");
-						}
-						else if (HasTool(PlayerTool::TOOL_PICK))
-						{
-							TRIGGER_CLICKEVENT(tMousePos, "PickTool");
-						}
-						else if (HasTool(PlayerTool::TOOL_HOE))
-						{
-							static_cast<GameScene*>(m_pScene)->DigTile(tMousePos);
-						}
-						else if (HasTool(PlayerTool::TOOL_WATER))
-						{
-							static_cast<GameScene*>(m_pScene)->WaterTile(tMousePos);
-						}
-					}
-				}
-				
-				if (IsSeedSelected())
-				{
-					static_cast<GameScene*>(m_pScene)->SpawnPlant(tMousePos);
-				}
-			}
-		}
+		AfterStop();
+		ClickEventHandling();
 	}
 }
 
@@ -650,7 +693,7 @@ void Player::Draw(HDC hDC, float dt)
 	{
 		Pos tilePos = static_cast<GameScene*>(m_pScene)->GetTilePos(GetCenterPos());
 		tilePos -= CAMERA->GetTopLeft();
-		DrawRectWithColor(hDC, MakeRect(int(tilePos.x), int(tilePos.y), TILESIZE, TILESIZE),
+		DrawVoidRectWithBorderColor(hDC, MakeRect(int(tilePos.x), int(tilePos.y), TILESIZE, TILESIZE),
 			RGB(0, 200, 0));
 	}
 }

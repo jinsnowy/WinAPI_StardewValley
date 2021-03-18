@@ -2,7 +2,7 @@
 #include "../../framework.h"
 #include "UIGameTimer.h"
 #include "UISeedStore.h"
-#include "UIFastItemList.h"
+#include "UIPlayerInfo.h"
 
 class GameManager
 {
@@ -29,7 +29,7 @@ private:
 private:
 	class Player* m_pPlayer = nullptr;
 	unique_ptr<UIGameTimer> m_clockPanel = make_unique<UIGameTimer>();
-	unique_ptr<UIFastItemList> m_itemPanel = make_unique<UIFastItemList>();
+	unique_ptr<UIPlayerInfo> m_infoPanel = make_unique<UIPlayerInfo>();
 	unique_ptr<UISeedStore> m_storePanel = make_unique<UISeedStore>();
 public:
 	virtual bool Init();

@@ -8,7 +8,6 @@ class Cauliflower :
 protected:
 	Cauliflower();
 	virtual ~Cauliflower();
-	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
 	virtual void Die();
 public:
 	virtual bool Init();

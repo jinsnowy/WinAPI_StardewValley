@@ -8,10 +8,6 @@ Cauliflower::~Cauliflower()
 {
 }
 
-void Cauliflower::TileHit(Collider* pSrc, Collider* pDst, float dt)
-{
-}
-
 void Cauliflower::Die()
 {
     Plant::Die();

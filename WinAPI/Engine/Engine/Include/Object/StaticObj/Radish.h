@@ -8,7 +8,6 @@ class Radish :
 protected:
 	Radish();
 	virtual ~Radish();
-	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
 	virtual void Die();
 public:
 	virtual bool Init();

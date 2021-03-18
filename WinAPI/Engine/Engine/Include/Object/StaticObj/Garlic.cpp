@@ -8,10 +8,6 @@ Garlic::~Garlic()
 {
 }
 
-void Garlic::TileHit(Collider* pSrc, Collider* pDst, float dt)
-{
-}
-
 void Garlic::Die()
 {
     Plant::Die();

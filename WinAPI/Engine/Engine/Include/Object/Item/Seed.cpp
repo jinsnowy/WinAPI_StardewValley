@@ -3,7 +3,9 @@
 #include "../StaticObj/Garlic.h"
 #include "../StaticObj/Cauliflower.h"
 #include "../StaticObj/Radish.h"
-
+#include "../StaticObj/BlueBerry.h"
+#include "../StaticObj/Tomato.h"
+#include "../StaticObj/Pepper.h"
 Seed::Seed()
 {
 	m_eItemType = ITEM_SEED;
@@ -72,15 +74,19 @@ Plant* Seed::SpawnPlant() const
 	}
 	if (m_strPlantTag == "Pepper_Plant")
 	{
-		return Object::CreateObject<Parsnip>(m_strPlantTag);
+		return Object::CreateObject<Pepper>(m_strPlantTag);
 	}
 	if (m_strPlantTag == "Radish_Plant")
 	{
 		return Object::CreateObject<Radish>(m_strPlantTag);
 	}
-	if (m_strPlantTag == "Tomato_Seed")
+	if (m_strPlantTag == "Tomato_Plant")
+	{
+		return Object::CreateObject<Tomato>(m_strPlantTag);
+	}
+	if (m_strPlantTag == "BlueBerry_Plant")
     {
-		return Object::CreateObject<Parsnip>(m_strPlantTag);
+		return Object::CreateObject<BlueBerry>(m_strPlantTag);
     }
 	return nullptr;
 }
