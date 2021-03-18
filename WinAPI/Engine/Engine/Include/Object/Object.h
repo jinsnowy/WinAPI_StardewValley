@@ -15,9 +15,12 @@ protected:
 	class Scene* m_pScene;
 	class Layer* m_pLayer;
 	class Texture* m_pTexture;
-	list<Collider*> m_ColliderList;
+	class Effect* m_pEffect;
 	Animation* m_pAnimation;
+	list<Collider*> m_ColliderList;
 public:
+	const Effect* AccessEffect() const { return m_pEffect; }
+	void SetEffect(class Effect* pEffect);
 	void SetColliderChannel(COLL_CHANNEL eChannel) { m_eColliderChannel = eChannel; }
 	COLL_CHANNEL GetColliderChannel() const { return m_eColliderChannel; }
 	OBJ_TYPE GetObjectType() const { return m_eObjType; }

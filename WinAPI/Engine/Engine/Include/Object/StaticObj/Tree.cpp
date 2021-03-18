@@ -7,6 +7,7 @@
 #include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
 #include "../../Scene/Scene.h"
+#include "../../Effect/ShakeEffect.h"
 
 const wchar_t* const Tree::m_strBaseName[] = { L"Tree1.bmp", L"Tree2.bmp", L"Tree3.bmp" };
 
@@ -83,6 +84,10 @@ void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
 	{
+		if (!m_pEffect)
+		{
+			m_pEffect = new ShakeEffect(m_tPos, TOOLSPEED - 0.1f, 0.01f, 5.f, 0.f);
+		}
 		float power = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetToolPower();
 		GetDamage(power);
 		SOUND_MANAGER->PlaySound("TreeHit");

@@ -1,22 +1,21 @@
 #pragma once
-class ShakeEffect
+#include "Effect.h"
+class ShakeEffect : public Effect
 {
 private:
-	bool m_bEnd = false;
-	int m_iBounceCount = 0;
-	int m_iMaxBounceNum = 5;
-	float m_fVeloY = 0.f;
-	float m_fVeloX = 0.f;
-	float m_fCoeff = 0.7f;
-	Pos m_tPos = Pos(0, 0);
-	float m_fYLimit = 0.f;
-	float m_fDeltaTime = 0.f;
-	float m_fDuration = 3.f;
+	float m_fShakeTime = 0.f;
+	float m_fShakePeriod;
+	float m_fRangeX;
+	float m_fRangeY;
+	float m_fDampingCoeff;
+	float m_fNoiseCoeff;
+	float m_fAlpha = 1.0f;
+	Pos m_tOrigin;
+	static normal_distribution<float> m_noiseDist;
+protected:
+	virtual bool Predicate();
+	virtual void Process(float dt);
 public:
-	BoundEffect();
-	~BoundEffect();
-	void Init(const Pos& origin, int maxBounce,
-		float fAngle, float fVelo, float YLimit, float duration);
-	bool IsEnd()const { return m_bEnd; }
-	Pos Next(float dt);
+	explicit ShakeEffect(const Pos& origin, float duration, float fPeriod, float fRangeX, float fRangeY, float m_fNoiseCoeff = 1.0f, float dampingCoeff = 0.96f);
+	~ShakeEffect();
 };

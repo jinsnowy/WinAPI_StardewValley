@@ -18,7 +18,7 @@ private:
 	virtual UIPlayerInfo* Clone() { throw EXCEPT(L"UIFastItemList cloned"); return nullptr; }
 private:
 	class UIPanel* m_pPlayerMPPanel = nullptr;
-
+	static constexpr float m_iMPShakeStart = 0.25f;
 	static constexpr int m_iMPPanelStartX = 13;
 	static constexpr int m_iMPPanelStartY = 56;
 	static constexpr float m_iMPPanelSizeX = 25.f;

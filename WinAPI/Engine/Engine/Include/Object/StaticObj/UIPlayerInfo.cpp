@@ -5,6 +5,7 @@
 #include "../MoveObj/Player.h"
 #include "../../Core/Input.h"
 #include "../../Resources/ResourceManager.h"
+#include "../../Effect/ShakeEffect.h"
 
 UIPlayerInfo::UIPlayerInfo()
 {
@@ -34,7 +35,7 @@ bool UIPlayerInfo::Init()
 	m_pPlayerMPPanel->SetColorKey(255,255,255);
 	m_pPlayerMPPanel->SetAsTextureSize();
 	Size tSize = m_pPlayerMPPanel->GetSize();
-	m_pPlayerMPPanel->SetPos(float(GETRESOLUTION.x) - tSize.x - 30.f, float(GETRESOLUTION.y) - tSize.y - 30.f);
+	m_pPlayerMPPanel->SetPos(float(GETRESOLUTION.x) - tSize.x - 10.f, float(GETRESOLUTION.y) - tSize.y - 10.f);
 	return true;
 }
 
@@ -46,11 +47,26 @@ void UIPlayerInfo::Input(float dt)
 		m_iItemListOffset = (m_iItemListOffset + 12) % 36;
 		PLAYER->SetCurItemSel((PLAYER->GetCurItemSel() + 12) % 36);
 	}
+	if (PLAYER->GetMPRemainRatio() < m_iMPShakeStart)
+	{
+		// Ã¼·Â¹Ù ¶³¸²
+		if (!m_pPlayerMPPanel->AccessEffect())
+		{
+			m_pPlayerMPPanel->SetEffect(new ShakeEffect(m_pPlayerMPPanel->GetPos(), FLT_MAX, 5.f, 5.f, 10.f, 1.0f));
+		}
+	}
+	else {
+		if(m_pPlayerMPPanel->AccessEffect())
+		{
+			m_pPlayerMPPanel->SetEffect(nullptr);
+		}
+	}
 }
 
 int UIPlayerInfo::Update(float dt)
 {
     UI::Update(dt);
+	m_pPlayerMPPanel->Update(dt);
     return 0;
 }
 

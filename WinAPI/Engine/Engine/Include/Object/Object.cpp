@@ -20,12 +20,14 @@
 #include "StaticObj/Rock.h"
 #include "StaticObj/TreeTrunk.h"
 #include "StaticObj/Npc.h"
+#include "../Effect/Effect.h"
 
 Object::Object() :
     m_pTexture(nullptr),
     m_pAnimation(nullptr),
     m_pScene(nullptr),
     m_pLayer(nullptr),
+    m_pEffect(nullptr),
     m_tPos(0, 0),
     m_tPivot(0, 0),
     m_tSize(0, 0),
@@ -40,6 +42,7 @@ Object::Object(const Object& obj)
 {
     *this = obj;
     m_Ref = 1;
+    m_pEffect = nullptr;
 
     if (obj.m_pAnimation)
         m_pAnimation = obj.m_pAnimation->Clone();
@@ -68,7 +71,14 @@ Object::~Object()
 {
     SAFE_RELEASE(m_pAnimation);
     SAFE_RELEASE(m_pTexture);
+    SAFE_DELETE(m_pEffect)
     Safe_Release_VecList(m_ColliderList);
+}
+
+void Object::SetEffect(Effect* pEffect)
+{
+    SAFE_DELETE(m_pEffect);
+    m_pEffect = pEffect;
 }
 
 Object* Object::CreateObjectByType(OBJ_TYPE eType)
@@ -242,6 +252,14 @@ void Object::Input(float dt)
 
 int Object::Update(float dt)
 {
+    if (m_pEffect)
+    {
+        SetPos(m_pEffect->Next(dt));
+        if (m_pEffect->IsEnd())
+        {
+            SAFE_DELETE(m_pEffect);
+        }
+    }
     list<Collider*>::iterator iter;
     list<Collider*>::iterator iterEnd = m_ColliderList.end();
 

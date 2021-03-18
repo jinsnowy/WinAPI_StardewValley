@@ -85,7 +85,6 @@ protected:
 	static constexpr float m_fChaseSpeed = 350.f;
 	static constexpr float m_fChaseRange = 100.f;
 private:
-	class BoundEffect* m_Effect = nullptr;
 	void ChasePlayer(float dt);
 public:
 	void GenerateBoundEffect();

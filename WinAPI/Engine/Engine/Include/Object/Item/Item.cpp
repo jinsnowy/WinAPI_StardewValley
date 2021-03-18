@@ -33,15 +33,14 @@ void Item::ChasePlayer(float dt)
 
 void Item::GenerateBoundEffect()
 {
-    assert(m_Effect == nullptr);
+    SAFE_DELETE(m_pEffect);
 
     float angle = m_AngleDist(util::_rng);
     float velo = m_VeloDist(util::_rng);
     
     angle = (rand() % 2 == 1) ? angle : PI - angle;
 
-    m_Effect = new BoundEffect;
-    m_Effect->Init(GetPos(), 4, angle, velo, GetPos().y + 0.5f, 2.5f);
+    m_pEffect = new BoundEffect(GetPos(), 2.5f, 4, angle, velo, GetPos().y + 0.5f);
 }
 
 Item::Item()
@@ -58,7 +57,6 @@ Item::Item(const Item& item)
 
 Item::~Item()
 {
-    SAFE_DELETE(m_Effect);
 }
 
 void Item::Decrease()
@@ -89,17 +87,8 @@ int Item::Update(float dt)
 
     if (m_pScene)
     {
-        if (m_Effect)
-        {
-            SetPos(m_Effect->Next(dt));
-            if (m_Effect->IsEnd())
-            {
-                SAFE_DELETE(m_Effect);
-            }
-        }
         ChasePlayer(dt);
     }
-
     return 0;
 }
 
