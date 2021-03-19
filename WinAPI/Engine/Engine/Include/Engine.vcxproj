@@ -207,10 +207,11 @@
     <ClInclude Include="Object\StaticObj\TreeTrunk.h" />
     <ClInclude Include="Object\StaticObj\UI.h" />
     <ClInclude Include="Object\StaticObj\UIButton.h" />
-    <ClInclude Include="Object\StaticObj\UIPlayerInfo.h" />
+    <ClInclude Include="Object\StaticObj\UIFastItemList.h" />
     <ClInclude Include="Object\StaticObj\GameManager.h" />
     <ClInclude Include="Object\StaticObj\UIGameTimer.h" />
     <ClInclude Include="Object\StaticObj\UIPanel.h" />
+    <ClInclude Include="Object\StaticObj\UIPlayerInfo.h" />
     <ClInclude Include="Object\StaticObj\UIScrollBar.h" />
     <ClInclude Include="Object\StaticObj\UISeedStore.h" />
     <ClInclude Include="Object\StaticObj\UITileSelect.h" />
@@ -287,10 +288,11 @@
     <ClCompile Include="Object\StaticObj\TreeTrunk.cpp" />
     <ClCompile Include="Object\StaticObj\UI.cpp" />
     <ClCompile Include="Object\StaticObj\UIButton.cpp" />
-    <ClCompile Include="Object\StaticObj\UIPlayerInfo.cpp" />
+    <ClCompile Include="Object\StaticObj\UIFastItemList.cpp" />
     <ClCompile Include="Object\StaticObj\GameManager.cpp" />
     <ClCompile Include="Object\StaticObj\UIGameTimer.cpp" />
     <ClCompile Include="Object\StaticObj\UIPanel.cpp" />
+    <ClCompile Include="Object\StaticObj\UIPlayerInfo.cpp" />
     <ClCompile Include="Object\StaticObj\UIScrollBar.cpp" />
     <ClCompile Include="Object\StaticObj\UISeedStore.cpp" />
     <ClCompile Include="Object\StaticObj\UITileSelect.cpp" />

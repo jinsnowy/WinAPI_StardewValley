@@ -8,7 +8,7 @@ private:
 private:
     const char* pGameDataFileName = "Middleway.map";
     const Rect m_tFarmSceneTrigger = { -64.f, 1792.f,16.f,2048.f };
-    const Rect m_tTownSceneTrigger = {1260.f, 1792.f,1340.f,2048.f};
+    const Rect m_tTownSceneTrigger = {1280.f, 1792.f,1340.f,2048.f};
 private:
     MiddlewayScene();
     ~MiddlewayScene();

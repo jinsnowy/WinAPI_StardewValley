@@ -25,6 +25,10 @@ public:
 		Rect_(topLeft, topLeft + Vec2_<T>(width, height))
 	{
 	}
+	operator RECT()
+	{
+		return RECT(left, top, right, bottom);
+	}
 	bool IsCollideRect(const Rect_& other) const
 	{
 		return right > other.left && left < other.right

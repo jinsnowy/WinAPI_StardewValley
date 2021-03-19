@@ -28,7 +28,8 @@ void BoundEffect::Process(float dt)
 
 	if (m_tPos.y >= m_fYLimit && m_iBounceCount < m_iMaxBounceNum)
 	{
-		m_fVeloY = -m_fCoeff * m_fVeloY;
+		m_fVeloX *= m_fCoeff;
+		m_fVeloY *= -m_fCoeff;
 		++m_iBounceCount;
 	}
 }

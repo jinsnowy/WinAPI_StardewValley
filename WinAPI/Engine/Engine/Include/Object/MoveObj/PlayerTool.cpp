@@ -18,8 +18,7 @@ void PlayerTool::SetPlayer(Player* player)
 
     for (Item* tool : m_pTools)
     {
-        m_pPlayer->m_vecItem.push_back(tool);
-        tool->AddRef();
+        m_pPlayer->AddTool(tool);
     }
 }
 

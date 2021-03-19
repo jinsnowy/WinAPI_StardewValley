@@ -111,7 +111,7 @@ void SceneManager::Collision(float dt)
 void SceneManager::Draw(HDC hdc, float dt)
 {
 	m_pScene->Draw(hdc, dt);
-
+	DrawScreenDarkness(hdc);
 	if(m_pScene->GetSceneType() != SC_START && m_pScene->GetSceneType() != SC_MAPEDIT)
 		GAME_MANAGER->Draw(hdc, dt);
 }
@@ -155,6 +155,11 @@ void SceneManager::ChangeScene()
 		}
 	}
 
+	if (m_tNextState.bSleep)
+	{
+		GAME_MANAGER->SleepUntilMorning();
+	}
+
 	m_pScene = m_vecScene[nxt];
 	
 	GameScene* gameScene = dynamic_cast<GameScene*>(m_pScene);
@@ -166,6 +171,7 @@ void SceneManager::ChangeScene()
 	FadeIn();
 	COLLISION_MANAGER->Clear();
 	m_iSignal = 0;
+	m_tNextState.bSleep = false;
 	m_tNextState.nextBeacon = BC_NONE;
 	m_tNextState.nextDir = LEFT;
 	m_tNextState.nextScene = SC_NONE;
@@ -229,18 +235,14 @@ void SceneManager::FadeIn()
 
 	m_fDelay = 0.f;
 	RESOURCE_MANAGER->SetAlphaChannel(0);
-	float th = m_fSceneDrawPeriod;
+	float th = 0.f;
 	while (m_fDelay < m_fSceneDelay)
 	{
 		const float dt = TIMER->Tick();
-		// FadeIn 장면 전환 효과
+		// FadeOut 장면 전환 효과
 		m_fDelay += dt;
 		if (m_fDelay > th)
 		{
-			m_pScene->Draw(pEmptyTex->GetDC(), dt);
-			if (m_pScene->GetSceneType() != SC_START && m_pScene->GetSceneType() != SC_MAPEDIT)
-				GAME_MANAGER->Draw(pEmptyTex->GetDC(), dt);
-
 			th += m_fSceneDrawPeriod;
 			int alpha = int(255.f * (m_fDelay / m_fSceneDelay));
 			RESOURCE_MANAGER->SetAlphaChannel(alpha);
@@ -252,9 +254,37 @@ void SceneManager::FadeIn()
 	SAFE_RELEASE(pEmptyTex);
 }
 
+void SceneManager::DrawScreenDarkness(HDC hdc)
+{
+	if (!m_pScene)
+		return;
+
+	const int RSW = GETRESOLUTION.x;
+	const int RSH = GETRESOLUTION.y;
+
+	Texture* pEmptyTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), RSW, RSH);
+
+	float darkness = GAME_MANAGER->GetDayDarkNess();
+	int alpha = int(255.f * darkness);
+	RESOURCE_MANAGER->SetAlphaChannel(alpha);
+	AlphaBlend(hdc, 0, 0, RSW, RSH,
+		pEmptyTex->GetDC(), 0, 0, RSW, RSH, RESOURCE_MANAGER->GetBlendFunc());
+	SAFE_RELEASE(pEmptyTex);
+}
+
 void SceneManager::SignalizeSceneChange(const SceneState& state)
 {
 	m_iSignal = m_iChangeSignal;
 	m_tNextState = state;
+}
+
+void SceneManager::PlayerSleep()
+{
+	SceneState state = {};
+	state.bSleep = true;
+	state.nextDir = LEFT;
+	state.nextBeacon = BC_TWO;
+	state.nextScene = SC_INHOUSE;
+	SignalizeSceneChange(state);
 }
 

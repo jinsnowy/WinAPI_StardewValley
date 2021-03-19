@@ -24,6 +24,7 @@ private:
 	float m_fDelay = 0.f;
 	void FadeOut();
 	void FadeIn();
+	void DrawScreenDarkness(HDC hdc);
 public:
 	int GetShowMode()const { return m_iShowMode; }
 	bool CheckShowMode(STAGE_SHOW eShow)
@@ -36,6 +37,7 @@ public:
 	}
 	bool NeedChangeScene(int result) { return result == m_iChangeSignal; }
 	void SignalizeSceneChange(const SceneState& state);
+	void PlayerSleep();
 	class Scene* GetScene() const { return m_pScene; }
 public:
 	bool Init();

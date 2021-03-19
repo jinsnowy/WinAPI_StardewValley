@@ -23,6 +23,7 @@ Player::Player()
 	m_tPrev(Pos())
 {
 	m_eColliderChannel = CO_PLAYER;
+	m_vecItem.resize(m_iMaxItemNum, nullptr);
 }
 
 Player::~Player()
@@ -297,9 +298,16 @@ float Player::GetToolPower() const
 	return 0.f;
 }
 
+void Player::SetCurItemSel(int sel)
+{
+	if (sel < 0 || sel >= m_iMaxItemNum)
+		return;
+	m_iCurItemSel = sel; 
+}
+
 Item* Player::GetCurItem() const
 {
-	if (m_iCurItemSel >= m_vecItem.size())
+	if (!m_vecItem[m_iCurItemSel])
 	{
 		return nullptr;
 	}
@@ -613,6 +621,10 @@ void Player::Input(float dt)
 	{
 		return;
 	}
+	if (!HasEnoughMP())
+	{
+		SCENE_MANAGER->PlayerSleep();
+	}
 	MovableObject::Input(dt);
 	ChangePlayerTool(dt);
 
@@ -775,21 +787,27 @@ void Player::ChangePlayerTool(float dt)
 	{
 		m_iCurItemSel = 11;
 	}
-	if (m_iCurItemSel < m_vecItem.size())
+
+	if (m_vecItem[m_iCurItemSel] && m_vecItem[m_iCurItemSel]->IsToolItem())
 	{
-		Tool* pTool = dynamic_cast<Tool*>(m_vecItem[m_iCurItemSel]);
-		if (pTool)
-		{
-			m_pPlayerTool->SetTool(pTool);
-		}
+		m_pPlayerTool->SetTool(m_vecItem[m_iCurItemSel]);
 	}
+}
+
+void Player::AddTool(Item* pItem)
+{
+	int index = FindEmptyIndex();
+	if (index == -1) return;
+	SAFE_RELEASE(m_vecItem[index]);
+	m_vecItem[index] = pItem;
+	m_vecItem[index]->AddRef();
 }
 
 Item* Player::FindItem(const string& itemTag)
 {
 	for (Item* pItem : m_vecItem)
 	{
-		if (pItem->GetTag() == itemTag)
+		if (pItem && pItem->GetTag() == itemTag)
 		{
 			pItem->AddRef();
 			return pItem;
@@ -800,12 +818,14 @@ Item* Player::FindItem(const string& itemTag)
 
 void Player::AddItem(Item* pItem)
 {
+	if (IsFull())
+		return;
 	Item* exist = FindItem(pItem->GetTag());
 	if (!exist)
 	{
 		exist = pItem->Clone();
 		exist->EraseAllColiders();
-		m_vecItem.push_back(exist);
+		m_vecItem[FindEmptyIndex()] = exist;
 	}
 	else 
 	{
@@ -818,5 +838,14 @@ void Player::EraseItem(Item* pItem)
 {
 	auto iter = find(m_vecItem.begin(), m_vecItem.end(), pItem);
 	SAFE_RELEASE((*iter));
-	m_vecItem.erase(iter);
+}
+
+int Player::FindEmptyIndex() const
+{
+	for (int i = 0; i < m_iMaxItemNum; ++i)
+	{
+		if (m_vecItem[i] == nullptr)
+			return i;
+	}
+	return -1;
 }

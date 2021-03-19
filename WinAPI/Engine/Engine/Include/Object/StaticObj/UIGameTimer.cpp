@@ -1,8 +1,10 @@
 #include "UIGameTimer.h"
 #include "GameManager.h"
+#include "UIPanel.h"
 #include "../../Application/Window.h"
 #include "../../Resources/ResourceManager.h"
 #include "../MoveObj/Player.h"
+#include "../../Effect/ShakeEffect.h"
 
 
 UIGameTimer::UIGameTimer()
@@ -16,11 +18,12 @@ UIGameTimer::~UIGameTimer()
 	Safe_Release_VecList(m_vecNeedleTex);
 	Safe_Release_VecList(m_vecWeekDays);
 	Safe_Release_VecList(m_vecNoon);
+	SAFE_RELEASE(m_pPlayerMPPanel);
 }
 
 bool UIGameTimer::Init()
 {
-    SetTexture("ClockBase", L"SV/Scene/ClockBase.bmp");
+    SetTexture("ClockBase", L"SV/Scene/UI/ClockBase.bmp");
     SetColorKey(255, 255, 255);
     SetAsTextureSize();
 	SetNormalPos();
@@ -31,18 +34,38 @@ bool UIGameTimer::Init()
     m_vecNoon = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/Noon/", chromaKey);
 	m_vecMoneyTex = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/Money/", chromaKey);
 
+	m_pPlayerMPPanel = Object::CreateObject<UIPanel>("PlayerMPUI");
+	m_pPlayerMPPanel->SetTexture("PlayerMPUI", L"SV/Scene/UI/Gauge.bmp");
+	m_pPlayerMPPanel->SetColorKey(255, 255, 255);
+	m_pPlayerMPPanel->SetAsTextureSize();
+	Size tSize = m_pPlayerMPPanel->GetSize();
+	m_pPlayerMPPanel->SetPos(float(GETRESOLUTION.x) - tSize.x - 10.f, float(GETRESOLUTION.y) - tSize.y - 10.f);
 	return true;
 }
 
 void UIGameTimer::Input(float dt)
 {
     UI::Input(dt);
+	if (PLAYER->GetMPRemainRatio() < m_iMPShakeStart)
+	{
+		// 체력바 떨림
+		if (!m_pPlayerMPPanel->AccessEffect())
+		{
+			m_pPlayerMPPanel->SetEffect(new ShakeEffect(m_pPlayerMPPanel->GetPos(), FLT_MAX, 5.f, 5.f, 10.f, 1.0f));
+		}
+	}
+	else {
+		if (m_pPlayerMPPanel->AccessEffect())
+		{
+			m_pPlayerMPPanel->SetEffect(nullptr);
+		}
+	}
 }
 
 int UIGameTimer::Update(float dt)
 {
     UI::Update(dt);
-
+	m_pPlayerMPPanel->Update(dt);
 	m_bTicked = m_clock->Tick(dt);
 
     return 0;
@@ -63,6 +86,19 @@ void UIGameTimer::Draw(HDC hdc, float dt)
 {
     UI::Draw(hdc, dt);
 
+	m_pPlayerMPPanel->Draw(hdc, dt);
+	// 체력 바
+	Pos tPos = m_pPlayerMPPanel->GetPos();
+	float ratio = PLAYER->GetMPRemainRatio();
+	RECT rc = {};
+	rc.left = tPos.x + m_iMPPanelStartX;
+	rc.top = tPos.y + m_iMPPanelStartY + int((1 - ratio) * m_iMPPanelSizeY);
+	rc.right = rc.left + m_iMPPanelSizeX;
+	rc.bottom = rc.top + int(ratio * m_iMPPanelSizeY);
+
+	COLORREF blend = RGB(max(int((1 - ratio) * 255.f), 10), max(int((ratio) * 255.f), 10), 0);
+	DrawColorRectWithOutBorder(hdc, rc, blend);
+
 	// 시계 바늘
 	int hours = m_clock->GetHours();
 	if (hours >= 0 && hours <= 5)
@@ -79,8 +115,7 @@ void UIGameTimer::Draw(HDC hdc, float dt)
 	}
 
 	m_vecNeedleTex[iCur]->DrawImageAt(hdc, GetPos());
-
-	Pos tPos = GetPos();
+	tPos = GetPos();
 
 	// 월화수목금토일
 	tPos.x += 140;
@@ -157,6 +192,16 @@ bool UIGameTimer::GameClock::Tick(float dt)
 		}
 	}
 	return tick;
+}
+
+float UIGameTimer::GameClock::GetDayDarkness() const
+{
+	if (m_iHours >= 6 && m_iHours <= 18)
+		return 0.f;
+	else 
+	{
+		return min((abs(float(m_iHours) - 12.f) - 6.f) / 6.f, m_fMaxDarkness);
+	}
 }
 
 unsigned long long UIGameTimer::GetWorldTime() const

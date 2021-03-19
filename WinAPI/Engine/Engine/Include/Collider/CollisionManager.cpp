@@ -86,6 +86,20 @@ void CollisionManager::AddObject(Object* pObj)
     }
 }
 
+void CollisionManager::EraseObject(Object* pObj)
+{
+    for (auto iter = m_CollisionObjList.begin();
+        iter != m_CollisionObjList.end();
+        ++iter)
+    {
+        if ((*iter) == pObj)
+        {
+            m_CollisionObjList.erase(iter);
+            return;
+        }
+    }
+}
+
 void CollisionManager::Collision(float dt)
 {
     if (m_CollisionObjList.size() < 2)
@@ -104,19 +118,18 @@ void CollisionManager::Collision(float dt)
    
     for (iter = m_CollisionObjList.begin(); iter != iterEnd; ++iter)
     {
+        if (!(*iter)->GetEnable())
+        {
+            continue;
+        }
         list<Object*>::iterator jter = iter;
         ++jter;
         list<Object*>::iterator jterEnd = m_CollisionObjList.end();
         for (; jter != jterEnd; ++jter)
         {
-            if ((*iter)->GetTag() == "Click" && (*jter)->GetTag() == "NPC")
+            if (!(*jter)->GetEnable())
             {
-                int a = 10;
-            }
-
-            if ((*iter)->GetTag() == "NPC" && (*jter)->GetTag() ==  "Click")
-            {
-                int a = 10;
+                continue;
             }
             COLL_CHANNEL eListenSrc = (*iter)->GetColliderChannel();
             COLL_CHANNEL eListenDst = (*jter)->GetColliderChannel();

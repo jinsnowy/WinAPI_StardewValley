@@ -13,13 +13,25 @@ DEFINITION_SINGLE(GameManager);
 
 bool GameManager::Init()
 {
+	INPUT->AddKey("PlayerUI", 'E');
 	return true;
 }
 
 void GameManager::Input(float dt)
 {
+	if (KEYDOWN("PlayerUI"))
+	{
+		m_bPlayerInfoSelect = !m_bPlayerInfoSelect;
+	}
 	m_clockPanel->Input(dt);
-	m_infoPanel->Input(dt);
+	if (m_bPlayerInfoSelect)
+	{
+		m_playerInfoPanel->Input(dt);
+	}
+	else
+	{
+		m_fastItemPanel->Input(dt);
+	}
 	if (m_bSeedStoreSelect)
 	{
 		m_storePanel->Input(dt);
@@ -39,7 +51,14 @@ int GameManager::Update(float dt)
 		}
 	}
 
-	m_infoPanel->Update(dt);
+	if (m_bPlayerInfoSelect)
+	{
+		m_playerInfoPanel->Update(dt);
+	}
+	else
+	{
+		m_fastItemPanel->Update(dt);
+	}
 
 	if (m_bSeedStoreSelect)
 	{
@@ -52,7 +71,14 @@ int GameManager::Update(float dt)
 int GameManager::LateUpdate(float dt)
 {
 	m_clockPanel->LateUpdate(dt);
-	m_infoPanel->LateUpdate(dt);
+	if (m_bPlayerInfoSelect)
+	{
+		m_playerInfoPanel->LateUpdate(dt);
+	}
+	else
+	{
+		m_fastItemPanel->LateUpdate( dt);
+	}
 	if (m_bSeedStoreSelect)
 	{
 		m_storePanel->LateUpdate(dt);
@@ -67,9 +93,13 @@ void GameManager::Collision(float dt)
 void GameManager::Draw(HDC hdc, float dt)
 {
 	m_clockPanel->Draw(hdc, dt);
-	if (m_bFastItemListSelect)
+	if (m_bPlayerInfoSelect)
 	{
-		m_infoPanel->Draw(hdc, dt);
+		m_playerInfoPanel->Draw(hdc, dt);
+	}
+	else
+	{
+		m_fastItemPanel->Draw(hdc, dt);
 	}
 	if (m_bSeedStoreSelect)
 	{
@@ -193,6 +223,22 @@ void GameManager::SetPlayer(Player* pPlayer)
 unsigned long long GameManager::GetWorldTime() const
 {
 	return m_clockPanel->GetWorldTime();
+}
+
+float GameManager::GetDayDarkNess() const
+{
+	if (!m_bTickStart) return 0.0f;
+	return m_clockPanel->GetDayDarkNess(); 
+}
+
+void GameManager::SleepUntilMorning()
+{
+	m_pPlayer->Sleep();
+	while (!m_clockPanel->IsMorning())
+	{
+		GameTimerTick();
+	}
+	GameTimerTick();
 }
 
 

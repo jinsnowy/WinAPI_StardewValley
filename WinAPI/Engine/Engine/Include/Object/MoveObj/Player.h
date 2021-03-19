@@ -34,25 +34,26 @@ private:
 private:
 	bool m_bMoveEnabled = true;
 	static constexpr int m_iMaxItemNum = 36;
-	static constexpr float m_fPlayerSpeed = 800.f;
+	static constexpr float m_fPlayerSpeed = 400.f;
+	static constexpr float m_iMaxHP = 1000.f;
 	static constexpr float m_iMaxMP = 1000.f;
 	static constexpr float m_iUseMPUnit = 20.f;
-	float m_iHP = 1000.f;
+	float m_iHP = m_iMaxHP;
 	float m_iMP = m_iMaxMP;
 	float m_fAttackRange = TILESIZE;
 	int m_iCurItemSel = 0;
-	int m_iMoney = 5000;
+	int m_iMoney = 500;
 public:
 	void DisableMovement() { m_bMoveEnabled = false; }
 	void EnableMovement() { m_bMoveEnabled = true; }
 	float GetToolPower() const;
 	const vector<class Item*>& AccessItemList() const { return m_vecItem; }
 	int GetCurItemSel() const { return m_iCurItemSel; }
-	void SetCurItemSel(int sel) { m_iCurItemSel = sel; }
+	void SetCurItemSel(int sel);
 	Item* GetCurItem() const;
 	int GetMoney() const { return m_iMoney; }
 	bool Affordable(int cost) { return m_iMoney >= cost; }
-	bool IsFull() const { return m_vecItem.size() == m_iMaxItemNum; }
+	bool IsFull() const { return FindEmptyIndex() == -1; }
 	void BuyItem(class Item* pItem);
 	PlayerState GetState() const { return m_eState; }
 	inline Pos GetCenterPos() const
@@ -66,6 +67,24 @@ public:
 	float GetMPRemainRatio() const
 	{
 		return m_iMP / m_iMaxMP;
+	}
+	Item* GetItem(int index)
+	{
+		if (index < 0 || index >= m_iMaxItemNum) return nullptr;
+		if (m_vecItem[index])
+			m_vecItem[index]->AddRef();
+		return m_vecItem[index];
+	}
+	void SwapItem(int index1, int index2)
+	{
+		if (index1 < 0 || index1 >= m_iMaxItemNum) return;
+		if (index2 < 0 || index2 >= m_iMaxItemNum) return;
+		swap(m_vecItem[index1], m_vecItem[index2]);
+	}
+	void Sleep()
+	{
+		m_iHP = m_iMaxHP;
+		m_iMP = m_iMaxMP;
 	}
 public:
 	virtual void StateTransit(int iNext);
@@ -86,13 +105,14 @@ private:
 	void InitTexture();
 	void InitAnimation();
 	void ChangePlayerTool(float dt);
+	void AddTool(Item* pItem);
 	Item* FindItem(const string& itemTag);
 	void AddItem(class Item* pItem);
 	void EraseItem(class Item* pItem);
+	int FindEmptyIndex() const;
 private:
 	bool HasTool(PlayerTool::ToolState tool) const
 	{
-		if (m_iCurItemSel >= m_vecItem.size()) return false;
 		return m_vecItem[m_iCurItemSel] == (Item*)m_pPlayerTool->m_pTools[tool];
 	}
 	bool HasSwingTool() const
@@ -102,12 +122,12 @@ private:
 	bool IsUsingTool() const { return m_eState == TOOL_USE; }
 	bool IsToolSelected() const
 	{
-		if (m_iCurItemSel >= m_vecItem.size()) return false;
-		 return m_vecItem[m_iCurItemSel]->IsToolItem();
+		if (!m_vecItem[m_iCurItemSel]) return false;
+		return m_vecItem[m_iCurItemSel]->IsToolItem();
 	}
 	bool IsSeedSelected() const
 	{
-		if (m_iCurItemSel >= m_vecItem.size()) return false;
+		if (!m_vecItem[m_iCurItemSel]) return false;
 		return m_vecItem[m_iCurItemSel]->IsSeedItem();
 	}
 	bool IsIdleState() const

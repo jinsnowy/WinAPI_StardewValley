@@ -27,14 +27,14 @@ bool UISeedStore::Init()
 {
 	m_vecSellingSeeds = Item::LoadItemFromDirectory<Seed>(L"SV/Item/Seed/", RGB(255, 255, 255));
 
-	SetTexture("SeedStore", L"SV/Scene/SeedStoreUIMain.bmp");
+	SetTexture("SeedStore", L"SV/Scene/UI/SeedStoreUIMain.bmp");
 	SetAsTextureSize();
 	SetPos(100.f, 100.f);
 
 	sort(m_vecSellingSeeds.begin(), m_vecSellingSeeds.end(), Item::SortByName);
 
 	m_pExitButton = Object::CreateObject<UIButton>("StoreExitButton");
-	m_pExitButton->SetTexture("StoreExitButton", L"SV/Scene/ExitButton.bmp");
+	m_pExitButton->SetTexture("StoreExitButton", L"SV/Scene/UI/ExitButton.bmp");
 	m_pExitButton->SetAsTextureSize();
 	m_pExitButton->SetPos(GetPos().x + GetSize().x + 50.f, GetPos().y);
 	m_pExitButton->SetCallback(this, &UISeedStore::Exit);
@@ -46,14 +46,14 @@ bool UISeedStore::Init()
 	SAFE_RELEASE(pRC);
 
 	m_pScrollBar = Object::CreateObject<UIScrollBar>("StoreScrollBar");
-	m_pScrollBar->SetTexture("ScrollBar", L"SV/Scene/ScrollBar.bmp");
+	m_pScrollBar->SetTexture("ScrollBar", L"SV/Scene/UI/ScrollBar.bmp");
 	m_pScrollBar->SetAsTextureSize();
 	m_pScrollBar->SetPos(GetPos().x + GetSize().x + 60.f, GetPos().y + m_pExitButton->GetSize().y + 25.f);
 	int itemNum = (int) m_vecSellingSeeds.size();
 	m_pScrollBar->SetNumBlock(itemNum - 3);
 
 	UIButton* pObj = m_pScrollBar->GetScroller();
-	pObj->SetTexture("Scroller", L"SV/Scene/Scroller.bmp");
+	pObj->SetTexture("Scroller", L"SV/Scene/UI/Scroller.bmp");
 	pObj->SetAsTextureSize();
 	pObj->SetPos(m_pScrollBar->GetPos());
 	SAFE_RELEASE(pObj);

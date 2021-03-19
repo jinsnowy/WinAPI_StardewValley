@@ -2,6 +2,7 @@
 #include "../../framework.h"
 #include "UIGameTimer.h"
 #include "UISeedStore.h"
+#include "UIFastItemList.h"
 #include "UIPlayerInfo.h"
 
 class GameManager
@@ -28,8 +29,9 @@ private:
 	list<class Plant*> m_plantList;
 private:
 	class Player* m_pPlayer = nullptr;
+	unique_ptr<UIPlayerInfo> m_playerInfoPanel = make_unique<UIPlayerInfo>();
 	unique_ptr<UIGameTimer> m_clockPanel = make_unique<UIGameTimer>();
-	unique_ptr<UIPlayerInfo> m_infoPanel = make_unique<UIPlayerInfo>();
+	unique_ptr<UIFastItemList> m_fastItemPanel = make_unique<UIFastItemList>();
 	unique_ptr<UISeedStore> m_storePanel = make_unique<UISeedStore>();
 public:
 	virtual bool Init();
@@ -41,18 +43,16 @@ public:
 private:
 	bool m_bTickStart = false;
 	bool m_bSeedStoreSelect = false;
-	bool m_bFastItemListSelect = true;
+	bool m_bPlayerInfoSelect = false;
 public:
 	void AddWateredTile(int index);
 	vector<int> GetDroughtTiles();
 	void UpdateFarm();
-
 	bool IsWateredTile(int index)
 	{
 		return m_setWateredTileIndices.find(index) != m_setWateredTileIndices.end();
 	}
 	void AddPlantList(class Plant* pPlant);
-
 	void SetSeedStore(bool bSelect);
 	void StartTick() { m_bTickStart = true; }
 	void GameTimerTick();
@@ -60,4 +60,6 @@ public:
 	bool IsStoreSelect() const { return m_bSeedStoreSelect; }
 	Player* AccessPlayer() { return m_pPlayer; }
 	unsigned long long GetWorldTime() const;
+	float GetDayDarkNess() const;
+	void SleepUntilMorning();
 };

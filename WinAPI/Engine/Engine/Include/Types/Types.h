@@ -164,6 +164,7 @@ enum DIRECTION
 };
 
 struct SceneState {
+	bool bSleep = false;
 	SCENE_CREATE nextScene = SC_NONE;
 	BEACON_TAG nextBeacon = BC_NONE;
 	DIRECTION nextDir = RIGHT;
