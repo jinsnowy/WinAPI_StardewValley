@@ -19,6 +19,10 @@ public:
 	{
 		return m_tWorldPos;
 	}
+	void SetPoint(const Pos& pos)
+	{
+		m_tPos = pos;
+	}
 	void SetPoint(float x, float y)
 	{
 		m_tPos.x = x;

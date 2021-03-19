@@ -42,7 +42,7 @@ protected:
 	Plant();
 	Plant(const Plant& obj) = delete;
 	virtual ~Plant();
-	virtual void Die() = 0;
+	virtual void AfterDie();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

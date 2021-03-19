@@ -105,10 +105,10 @@ void UIPlayerInfo::Draw(HDC hdc, float dt)
 			tOffset.x = startX;
 			if (i == 12)
 			{
-				tOffset.y += 90.f;
+				tOffset.y += m_iItemListSecondOffset;
 			}
 			else if(i == 24) {
-				tOffset.y += 70.f;
+				tOffset.y += m_iItemListThirdOffset;
 			}
 		}
 		if (itemList[i])
@@ -148,10 +148,10 @@ int UIPlayerInfo::GetClickIndex(const Pos& screenPos)
 			tOffset.x = startX;
 			if (i == 12)
 			{
-				tOffset.y += 90.f;
+				tOffset.y += m_iItemListSecondOffset;
 			}
 			else if (i == 24) {
-				tOffset.y += 70.f;
+				tOffset.y += m_iItemListThirdOffset;
 			}
 		}
 		if (screenPos.x >= tOffset.x && screenPos.x < tOffset.x + m_iItemBlockSize

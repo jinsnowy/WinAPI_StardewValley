@@ -62,13 +62,12 @@ void Rock::TileHit(Collider* pSrc, Collider* pDst, float dt)
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "PickTool")
 	{
 		Die();
+		AfterDie();
 	}
 }
 
-void Rock::Die()
+void Rock::AfterDie()
 {
-	Ref::Die();
-
 	ItemDrop(1);
 	SOUND_MANAGER->PlaySound("RockOver");
 }

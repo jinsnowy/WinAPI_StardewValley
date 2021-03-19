@@ -39,18 +39,18 @@ void InteractiveTile::ItemDrop(int num, bool effect)
     for (int i = 0; i < num; ++i)
     {
         Item* pItem = m_pItem->Clone();
-        
         pItem->SetPos(tPos);
-
         if (effect)
         {
             pItem->GenerateBoundEffect();
         }
-
         m_pLayer->AddObject(pItem);
-
         SAFE_RELEASE(pItem);
     }
+}
+
+void InteractiveTile::AterDie()
+{
 }
 
 bool InteractiveTile::Init()

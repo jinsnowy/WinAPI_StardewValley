@@ -33,14 +33,13 @@ void Item::ChasePlayer(float dt)
 
 void Item::GenerateBoundEffect()
 {
-    SAFE_DELETE(m_pEffect);
-
     float angle = m_AngleDist(util::_rng);
     float velo = m_VeloDist(util::_rng);
     
     angle = (rand() % 2 == 1) ? angle : PI - angle;
 
-    m_pEffect = new BoundEffect(GetPos(), 2.5f, 4, angle, velo, GetPos().y + 0.5f);
+    Effect* pEffect = new BoundEffect(this, 2.5f, 4, angle, velo, GetPos().y + 0.5f);
+    SetEffect(pEffect);
 }
 
 Item::Item()
@@ -52,6 +51,8 @@ Item::Item(const Item& item)
     : Object(item)
 {
     m_iItemNum = 1;
+    m_iSellPrice = item.m_iSellPrice;
+    m_iPrice = item.m_iPrice;
     m_eItemType = item.m_eItemType;
 }
 

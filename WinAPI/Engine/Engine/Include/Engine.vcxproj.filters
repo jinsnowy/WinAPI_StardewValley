@@ -342,6 +342,12 @@
     <ClInclude Include="Object\StaticObj\UIPlayerInfo.h">
       <Filter>Object\04. UI\Concrete</Filter>
     </ClInclude>
+    <ClInclude Include="Object\StaticObj\CropCabinet.h">
+      <Filter>Object\02. StaticObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\TempObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -562,6 +568,12 @@
     </ClCompile>
     <ClCompile Include="Object\StaticObj\UIPlayerInfo.cpp">
       <Filter>Object\04. UI\Concrete</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\StaticObj\CropCabinet.cpp">
+      <Filter>Object\02. StaticObj</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\TempObject.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

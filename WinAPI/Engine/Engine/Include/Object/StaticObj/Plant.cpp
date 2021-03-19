@@ -85,6 +85,7 @@ void Plant::HarvestFruit()
         if (m_iHarvestNum == 0)
         {
             Die();
+            AfterDie();
         }
     }
 }
@@ -152,11 +153,6 @@ Plant::~Plant()
 
 }
 
-void Plant::Die()
-{
-    Ref::Die();
-}
-
 bool Plant::Init()
 {
     return true;
@@ -171,6 +167,10 @@ int Plant::Update(float dt)
 {
     InteractiveTile::Update(dt);
     return 0;
+}
+
+void Plant::AfterDie()
+{
 }
 
 int Plant::LateUpdate(float dt)

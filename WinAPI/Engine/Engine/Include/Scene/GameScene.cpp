@@ -96,7 +96,6 @@ TILE_OPTION GameScene::GetTileOption(const Pos& worldPos) const
     return m_pStaticStage->GetTileOption(worldPos);
 }
 
-
 bool GameScene::IsBlockTile(const Pos& worldPos) const
 {
     return m_pStaticStage->IsBlockTile(worldPos);
@@ -185,11 +184,7 @@ void GameScene::SpawnPlant(const Pos& worldPos)
         }
 
         pSeed->Decrease();
-        // ¾¾¾ÑÀ» ´Ù ›§À» °æ¿ì
-        if (!pSeed->GetLife())
-        {
-            m_pPlayer->EraseItem(pSeed);
-        }
+        m_pPlayer->DecreaseItem(pSeed);
         SAFE_RELEASE(pSeed);
     }
 

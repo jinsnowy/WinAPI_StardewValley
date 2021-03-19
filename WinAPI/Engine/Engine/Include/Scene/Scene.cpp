@@ -23,7 +23,7 @@ Scene::~Scene()
 	Safe_Release_VecList(m_ObjList);
 }
 
-Object* Scene::FindObjectByIndex(const INDEX& index)
+Object* Scene::FindObjectByIndex(const INDEX& index) const
 {
 	auto iterEnd = m_ObjList.end();
 	for (auto it = m_ObjList.begin(); it != iterEnd; ++it)

@@ -8,7 +8,6 @@ class Tomato :
 protected:
 	Tomato();
 	virtual ~Tomato();
-	virtual void Die();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

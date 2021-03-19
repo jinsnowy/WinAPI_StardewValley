@@ -10,6 +10,7 @@ private:
 public:
 	bool Init();
 	void ClickPoint();
+	void AddCollideObject(class Object* pObj);
 	void AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag);
 	void AddCollidePoint(const Pos& pos, const string& strTag);
 	void TempLateUpdate(float dt);

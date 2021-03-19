@@ -203,6 +203,7 @@
     <ClInclude Include="Object\StaticObj\StaticObject.h" />
     <ClInclude Include="Object\StaticObj\Tile.h" />
     <ClInclude Include="Object\StaticObj\Tomato.h" />
+    <ClInclude Include="Object\StaticObj\CropCabinet.h" />
     <ClInclude Include="Object\StaticObj\Tree.h" />
     <ClInclude Include="Object\StaticObj\TreeTrunk.h" />
     <ClInclude Include="Object\StaticObj\UI.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="Object\StaticObj\UIScrollBar.h" />
     <ClInclude Include="Object\StaticObj\UISeedStore.h" />
     <ClInclude Include="Object\StaticObj\UITileSelect.h" />
+    <ClInclude Include="Object\TempObject.h" />
     <ClInclude Include="Other\UserException.h" />
     <ClInclude Include="Other\WindowsMessageMap.h" />
     <ClInclude Include="Resource.h" />
@@ -284,6 +286,7 @@
     <ClCompile Include="Object\StaticObj\StaticObject.cpp" />
     <ClCompile Include="Object\StaticObj\Tile.cpp" />
     <ClCompile Include="Object\StaticObj\Tomato.cpp" />
+    <ClCompile Include="Object\StaticObj\CropCabinet.cpp" />
     <ClCompile Include="Object\StaticObj\Tree.cpp" />
     <ClCompile Include="Object\StaticObj\TreeTrunk.cpp" />
     <ClCompile Include="Object\StaticObj\UI.cpp" />
@@ -296,6 +299,7 @@
     <ClCompile Include="Object\StaticObj\UIScrollBar.cpp" />
     <ClCompile Include="Object\StaticObj\UISeedStore.cpp" />
     <ClCompile Include="Object\StaticObj\UITileSelect.cpp" />
+    <ClCompile Include="Object\TempObject.cpp" />
     <ClCompile Include="Other\UserException.cpp" />
     <ClCompile Include="Other\WindowsMessageMap.cpp" />
     <ClCompile Include="Resources\PrototypeManager.cpp" />

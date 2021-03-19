@@ -8,11 +8,6 @@ Cauliflower::~Cauliflower()
 {
 }
 
-void Cauliflower::Die()
-{
-    Plant::Die();
-}
-
 bool Cauliflower::Init()
 {
     LoadGrowTexture(m_plantTag, L"SV/Plant/Cauliflower/");

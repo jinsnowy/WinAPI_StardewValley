@@ -8,7 +8,6 @@ class Radish :
 protected:
 	Radish();
 	virtual ~Radish();
-	virtual void Die();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

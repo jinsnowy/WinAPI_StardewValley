@@ -31,6 +31,10 @@ void GameManager::Input(float dt)
 	else
 	{
 		m_fastItemPanel->Input(dt);
+		if (m_bSeedStoreSelect)
+		{
+			m_fastItemPanel->SellItem();
+		}
 	}
 	if (m_bSeedStoreSelect)
 	{

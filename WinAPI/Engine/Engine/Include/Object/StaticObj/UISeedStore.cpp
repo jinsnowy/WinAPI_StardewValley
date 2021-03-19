@@ -9,6 +9,7 @@
 #include "../MoveObj/Player.h"
 #include "../Item/Item.h"
 #include "../Item/Seed.h"
+#include "../../Core/Input.h"
 
 UISeedStore::UISeedStore()
 {
@@ -20,7 +21,6 @@ UISeedStore::~UISeedStore()
 	SAFE_RELEASE(m_pExitButton);
 	SAFE_RELEASE(m_pScrollBar);
 	Safe_Release_VecList(m_vecSellingSeeds);
-	Safe_Release_VecList(m_vecSellingPanelBodies);
 }
 
 bool UISeedStore::Init()
@@ -75,14 +75,6 @@ int UISeedStore::Update(float dt)
 	m_pExitButton->Update(dt);
 	m_pExitButton->LateUpdate(dt);
 	COLLISION_MANAGER->AddObject(m_pExitButton);
-
-	for (UIButton* pSellingPanel : m_vecSellingPanelBodies)
-	{
-		pSellingPanel->Update(dt);
-		pSellingPanel->LateUpdate(dt);
-		COLLISION_MANAGER->AddObject(pSellingPanel);
-	}
-
 	m_pScrollBar->Update(dt);
 	m_pScrollBar->LateUpdate(dt);
     return 0;
@@ -91,6 +83,7 @@ int UISeedStore::Update(float dt)
 int UISeedStore::LateUpdate(float dt)
 {
     UI::LateUpdate(dt);
+	COLLISION_MANAGER->AddObject(this);
     return 0;
 }
 
@@ -124,35 +117,32 @@ void UISeedStore::Draw(HDC hdc, float dt)
 	}
 }
 
-void UISeedStore::BuyingCallback(float dt, int id)
+void UISeedStore::BuyingCallback(Collider* pSrc, Collider* pDst, float dt, int id)
 {
 	if (m_fClickDelay > 0.f)
 	{
 		m_fClickDelay -= dt;
 		return;
 	}
-	int curBlock = m_pScrollBar->GetCurBlock() + id;
-	Item* curItem = m_vecSellingSeeds[curBlock];
-	PLAYER->BuyItem(curItem);
+	if (pDst->GetTag() == "Mouse" && KEYUP("MouseLButton"))
+	{
+		int curBlock = m_pScrollBar->GetCurBlock() + id;
+			Item* curItem = m_vecSellingSeeds[curBlock];
+			PLAYER->BuyItem(curItem);
+	}
 }
 
 void UISeedStore::SetUpItemBuyColliders()
 {
-	m_vecSellingPanelBodies.resize(4, nullptr);
 	// 판매 아이템 리스트
-	float st_x = GetPos().x + 20.f;
-	float st_y = GetPos().y + 20.f;
+	float st_x = 20.f,  st_y = 20.f;
 	for (int i = 0; i <  4; ++i)
 	{
-		m_vecSellingPanelBodies[i] = Object::CreateObject<UIButton>("SellingPanel" + to_string(i + 1));
-		m_vecSellingPanelBodies[i]->SetPos(st_x, st_y);
-		m_vecSellingPanelBodies[i]->SetSize(m_fPanelWidth, m_fPanelHeight);
-		function<void(float)> clickCallBack =
-			bind(&UISeedStore::BuyingCallback, this, std::placeholders::_1, i);
-		m_vecSellingPanelBodies[i]->SetCallback(clickCallBack);
-		m_vecSellingPanelBodies[i]->SetColliderChannel(CO_UI);
-		ColliderRect* pRC = static_cast<ColliderRect*>(m_vecSellingPanelBodies[i]->GetCollider("ButtonBody"));
-		pRC->SetRect(0.f, 0.f, m_fPanelWidth, m_fPanelHeight);
+		ColliderRect* pRC = AddCollider<ColliderRect>("SellingPanel" + to_string(i + 1));
+		pRC->SetRect(st_x, st_y, st_x+m_fPanelWidth, st_y+m_fPanelHeight);
+		function<void(Collider* pSrc, Collider* pDst, float)> clickCallBack = 
+			[this, i](Collider* pSrc, Collider* pDst, float dt) { this->BuyingCallback(pSrc, pDst, dt, i); };
+		pRC->AddCollisionFunction(CS_STAY, clickCallBack);
 		SAFE_RELEASE(pRC);
 		st_y += 95.f;
 	}

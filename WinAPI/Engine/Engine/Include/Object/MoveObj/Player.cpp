@@ -315,6 +315,28 @@ Item* Player::GetCurItem() const
 	return m_vecItem[m_iCurItemSel];
 }
 
+void Player::SellItem(int index)
+{
+	if (!m_vecItem[index] || m_vecItem[index]->IsToolItem())
+		return;
+
+	m_iMoney += m_vecItem[index]->GetItemSellPrice();
+	DecreaseItem(m_vecItem[index]);
+}
+
+void Player::SellItem(const string& itemTag)
+{
+	for (int i = 0; i < m_iMaxItemNum; ++i)
+	{
+		if (!m_vecItem[i]) continue;
+		if (m_vecItem[i]->GetTag() == itemTag)
+		{
+			SellItem(i);
+			break;
+		}
+	}
+}
+
 void Player::BuyItem(Item* pItem)
 {
 	if (!Affordable(pItem->GetPrice()) || IsFull())
@@ -600,17 +622,11 @@ bool Player::Init()
 	INPUT->AddKey("Item-", char(0x2d));
 	INPUT->AddKey("Item=", char(0x3d));
 
-	Seed* pSeed = static_cast<Seed*>(Item::FindItem("BlueBerry_Seed"));
-	for(int i =0;i<10;++i)
-		AddItem(pSeed);
-	SAFE_RELEASE(pSeed);
-	pSeed = static_cast<Seed*>(Item::FindItem("Tomato_Seed"));
+	Seed* pSeed = static_cast<Seed*>(Item::FindItem("Parsnip_Seed"));
 	for (int i = 0; i < 10; ++i)
+	{
 		AddItem(pSeed);
-	SAFE_RELEASE(pSeed);
-	pSeed = static_cast<Seed*>(Item::FindItem("Pepper_Seed"));
-	for (int i = 0; i < 10; ++i)
-		AddItem(pSeed);
+	}
 	SAFE_RELEASE(pSeed);
 	return true;
 }
@@ -820,24 +836,31 @@ void Player::AddItem(Item* pItem)
 {
 	if (IsFull())
 		return;
+
 	Item* exist = FindItem(pItem->GetTag());
 	if (!exist)
 	{
 		exist = pItem->Clone();
 		exist->EraseAllColiders();
 		m_vecItem[FindEmptyIndex()] = exist;
+		return;
 	}
-	else 
-	{
-		exist->Increase();
-		SAFE_RELEASE(exist);
-	}
+
+	exist->Increase();
+	SAFE_RELEASE(exist);
 }
 
-void Player::EraseItem(Item* pItem)
+void Player::DecreaseItem(Item* pItem)
 {
 	auto iter = find(m_vecItem.begin(), m_vecItem.end(), pItem);
-	SAFE_RELEASE((*iter));
+	if (iter != m_vecItem.end())
+	{
+		(*iter)->Decrease();
+		if (!(*iter)->GetLife())
+		{
+			SAFE_RELEASE((*iter));
+		}
+	}
 }
 
 int Player::FindEmptyIndex() const

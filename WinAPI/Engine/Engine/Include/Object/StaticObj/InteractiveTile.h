@@ -22,7 +22,7 @@ public:
 	bool IsDie() const { return m_iHP <= 0.f || !GetLife(); }
 	void SetDropItem(class Item* pItem);
 	virtual void ItemDrop(int num, bool effect = true);
-	virtual void Die() = 0;
+	virtual void AterDie();
 	void SetPosByIndex(const INDEX& index)
 	{
 		float sz = (TILESIZE - GetSize().x) / 2;

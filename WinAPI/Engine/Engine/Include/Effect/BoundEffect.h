@@ -13,7 +13,7 @@ protected:
 	virtual void Process(float dt);
 	virtual bool Predicate() const;
 public:
-	explicit BoundEffect(const Pos& origin, float duration, int maxBounce,
+	explicit BoundEffect(Object* pObj, float duration, int maxBounce,
 							float fAngle, float fVelo, float YLimit);
 	~BoundEffect();
 };

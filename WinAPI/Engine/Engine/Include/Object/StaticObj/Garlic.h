@@ -8,7 +8,6 @@ class Garlic :
 protected:
 	Garlic();
 	virtual ~Garlic();
-	virtual void Die();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

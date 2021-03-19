@@ -1,10 +1,10 @@
 #include "BoundEffect.h"
 
-BoundEffect::BoundEffect(const Pos& origin, float duration,
+BoundEffect::BoundEffect(Object* pObj, float duration,
 						int maxBounce,
 						float fAngle, float fVelo,
 						float YLimit)
-	: Effect(origin, duration)
+	: Effect(pObj, duration)
 {
 	m_iMaxBounceNum = maxBounce;
 	m_fYLimit = YLimit;
@@ -23,10 +23,11 @@ void BoundEffect::Process(float dt)
 	float dx = m_fVeloX * dt;
 	float dy = m_fVeloY * dt;
 
-	m_tPos.x += dx;
-	m_tPos.y -= dy;
+	m_tOrigin.x += dx;
+	m_tOrigin.y -= dy;
+	m_pSubject->SetPos(m_tOrigin);
 
-	if (m_tPos.y >= m_fYLimit && m_iBounceCount < m_iMaxBounceNum)
+	if (m_tOrigin.y >= m_fYLimit && m_iBounceCount < m_iMaxBounceNum)
 	{
 		m_fVeloX *= m_fCoeff;
 		m_fVeloY *= -m_fCoeff;

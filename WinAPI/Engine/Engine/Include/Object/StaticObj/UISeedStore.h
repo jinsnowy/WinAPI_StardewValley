@@ -20,7 +20,6 @@ private:
 private:
 	class UIButton* m_pExitButton = nullptr;
 	class UIScrollBar* m_pScrollBar = nullptr;
-	class vector<UIButton*> m_vecSellingPanelBodies;
 	vector<class Seed*> m_vecSellingSeeds;
 	static constexpr float m_iMargin = 5.f;
 	// 패널 한 칸에 대한 정보
@@ -29,7 +28,7 @@ private:
 	float m_fClickDelay = 0.f;
 private:
 	void SetClickDelay() { m_fClickDelay = 0.5f; }
-	void BuyingCallback(float dt, int id);
+	void BuyingCallback(Collider* pSrc, Collider* pDst, float dt, int id);
 	void SetUpItemBuyColliders();
 	void Exit(float dt);
 };

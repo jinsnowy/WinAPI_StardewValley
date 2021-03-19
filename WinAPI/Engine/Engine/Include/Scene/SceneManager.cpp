@@ -100,6 +100,7 @@ int SceneManager::Update(float dt)
 int SceneManager::LateUpdate(float dt)
 {
 	m_pScene->LateUpdate(dt);
+	GAME_MANAGER->LateUpdate(dt);
 	return m_iSignal;
 }
 

@@ -2,14 +2,13 @@
 
 normal_distribution<float> ShakeEffect::m_noiseDist(0.f, 0.5f);
 
-ShakeEffect::ShakeEffect(const Pos& origin, float duration, 
+ShakeEffect::ShakeEffect(Object* pObj, float duration,
 	float fPeriod, float fRangeX, float fRangeY, float fNoiseCoeff, float fDampingCoeff)
-	: Effect(origin, duration)
+	: Effect(pObj, duration)
 {
 	m_fRangeX = max(fRangeX, 0.0f);
 	m_fRangeY = max(fRangeY, 0.0f);
 
-	m_tOrigin = origin;
 	m_fShakePeriod = fPeriod;
 	m_fNoiseCoeff = fNoiseCoeff;
 	m_fDampingCoeff = fDampingCoeff;
@@ -33,8 +32,10 @@ void ShakeEffect::Process(float dt)
 		float dx = m_fAlpha * m_fRangeX;
 		float dy = m_fAlpha * m_fRangeY;
 
-		m_tPos.x = m_tOrigin.x + dx + m_noiseDist(util::_rng);
-		m_tPos.y = m_tOrigin.y + dy + m_noiseDist(util::_rng);
+		float posX = m_tOrigin.x + dx + m_noiseDist(util::_rng);
+		float posY = m_tOrigin.y + dy + m_noiseDist(util::_rng);
+
+		m_pSubject->SetPos(posX, posY);
 
 		m_fAlpha *= m_fDampingCoeff;
 		m_fRangeX = -m_fRangeX;

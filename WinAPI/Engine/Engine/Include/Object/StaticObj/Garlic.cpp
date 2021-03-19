@@ -8,10 +8,6 @@ Garlic::~Garlic()
 {
 }
 
-void Garlic::Die()
-{
-    Plant::Die();
-}
 
 bool Garlic::Init()
 {

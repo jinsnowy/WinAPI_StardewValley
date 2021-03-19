@@ -8,12 +8,6 @@ Radish::~Radish()
 {
 }
 
-
-void Radish::Die()
-{
-    Plant::Die();
-}
-
 bool Radish::Init()
 {
     LoadGrowTexture(m_plantTag, L"SV/Plant/Radish/");

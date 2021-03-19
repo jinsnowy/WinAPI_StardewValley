@@ -51,7 +51,7 @@ void UIGameTimer::Input(float dt)
 		// Ã¼·Â¹Ù ¶³¸²
 		if (!m_pPlayerMPPanel->AccessEffect())
 		{
-			m_pPlayerMPPanel->SetEffect(new ShakeEffect(m_pPlayerMPPanel->GetPos(), FLT_MAX, 5.f, 5.f, 10.f, 1.0f));
+			m_pPlayerMPPanel->SetEffect(new ShakeEffect(m_pPlayerMPPanel, FLT_MAX, 5.f, 5.f, 10.f, 1.0f));
 		}
 	}
 	else {

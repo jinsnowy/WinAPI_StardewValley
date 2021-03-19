@@ -116,7 +116,7 @@ void InHouseScene::SleepCallBack(Collider* pSrc, Collider* pDst, float dt)
 		{
 			m_bClick = true;
 		}
-		if (KEYUP("MouseLButton"))
+		if (KEYDOWN("MouseLButton"))
 		{
 			if (m_bClick)
 			{

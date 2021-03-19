@@ -17,8 +17,8 @@ private:
 	const wchar_t* m_strUIImagePath = L"SV/UISelectBase2.bmp";
 	unordered_map<string, int> m_optNameMap;
 
-	int m_iDrawMaxitemNumX = 0;
-	int m_iDrawMaxitemNumY = 0;
+	int m_iDrawMaxitemNumX = 1;
+	int m_iDrawMaxitemNumY = 1;
 	int m_iValidWidth = 0;
 	int m_iValidHeight = 0;
 	int m_iTotalSizeX = 0;

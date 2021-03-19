@@ -24,7 +24,10 @@ private:
 	static constexpr float m_iItemBlockSize = 56.f;
 	static constexpr float m_iItemListMargin = 8.f;
 	static constexpr float m_fSmallNumberSize = 12.f;
+	static constexpr float m_iItemListSecondOffset = 85.f;
+	static constexpr float m_iItemListThirdOffset = 65.f;
 	static constexpr int m_iItemListOffsetX = 43;
 	static constexpr int m_iItemListOffsetY = 43;
+
 	int GetClickIndex(const Pos& screenPos);
 };

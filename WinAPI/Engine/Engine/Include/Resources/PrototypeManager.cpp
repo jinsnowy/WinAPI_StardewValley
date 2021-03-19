@@ -80,6 +80,39 @@ bool PrototypeManager::Init()
 
 
     vector<Item*>m_vecItem = Item::LoadItemFromDirectory<Item>(L"SV/Item/Fruit/", RGB(255, 255, 255));
+    for (Item* pFruit : m_vecItem)
+    {
+        const string& fruitName = pFruit->GetTag();
+        if (fruitName == "Cauliflower_Fruit")
+        {
+            pFruit->SetItemSellPrice(300);
+        }
+        else if (fruitName == "Garlic_Seed")
+        {
+            pFruit->SetItemSellPrice(100);
+        }
+        else if (fruitName == "Parsnip_Seed")
+        {
+            pFruit->SetItemSellPrice(80);
+        }
+        else if (fruitName == "Radish_Seed")
+        {
+            pFruit->SetItemSellPrice(80);
+        }
+        else if (fruitName == "Pepper_Seed")
+        {
+            pFruit->SetItemSellPrice(30);
+        }
+        else if (fruitName == "BlueBerry_Seed")
+        {
+            pFruit->SetItemSellPrice(30);
+        }
+        else if (fruitName == "Tomato_Seed")
+        {
+            pFruit->SetItemSellPrice(40);
+        }
+    }
+
     Safe_Release_VecList(m_vecItem);
 
     Tree* pTree = Object::CreateObject<Tree>("Tree");

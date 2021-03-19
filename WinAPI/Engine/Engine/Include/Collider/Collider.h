@@ -20,6 +20,10 @@ public:
 	void EnableUICollider(bool bUI) { m_bUIColl = bUI; }
 	Pos GetHitPoint() const { return m_tHitPoint; }
 	void SetHitPoint(const Pos& tPos) { m_tHitPoint = tPos; }
+	void AddCollisionFunction(COLLISION_STATE eState, function<void(Collider*, Collider*, float)> &pFunc)
+	{
+		m_FuncList[eState].push_back(pFunc);
+	}
 	void AddCollisionFunction(COLLISION_STATE eState, void (*pFunc)(Collider*, Collider*, float))
 	{
 		m_FuncList[eState].push_back(pFunc);

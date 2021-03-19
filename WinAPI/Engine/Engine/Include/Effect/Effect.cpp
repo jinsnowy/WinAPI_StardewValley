@@ -1,15 +1,19 @@
 #include "Effect.h"
 
-Effect::Effect(const Pos& pos, float duration)
-	: m_tPos(pos), m_fMaxDuration(duration)
+Effect::Effect(Object* pObj, float duration)
+	: m_pSubject(pObj), m_fMaxDuration(duration)
 {
+	if (m_pSubject)
+	{
+		m_tOrigin = m_pSubject->GetPos();
+	}
 }
 
 Effect::~Effect()
 {
 }
 
-Pos Effect::Next(float dt)
+void Effect::Step(float dt)
 {
 	if (!m_bEnd)
 	{
@@ -17,5 +21,4 @@ Pos Effect::Next(float dt)
 		Process(dt);
 		m_bEnd = IsOver() || Predicate();
 	}
-	return m_tPos;
 }

@@ -8,7 +8,6 @@ class Cauliflower :
 protected:
 	Cauliflower();
 	virtual ~Cauliflower();
-	virtual void Die();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

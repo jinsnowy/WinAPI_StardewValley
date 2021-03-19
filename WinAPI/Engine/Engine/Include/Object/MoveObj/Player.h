@@ -54,6 +54,8 @@ public:
 	int GetMoney() const { return m_iMoney; }
 	bool Affordable(int cost) { return m_iMoney >= cost; }
 	bool IsFull() const { return FindEmptyIndex() == -1; }
+	void SellItem(int index);
+	void SellItem(const string& itemTag);
 	void BuyItem(class Item* pItem);
 	PlayerState GetState() const { return m_eState; }
 	inline Pos GetCenterPos() const
@@ -108,7 +110,7 @@ private:
 	void AddTool(Item* pItem);
 	Item* FindItem(const string& itemTag);
 	void AddItem(class Item* pItem);
-	void EraseItem(class Item* pItem);
+	void DecreaseItem(class Item* pItem);
 	int FindEmptyIndex() const;
 private:
 	bool HasTool(PlayerTool::ToolState tool) const

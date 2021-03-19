@@ -8,11 +8,6 @@ Tomato::~Tomato()
 {
 }
 
-void Tomato::Die()
-{
-    Plant::Die();
-}
-
 bool Tomato::Init()
 {
     LoadGrowTexture(m_plantTag, L"SV/Plant/Tomato/");

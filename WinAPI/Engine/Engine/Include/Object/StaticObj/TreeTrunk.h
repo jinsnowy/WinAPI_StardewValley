@@ -12,7 +12,7 @@ protected:
 	TreeTrunk(const TreeTrunk& obj);
 	virtual ~TreeTrunk();
 	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
-	virtual void Die();
+	virtual void AfterDie();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

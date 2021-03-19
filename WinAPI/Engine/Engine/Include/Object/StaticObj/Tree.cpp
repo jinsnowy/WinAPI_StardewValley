@@ -84,25 +84,23 @@ void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
 	{
-		if (!m_pEffect)
-		{
-			m_pEffect = new ShakeEffect(m_tPos, TOOLSPEED - 0.1f, 0.01f, 5.f, 0.f);
-		}
+		Effect* pEffect = new ShakeEffect(this, TOOLSPEED - 0.1f, 0.01f, 5.f, 0.f);
+		SetEffect(m_pEffect);
+
 		float power = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetToolPower();
 		GetDamage(power);
 		SOUND_MANAGER->PlaySound("TreeHit");
 		if (IsDie())
 		{
 			Die();
+			AfterDie();
 		}
 	}
 
 }
 
-void Tree::Die()
+void Tree::AfterDie()
 {
-	Ref::Die();
-
 	ItemDrop(10);
 	Object* pTrunk = m_pScene->CreateObject<TreeTrunk>("TreeTrunk", m_pLayer);
 	pTrunk->SetPos(GetPos());

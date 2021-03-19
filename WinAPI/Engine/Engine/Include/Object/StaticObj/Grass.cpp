@@ -63,13 +63,12 @@ void Grass::TileHit(Collider* pSrc, Collider* pDst, float dt)
 	if (toolTag == "SwingTool" || toolTag == "AxeTool" || toolTag == "PickTool")
 	{
 		Die();
+		AfterDie();
 	}
 }
 
-void Grass::Die()
+void Grass::AfterDie()
 {
-	Ref::Die();
-
 	ItemDrop(1);
 	SOUND_MANAGER->PlaySound("GrassOver");
 }

@@ -28,6 +28,13 @@ void CollisionManager::ClickPoint()
     AddCollidePoint(MOUSEWORLDPOS, "Click");
 }
 
+void CollisionManager::AddCollideObject(Object* pObj)
+{
+    pObj->SetColliderChannel(CO_PLAYER);
+    m_tempCollisionObjList.push_back(pObj);
+    m_CollisionObjList.push_back(pObj);
+}
+
 void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
@@ -41,7 +48,6 @@ void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const st
     m_tempCollisionObjList.push_back(pPoint);
     m_CollisionObjList.push_back(pPoint);
 }
-
 
 void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
 {

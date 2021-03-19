@@ -13,7 +13,7 @@ protected:
 	Tree(const Tree& obj);
 	virtual ~Tree();
 	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
-	virtual void Die();
+	virtual void AfterDie();
 private:
 	void ShadeIn(Collider* pSrc, Collider* pDst, float dt);
 public:

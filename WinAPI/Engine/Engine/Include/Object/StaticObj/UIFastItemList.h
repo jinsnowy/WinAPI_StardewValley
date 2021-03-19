@@ -8,6 +8,7 @@ public:
 	UIFastItemList();
 	UIFastItemList(const UIFastItemList& ui) = delete;
 	virtual ~UIFastItemList();
+	void SellItem();
 private:
 	virtual bool Init();
 	virtual void Input(float dt);
@@ -17,10 +18,15 @@ private:
 	virtual void Draw(HDC hdc, float dt);
 	virtual UIFastItemList* Clone() { throw EXCEPT(L"UIFastItemList cloned"); return nullptr; }
 private:
+	bool m_bDrag = false;
+	class Item* m_pClickItem = nullptr;
 	vector<class Texture*> m_vecSmallNumbers;
 	static constexpr float m_iItemListMargin = 8.f;
 	static constexpr float m_fSmallNumberSize = 12.f;
+	static constexpr int m_iItemBlockSize = 56;
 	static constexpr int m_iItemListOffsetX = 20;
 	static constexpr int m_iItemListOffsetY = 20;
 	int m_iItemListOffset = 0;
+private:
+	int GetClickIndex(const Pos& screenPos);
 };

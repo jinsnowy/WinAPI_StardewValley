@@ -5,6 +5,7 @@
 #include "../Object/StaticObj/Tile.h"
 #include "SceneManager.h"
 #include"../Sound/SoundManager.h"
+#include "../Object/StaticObj/CropCabinet.h"
 FarmScene::FarmScene()
 {
 }
@@ -26,6 +27,8 @@ bool FarmScene::Init()
 	SOUND_MANAGER->LoadSound("DirtDig", false, SD_EFFECT, "Object/DirtDig.mp3");
 	SOUND_MANAGER->LoadSound("WaterTile", false, SD_EFFECT, "Object/WaterTile.mp3");
 
+	Object* pObj = CreateObject<CropCabinet>("CropCabinet", FindLayer("Object"));
+	SAFE_RELEASE(pObj);
 	return true;
 }
 

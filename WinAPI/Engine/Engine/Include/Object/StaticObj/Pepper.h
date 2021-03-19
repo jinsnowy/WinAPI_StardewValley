@@ -8,7 +8,6 @@ class Pepper :
 protected:
 	Pepper();
 	virtual ~Pepper();
-	virtual void Die();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

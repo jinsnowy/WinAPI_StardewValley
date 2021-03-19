@@ -12,7 +12,7 @@ protected:
 	Grass(const Grass& obj);
 	virtual ~Grass();
 	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
-	virtual void Die();
+	virtual void AfterDie();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

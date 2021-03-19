@@ -8,10 +8,7 @@ BlueBerry::~BlueBerry()
 {
 }
 
-void BlueBerry::Die()
-{
-    Plant::Die();
-}
+
 
 bool BlueBerry::Init()
 {

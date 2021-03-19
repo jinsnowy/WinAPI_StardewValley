@@ -8,11 +8,6 @@ Pepper::~Pepper()
 {
 }
 
-void Pepper::Die()
-{
-    Plant::Die();
-}
-
 bool Pepper::Init()
 {
     LoadGrowTexture(m_plantTag, L"SV/Plant/Pepper/");

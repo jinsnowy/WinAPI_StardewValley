@@ -8,11 +8,6 @@ Parsnip::~Parsnip()
 {
 }
 
-void Parsnip::Die()
-{
-    Plant::Die();
-}
-
 bool Parsnip::Init()
 {
     LoadGrowTexture(m_plantTag, L"SV/Plant/Parsnip/");

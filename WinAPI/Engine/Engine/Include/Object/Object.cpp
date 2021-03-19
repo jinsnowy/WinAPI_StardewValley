@@ -254,7 +254,7 @@ int Object::Update(float dt)
 {
     if (m_pEffect)
     {
-        SetPos(m_pEffect->Next(dt));
+        m_pEffect->Step(dt);
         if (m_pEffect->IsEnd())
         {
             SAFE_DELETE(m_pEffect);

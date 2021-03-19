@@ -26,7 +26,7 @@ public:
 	bool GetEnable() const { return m_bEnable; }
 	bool GetLife() const { return m_bLife; }
 	std::string GetTag() const { return m_strTag; }
-	virtual void Die() { m_bLife = false; }
+	void Die() { m_bLife = false; }
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }
 	void SetTag(const std::string& tagName);
 };

@@ -8,7 +8,6 @@ class BlueBerry :
 protected:
 	BlueBerry();
 	virtual ~BlueBerry();
-	virtual void Die();
 public:
 	virtual bool Init();
 	virtual void Input(float dt);
