@@ -2,7 +2,11 @@
 #include "../../Collider/ColliderRect.h"
 #include "GameManager.h"
 #include "../MoveObj/Player.h"
-
+#include "../TempObject.h"
+#include "../../Resources/ResourceManager.h"
+#include "../../Application/Window.h"
+#include "../../Scene/Scene.h"
+#include "../../Effect/VanishEffect.h"
 CropCabinet::CropCabinet()
 {
     m_eColliderChannel = CO_PLAYER;
@@ -71,8 +75,54 @@ void CropCabinet::Click(Collider* pSrc, Collider* pDst, float dt)
     if (pDst->GetTag() == "ItemPointBody")
     {
         Item* pItem = static_cast<Item*>(pDst->GetObj());
-        PLAYER->SellItem(pItem->GetTag());
+        bool bSold = PLAYER->SellItem(pItem->GetTag());
+
+        if (bSold)
+        {
+            SoldEffect(pItem->GetItemSellPrice());
+        }
     }
+}
+
+void CropCabinet::SoldEffect(int price)
+{
+    vector<int> digits;
+    do
+    {
+        digits.push_back(price % 10);
+        price /= 10;
+    } while (price > 0);
+
+    reverse(digits.begin(), digits.end());
+
+    int NumOfDigits = (int)digits.size();
+    Texture* pTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), m_iWidth * NumOfDigits, m_iHeight, util::White);
+    pTex->SetColorKey(util::White);
+
+    int stX = 0, stY = 0;
+    char baseName[10] = "Money";
+    baseName[6] = '\0';
+    for (int digit : digits)
+    {
+        baseName[5] = '0' + digit;
+        Texture* pNumTex = RESOURCE_MANAGER->FindTexture(baseName);
+
+        pTex->DrawImageFrom(stX, stY, m_iWidth, m_iHeight, pNumTex, 0, 0);
+        stX += m_iWidth;
+
+        SAFE_RELEASE(pNumTex);
+    }
+
+    TempObject* pObj = Object::CreateObject<TempObject>("SoldEffect");
+    pObj->SetPos(GetRight(), GetTop());
+    pObj->SetLifeDuration(1.0f);
+    pObj->SetTexture(pTex);
+    pObj->SetAsTextureSize();
+    pObj->SetEffect(new VanishEffect(pObj, 1.0f, Pos(0.0, -30.f)));
+    m_pScene->FindLayer("Effect")->AddObject(pObj);
+
+    SAFE_RELEASE(pTex);
+    SAFE_RELEASE(pObj);
 }
 
 void CropCabinet::Save(FILE* pFile)

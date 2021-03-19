@@ -1,5 +1,9 @@
 #include "TempObject.h"
 
+TempObject::TempObject()
+{
+}
+
 TempObject::~TempObject()
 {
 }

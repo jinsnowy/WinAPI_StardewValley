@@ -26,7 +26,7 @@ public:
     void DrawImageFrom(int px, int py, int sx, int sy, Texture* pTex, int u, int v);
     void DrawImageFrom(int px, int py, int sx, int sy, HDC orgin_hDC, int u, int v);
 
-    void TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, int v);
+    void TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, int v, unsigned char alpha = 125);
     void DrawImage(HDC hdc, int px, int py, int sx, int sy, int u, int v);
     
     inline void DrawImageAt(HDC hdc, const Pos& at)

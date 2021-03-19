@@ -70,7 +70,7 @@ void Texture::DrawImageFrom(int px, int py, int sx, int sy, HDC orgin_hDC, int u
     BitBlt(m_hMemDC, px, py, sx, sy, orgin_hDC, u, v, SRCCOPY);
 }
 
-void Texture::TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, int v)
+void Texture::TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, int v, unsigned char alpha)
 {
     // 알파 블렌딩 버그 (클라이언트 영역 벗어나면 드로우 안됌)
     if (py < 0)
@@ -97,8 +97,8 @@ void Texture::TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, 
     pTemp->DrawImageFrom(px, py, sx, sy, pBack, px, py);
     pTemp->DrawImageFrom(px, py, sx, sy, this, u, v);
 
-
-    AlphaBlend(hdc, px, py, sx, sy, pTemp->GetDC(), px, py, sx, sy, RESOURCE_MANAGER->GetTransparentFunc());
+    RESOURCE_MANAGER->SetAlphaChannel(alpha);
+    AlphaBlend(hdc, px, py, sx, sy, pTemp->GetDC(), px, py, sx, sy, RESOURCE_MANAGER->GetBlendFunc());
     SAFE_RELEASE(pTemp);
     SAFE_RELEASE(pBack);
 }
@@ -145,6 +145,8 @@ Texture* Texture::CreateEmptyTexture(HDC hDC, int w, int h, COLORREF color)
     pTexture->m_hMemDC = CreateCompatibleDC(hDC);
     pTexture->m_hBitmap = CreateCompatibleBitmap(hDC, w, h);
     pTexture->m_hOldBitmap = (HBITMAP)SelectObject(pTexture->m_hMemDC, pTexture->m_hBitmap);
+    pTexture->m_tInfo.bmWidth = w;
+    pTexture->m_tInfo.bmHeight = h;
     DrawHDCWithColor(pTexture->m_hMemDC, w, h, color);
 
     return pTexture;

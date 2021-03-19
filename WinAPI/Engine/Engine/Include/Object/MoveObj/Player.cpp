@@ -315,26 +315,27 @@ Item* Player::GetCurItem() const
 	return m_vecItem[m_iCurItemSel];
 }
 
-void Player::SellItem(int index)
+bool Player::SellItem(int index)
 {
 	if (!m_vecItem[index] || m_vecItem[index]->IsToolItem())
-		return;
+		return false;
 
 	m_iMoney += m_vecItem[index]->GetItemSellPrice();
 	DecreaseItem(m_vecItem[index]);
+	return true;
 }
 
-void Player::SellItem(const string& itemTag)
+bool Player::SellItem(const string& itemTag)
 {
 	for (int i = 0; i < m_iMaxItemNum; ++i)
 	{
 		if (!m_vecItem[i]) continue;
 		if (m_vecItem[i]->GetTag() == itemTag)
 		{
-			SellItem(i);
-			break;
+			return SellItem(i);
 		}
 	}
+	return false;
 }
 
 void Player::BuyItem(Item* pItem)

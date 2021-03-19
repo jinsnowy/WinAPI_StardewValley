@@ -153,11 +153,14 @@ public:
 	}
 protected:
 	bool m_bEnableTransparent = false;
+	unsigned char m_iAlpha = 125;
 	Pos   m_tPos;
 	Pos   m_tPivot;
 	Size  m_tImageOffset;
 	Size  m_tSize;
-protected:
+public:
+	void SetAlpha(unsigned char alpha) { m_iAlpha = alpha; }
+	unsigned char GetAlpha() const { return m_iAlpha; }
 	void EnableTransparentEffect() { m_bEnableTransparent = true; }
 	void DisableTransparentEffect() { m_bEnableTransparent = false; }
 public:

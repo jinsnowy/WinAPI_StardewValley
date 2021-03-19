@@ -18,6 +18,6 @@ public:
 private:
 	float m_fLifeDuration = 0.f;
 public:
-	void SetLifeDuration(float duration) { m_fLifeDuration = m_fLifeDuration; }
+	void SetLifeDuration(float duration) { m_fLifeDuration = duration; }
 	float GetLifeDuration() const { return m_fLifeDuration; }
 };

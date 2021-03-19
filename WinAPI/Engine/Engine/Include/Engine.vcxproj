@@ -175,6 +175,7 @@
     <ClInclude Include="Effect\BoundEffect.h" />
     <ClInclude Include="Effect\Effect.h" />
     <ClInclude Include="Effect\ShakeEffect.h" />
+    <ClInclude Include="Effect\VanishEffect.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="Math.h" />
@@ -260,6 +261,7 @@
     <ClCompile Include="Effect\BoundEffect.cpp" />
     <ClCompile Include="Effect\Effect.cpp" />
     <ClCompile Include="Effect\ShakeEffect.cpp" />
+    <ClCompile Include="Effect\VanishEffect.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Object\Item\Item.cpp" />
     <ClCompile Include="Object\Item\Seed.cpp" />

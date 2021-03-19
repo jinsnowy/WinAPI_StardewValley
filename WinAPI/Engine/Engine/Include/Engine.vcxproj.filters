@@ -348,6 +348,9 @@
     <ClInclude Include="Object\TempObject.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="Effect\VanishEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -574,6 +577,9 @@
     </ClCompile>
     <ClCompile Include="Object\TempObject.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\VanishEffect.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

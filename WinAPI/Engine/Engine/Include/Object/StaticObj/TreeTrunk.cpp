@@ -54,8 +54,7 @@ void TreeTrunk::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
 	{
-		Effect* pEffect = new ShakeEffect(this, TOOLSPEED - 0.1f, 0.01f, 5.f, 0.f);
-		SetEffect(m_pEffect);
+		SetEffect(new ShakeEffect(this, TOOLSPEED - 0.1f, 0.01f, 5.f, 0.f));
 
 		float power = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetToolPower();
 		GetDamage(power);

@@ -352,7 +352,7 @@ void Object::Draw(HDC hdc, float dt)
         if (m_bEnableTransparent)
         {
             m_pTexture->TransparentEffect(hdc, int(tPos.x), int(tPos.y), int(m_tSize.x), int(m_tSize.y),
-                int(tImagePos.x), int(tImagePos.y));
+                int(tImagePos.x), int(tImagePos.y), m_iAlpha);
         }
         else {
             m_pTexture->DrawImage(hdc, int(tPos.x), int(tPos.y), int(m_tSize.x), int(m_tSize.y),

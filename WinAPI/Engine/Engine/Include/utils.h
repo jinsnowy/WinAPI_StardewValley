@@ -14,7 +14,12 @@ namespace util
 	static mt19937 _rng(_rnd());
 	static uniform_real_distribution<float> _real_dist;
 	static uniform_int_distribution<int> _int_dist;
-
+	static constexpr COLORREF White = RGB(255, 255, 255);
+	static constexpr COLORREF Black = RGB(0, 0, 0);
+	static constexpr COLORREF Red = RGB(255, 0, 0);
+	static constexpr COLORREF Green = RGB(0, 255, 0);
+	static constexpr COLORREF Blue = RGB(0, 0, 255);
+	static constexpr COLORREF Magenta = RGB(255, 0, 255);
 	const wchar_t* GetWChar(const char* c);
 	const char* GetChar(const wchar_t* c);
 	inline RECT MakeRect(int left, int top, int w, int h)

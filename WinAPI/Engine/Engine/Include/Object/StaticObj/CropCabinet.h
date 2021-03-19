@@ -20,7 +20,10 @@ public:
 private:
 	static constexpr float m_fPosX = 1600.f;
 	static constexpr float m_fPosY = 820.f;
+	static constexpr float m_iWidth = 18.f;
+	static constexpr float m_iHeight = 36.f;
 	void Click(class Collider* pSrc, class Collider* pDst, float dt);
+	void SoldEffect(int price);
 public:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);

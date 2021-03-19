@@ -54,8 +54,8 @@ public:
 	int GetMoney() const { return m_iMoney; }
 	bool Affordable(int cost) { return m_iMoney >= cost; }
 	bool IsFull() const { return FindEmptyIndex() == -1; }
-	void SellItem(int index);
-	void SellItem(const string& itemTag);
+	bool SellItem(int index);
+	bool SellItem(const string& itemTag);
 	void BuyItem(class Item* pItem);
 	PlayerState GetState() const { return m_eState; }
 	inline Pos GetCenterPos() const
