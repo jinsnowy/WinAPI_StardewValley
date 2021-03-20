@@ -5,6 +5,8 @@
 #include <memory>
 #include <windows.h>
 #include <random>
+#include "Types/Rect.h"
+#include "Types/Vec2.h"
 using namespace std;
 namespace util
 {
@@ -31,6 +33,14 @@ namespace util
 		rc.bottom = rc.top + h;
 		return rc;
 	}
+	inline RectF MakeRectF(float l, float t, float r, float b)
+	{
+		return RectF(l, t, r, b);
+	}
+	inline RectI MakeRectI(int l, int t, int r, int b)
+	{
+		return RectI(l, t, r, b);
+	}
 	uniform_real_distribution<float> GenUniformRealDist(float lower, float upper);
 	uniform_int_distribution<int> GenUniformIntDist(int lower, int upper);
 	void SetUniformRealDist(float lower, float upper);
@@ -39,8 +49,12 @@ namespace util
 	int GenerateIntNumber();
 
 	void DrawRedRect(HDC hdc, RECT rc);
+	void DrawPointWithColor(HDC hdc, const Vec2F& point, COLORREF color);
+	void DrawVoidRectWithBorderColor(HDC hdc, const RectF& rect, COLORREF color);
 	void DrawVoidRectWithBorderColor(HDC hdc, RECT rc, COLORREF color);
+
 	void DrawColorRectWithOutBorder(HDC hdc, RECT rc, COLORREF color);
+	void DrawColorRectWithOutBorder(HDC hdc, const RectF& rect, COLORREF color);
 	void DrawHDCWithColor(HDC hdc, int w, int h, COLORREF color);
 	void DrawHDCWithColor(HDC hdc, int px, int py, int w, int h, COLORREF color);
 	std::string ExtractKeyFromPathString(const char* str, int size);

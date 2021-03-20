@@ -33,13 +33,13 @@ bool InHouseScene::Init()
 	m_pSleepPanel->SetPos((GETRESOLUTION.x - tSize.x) / 2.f, GETRESOLUTION.y - tSize.y - 100.f);
 	Pos tOffset = Pos(20.f, 106.f);
 	ColliderRect* pRC = m_pSleepPanel->AddCollider<ColliderRect>("SleepYes");
-	pRC->EnableUICollider(true);
+	pRC->SetUICollider(true);
 	pRC->SetRect(tOffset.x, tOffset.y, tOffset.x + 957.f, tOffset.y + 75.f);
 	pRC->AddCollisionFunction(CS_ENTER, this, &InHouseScene::SleepCallBack);
 	pRC->AddCollisionFunction(CS_STAY, this, &InHouseScene::SleepCallBack);
 	SAFE_RELEASE(pRC);
 	pRC = m_pSleepPanel->AddCollider<ColliderRect>("SleepNo");
-	pRC->EnableUICollider(true);
+	pRC->SetUICollider(true);
 	pRC->SetRect(tOffset.x, tOffset.y + 75.f, tOffset.x + 957.f, tOffset.y + 150.f);
 	pRC->AddCollisionFunction(CS_ENTER, this, &InHouseScene::CancelCallBack);
 	pRC->AddCollisionFunction(CS_STAY, this, &InHouseScene::CancelCallBack);

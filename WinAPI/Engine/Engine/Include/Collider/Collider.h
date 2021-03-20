@@ -17,7 +17,8 @@ protected:
 	list <function<void(Collider*, Collider*, float)>> m_FuncList[CS_END];
 	Pos				m_tHitPoint;
 public:
-	void EnableUICollider(bool bUI) { m_bUIColl = bUI; }
+	bool IsUICollider() const { return m_bUIColl; }
+	void SetUICollider(bool bUI) { m_bUIColl = bUI; }
 	Pos GetHitPoint() const { return m_tHitPoint; }
 	void SetHitPoint(const Pos& tPos) { m_tHitPoint = tPos; }
 	void AddCollisionFunction(COLLISION_STATE eState, function<void(Collider*, Collider*, float)> &pFunc)

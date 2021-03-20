@@ -35,6 +35,10 @@ bool StartScene::Init()
     SOUND_MANAGER->LoadSound("StartScene_Click", false, SD_EFFECT, "ClickButton_StartScene.mp3");
     SOUND_MANAGER->LoadSound("StartScene_On", false, SD_EFFECT, "ClickButtonOn_StartScene.mp3");
 
+    // 카메라 초기화
+    CAMERA->SetWorldResolution(GETRESOLUTION);
+    CAMERA->ReleaseTarget();
+
     Layer* pLayer = FindLayer("Ground");
     UIPanel* pBackPanel = CreateObject<UIPanel>("BackPanel", pLayer);
 
@@ -135,6 +139,7 @@ bool StartScene::Init()
 
     SAFE_RELEASE(pGameTitle);
     SAFE_RELEASE(pTex);
+
     SOUND_MANAGER->PlaySound("StartScene_BGM");
 	return true;
 }

@@ -67,24 +67,12 @@ void ColliderPoint::Draw(HDC hdc, float dt)
 {
 	Collider::Draw(hdc, dt);
 
-	HPEN myPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
-	HPEN OldPen = (HPEN)SelectObject(hdc, myPen);
-
-	HBRUSH OldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
-	Pos tPos = Pos(0, 0);
+	Pos tPos = m_tWorldPos;
 
 	if (!m_bUIColl)
-		tPos = CAMERA->GetTopLeft();
+		tPos -= CAMERA->GetTopLeft();
 
-	int left = int(m_tWorldPos.x) - 3;
-	int right = int(m_tWorldPos.x) + 3;
-	int top = int(m_tWorldPos.y) - 3;
-	int bottom = int(m_tWorldPos.y) + 3;
-
-	Ellipse(hdc, left, top, right, bottom);
-
-	DeleteObject(SelectObject(hdc, OldPen));
-	DeleteObject(SelectObject(hdc, OldBrush));
+	DrawPointWithColor(hdc, tPos, util::Green);
 }
 
 ColliderPoint* ColliderPoint::Clone()

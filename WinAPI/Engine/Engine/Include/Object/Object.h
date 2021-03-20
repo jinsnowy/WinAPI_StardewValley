@@ -12,6 +12,7 @@ protected:
 	OBJ_TYPE m_eObjType = OBJ_NORMAL;
 	COLL_CHANNEL    m_eColliderChannel = CO_ALL;
 	bool m_bEnableAnimation = true;
+	bool m_bUIObject = false;
 	class Scene* m_pScene;
 	class Layer* m_pLayer;
 	class Texture* m_pTexture;
@@ -19,6 +20,7 @@ protected:
 	Animation* m_pAnimation;
 	list<Collider*> m_ColliderList;
 public:
+	bool IsUIObject()const { return m_bUIObject; }
 	const Effect* AccessEffect() const { return m_pEffect; }
 	void SetEffect(class Effect* pEffect);
 	void SetColliderChannel(COLL_CHANNEL eChannel) { m_eColliderChannel = eChannel; }
@@ -60,33 +62,33 @@ public:
 		return m_pAnimation;
 	}
 	bool AddAnimationClip(const string& strName,
-							ANIMATION_TYPE eType, ANIMATION_OPTION eOption,
-							float	fAnimationTime,
-							float   fAnimationLimitTime,
-							int		iFrameMaxX,
-							int		iFrameMaxY,
-							int		iStartX,
-							int		iStartY,
-							int		iLengthX,
-							int		iLengthY,
-							float	fOptionLimitTime,
-							const string& strTexKey,
-							const wchar_t* pFileName,
-							const string& strPathKey = TEXTURE_PATH);
+		ANIMATION_TYPE eType, ANIMATION_OPTION eOption,
+		float	fAnimationTime,
+		float   fAnimationLimitTime,
+		int		iFrameMaxX,
+		int		iFrameMaxY,
+		int		iStartX,
+		int		iStartY,
+		int		iLengthX,
+		int		iLengthY,
+		float	fOptionLimitTime,
+		const string& strTexKey,
+		const wchar_t* pFileName,
+		const string& strPathKey = TEXTURE_PATH);
 	bool AddAnimationClip(const string& strName,
-					ANIMATION_TYPE eType, ANIMATION_OPTION eOption,
-					float	fAnimationTime,
-					float   fAnimationLimitTime,
-					int		iFrameMaxX,
-					int		iFrameMaxY,
-					int		iStartX,
-					int		iStartY,
-					int		iLengthX,
-					int		iLengthY,
-					float	fOptionLimitTime,
-					const string& strTexKey,
-					const vector<wstring>& vecFileName,
-					const string& strPathKey = TEXTURE_PATH);
+		ANIMATION_TYPE eType, ANIMATION_OPTION eOption,
+		float	fAnimationTime,
+		float   fAnimationLimitTime,
+		int		iFrameMaxX,
+		int		iFrameMaxY,
+		int		iStartX,
+		int		iStartY,
+		int		iLengthX,
+		int		iLengthY,
+		float	fOptionLimitTime,
+		const string& strTexKey,
+		const vector<wstring>& vecFileName,
+		const string& strPathKey = TEXTURE_PATH);
 public:
 	const list<Collider*>* GetColliderList() const
 	{
@@ -179,9 +181,10 @@ public:
 	float GetTop() const { return m_tPos.y - m_tSize.y * m_tPivot.y; }
 	float GetRight() const { return GetLeft() + m_tSize.x; }
 	float GetBottom() const { return GetTop() + m_tSize.y; }
-	Pos GetCenter() const { return Pos((GetLeft()+GetRight())/2.f, (GetTop()+GetBottom())/2.f); }
+	Pos GetCenter() const { return Pos((GetLeft() + GetRight()) / 2.f, (GetTop() + GetBottom()) / 2.f); }
 	Pos GetPos() const { return m_tPos; }
 	Pos GetPivot() const { return m_tPivot; }
+	Pos GetTopLeft() const { return m_tPos - m_tSize * m_tPivot; }
 	Size GetSize() const { return m_tSize; }
 	Size GetImageSize() const;
 	Size GetImageOffset() const { return m_tImageOffset; }

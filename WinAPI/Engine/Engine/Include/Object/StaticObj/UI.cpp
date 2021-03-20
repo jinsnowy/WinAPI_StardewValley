@@ -10,6 +10,7 @@
 
 UI::UI()
 {
+    m_bUIObject = true;
 }
 
 UI::UI(const UI& ui)

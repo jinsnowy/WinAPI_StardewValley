@@ -32,7 +32,7 @@ bool UIButton::Init()
 
 	pColl->AddCollisionFunction(CS_ENTER, this, &UIButton::MouseOn);
 	pColl->AddCollisionFunction(CS_LEAVE, this, &UIButton::MouseOut);
-	pColl->EnableUICollider(true);
+	pColl->SetUICollider(true);
 
 	SAFE_RELEASE(pColl);
 	return true;

@@ -293,7 +293,7 @@ string Scene::ConvertToNameOption(TILE_OPTION eOpt)
 	case TO_BEACON_1:
 		return "Beacon1";
 	case TO_BEACON_2:
-		return "Beacond";
+		return "Beacon2";
 	case TO_BEACON_3:
 		return "Beacon3";
 	default:

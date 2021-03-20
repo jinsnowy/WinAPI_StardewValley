@@ -168,6 +168,7 @@
     <ClInclude Include="Collider\ColliderRect.h" />
     <ClInclude Include="Collider\ColliderSphere.h" />
     <ClInclude Include="Collider\CollisionManager.h" />
+    <ClInclude Include="Collider\CollisionSpace.h" />
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="Core\FrameTimer.h" />
     <ClInclude Include="Core\Input.h" />
@@ -254,6 +255,7 @@
     <ClCompile Include="Collider\ColliderRect.cpp" />
     <ClCompile Include="Collider\ColliderSphere.cpp" />
     <ClCompile Include="Collider\CollisionManager.cpp" />
+    <ClCompile Include="Collider\CollisionSpace.cpp" />
     <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="Core\FrameTimer.cpp" />
     <ClCompile Include="Core\Input.cpp" />

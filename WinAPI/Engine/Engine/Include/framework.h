@@ -81,6 +81,7 @@
 #include <queue>
 #include <deque>
 #include <list>
+#include <array>
 #include <unordered_map>
 
 // 알고리즘

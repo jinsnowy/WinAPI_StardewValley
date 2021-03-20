@@ -43,6 +43,10 @@ public:
 	{
 		return point.x >= left && point.x <= right&& point.y >= top && point.y <= bottom;
 	}
+	Rect_<T> SubtractOffset(const Vec2_<T>& offset) const
+	{
+		return Rect_<T>(left - offset.x, top - offset.y, right - offset.x, bottom - offset.y);
+	}
 	Vec2_<T> GetCenter() const
 	{
 		return Vec2_<T>((left + right) / 2, (top + bottom) / 2);

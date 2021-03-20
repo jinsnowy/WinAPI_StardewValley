@@ -33,7 +33,7 @@ bool Mouse::Init()
     m_tPos.y = (float) pt.y;
 
     ColliderPoint* pColl = AddCollider<ColliderPoint>("Mouse");
-
+    pColl->SetUICollider(true);
     SAFE_RELEASE(pColl);
 
     return true;

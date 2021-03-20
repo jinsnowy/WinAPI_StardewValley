@@ -87,27 +87,27 @@ bool PrototypeManager::Init()
         {
             pFruit->SetItemSellPrice(300);
         }
-        else if (fruitName == "Garlic_Seed")
+        else if (fruitName == "Garlic_Fruit")
         {
             pFruit->SetItemSellPrice(100);
         }
-        else if (fruitName == "Parsnip_Seed")
+        else if (fruitName == "Parsnip_Fruit")
         {
             pFruit->SetItemSellPrice(80);
         }
-        else if (fruitName == "Radish_Seed")
+        else if (fruitName == "Radish_Fruit")
         {
             pFruit->SetItemSellPrice(80);
         }
-        else if (fruitName == "Pepper_Seed")
+        else if (fruitName == "Pepper_Fruit")
         {
             pFruit->SetItemSellPrice(30);
         }
-        else if (fruitName == "BlueBerry_Seed")
+        else if (fruitName == "BlueBerry_Fruit")
         {
             pFruit->SetItemSellPrice(30);
         }
-        else if (fruitName == "Tomato_Seed")
+        else if (fruitName == "Tomato_Fruit")
         {
             pFruit->SetItemSellPrice(40);
         }

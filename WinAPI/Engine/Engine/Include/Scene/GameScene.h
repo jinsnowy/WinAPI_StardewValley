@@ -4,6 +4,7 @@ class GameScene : public Scene
 {
     friend class SceneManager;
 protected:
+    class CollisionSpace* m_pCollSpace = nullptr;
     class Stage* m_pGroundStage = nullptr;
     class Stage* m_pStaticStage = nullptr;
     class Player* m_pPlayer = nullptr;
@@ -20,11 +21,11 @@ public:
     INDEX GetTileRowColIndex(const Pos& worldPos) const;
     INDEX GetIndexDiff(const Pos& pos, const Pos& from) const;
     bool CheckValidIndex(INDEX index) const;
-
     bool IsBlockTile(const Pos& worldPos) const;
     void DigTile(const Pos& worldPos);
     void WaterTile(const Pos& worldPos);
     void SpawnPlant(const Pos& worldPos);
+    void AddQuadSpacePoint(const Pos& point);
 public:
     virtual void SetUpScene(const char* fileName);
     virtual bool Init();

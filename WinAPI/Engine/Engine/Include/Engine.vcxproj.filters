@@ -351,6 +351,9 @@
     <ClInclude Include="Effect\VanishEffect.h">
       <Filter>Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Collider\CollisionSpace.h">
+      <Filter>Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -580,6 +583,9 @@
     </ClCompile>
     <ClCompile Include="Effect\VanishEffect.cpp">
       <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider\CollisionSpace.cpp">
+      <Filter>Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
