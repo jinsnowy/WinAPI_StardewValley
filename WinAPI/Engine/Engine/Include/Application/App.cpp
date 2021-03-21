@@ -167,7 +167,7 @@ int App::LateUpdate(float dt)
 void App::Collision(float dt)
 {
 	SCENE_MANAGER->Collision(dt);
-	COLLISION_MANAGER->Collision(dt);
+	COLLISION_MANAGER->Collision2(dt);
 }
 
 void App::Draw(float dt)

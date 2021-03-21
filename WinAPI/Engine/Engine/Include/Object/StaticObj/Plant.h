@@ -42,6 +42,7 @@ protected:
 	Plant();
 	Plant(const Plant& obj) = delete;
 	virtual ~Plant();
+	virtual bool DieCondition() const;
 	virtual void AfterDie();
 public:
 	virtual bool Init();

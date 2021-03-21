@@ -63,31 +63,19 @@ void Plant::AddHarvestCollider()
     SAFE_RELEASE(pRC);
 }
 
+bool Plant::DieCondition() const
+{
+    return m_iHarvestNum == 0;
+}
+
 void Plant::HarvestFruit()
 {
-    if (!m_bPeriodic)
+    --m_iHarvestNum;
+    if (m_bPeriodic && m_iHarvestNum > 0)
     {
-        assert(m_iHarvestNum == 1);
+        ItemDrop(m_iDropItemNum);
     }
-
-    if (m_iHarvestNum > 0)
-    {
-        --m_iHarvestNum;
-        if (m_bPeriodic)
-        {
-            ItemDrop(m_iDropItemNum);
-        }
-        else
-        {
-            ItemDrop(m_iDropItemNum, false);
-        }
-        // 다 수확했을 경우
-        if (m_iHarvestNum == 0)
-        {
-            Die();
-            AfterDie();
-        }
-    }
+    CheckDie();
 }
 
 void Plant::PlantHit(Collider* pSrc, Collider* pDst, float dt)
@@ -106,37 +94,34 @@ void Plant::PlantHit(Collider* pSrc, Collider* pDst, float dt)
 
 void Plant::Grow()
 {
-    if (!IsDie())
+    if (GAMEWORLDTIME - m_iGrowTime >= m_iGrowPeriod)
     {
-        if (GAMEWORLDTIME - m_iGrowTime >= m_iGrowPeriod)
+        m_iGrowTime = GAMEWORLDTIME;
+        if (m_bPeriodic)
         {
-            m_iGrowTime = GAMEWORLDTIME;
-            if (m_bPeriodic)
-            {
-               if (m_iCurLevel < m_iMaxLevel - 2)
-                {
-                    ++m_iCurLevel;
-                    GrowAsNextPlant();
-                    if (m_iCurLevel == m_iMaxLevel - 2)
-                    {
-                        AddHarvestCollider();
-                    }
-                }
-                else if (m_iCurLevel == m_iMaxLevel - 1)
-                {
-                    --m_iCurLevel;
-                    GrowAsNextPlant();
-                    AddHarvestCollider();
-                }
-            }
-            else
+            if (m_iCurLevel < m_iMaxLevel - 2)
             {
                 ++m_iCurLevel;
                 GrowAsNextPlant();
-                if (m_iCurLevel == m_iMaxLevel - 1)
+                if (m_iCurLevel == m_iMaxLevel - 2)
                 {
-                    HarvestFruit();
+                    AddHarvestCollider();
                 }
+            }
+            else if (m_iCurLevel == m_iMaxLevel - 1)
+            {
+                --m_iCurLevel;
+                GrowAsNextPlant();
+                AddHarvestCollider();
+            }
+        }
+        else
+        {
+            ++m_iCurLevel;
+            GrowAsNextPlant();
+            if (m_iCurLevel == m_iMaxLevel - 1)
+            {
+                HarvestFruit();
             }
         }
     }
@@ -145,7 +130,6 @@ void Plant::Grow()
 Plant::Plant()
     :m_iGrowTime(GAMEWORLDTIME)
 {
-    m_eColliderChannel = CO_PLAYER;
 }
 
 Plant::~Plant()
@@ -171,12 +155,12 @@ int Plant::Update(float dt)
 
 void Plant::AfterDie()
 {
+   ItemDrop(m_iDropItemNum, false);
 }
 
 int Plant::LateUpdate(float dt)
 {
     InteractiveTile::LateUpdate(dt);
-
     return 0;
 }
 

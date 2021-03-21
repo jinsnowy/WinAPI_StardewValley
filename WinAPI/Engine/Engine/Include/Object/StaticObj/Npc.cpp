@@ -5,7 +5,6 @@
 Npc::Npc()
 {
     m_eObjType = OBJ_NPC;
-    m_eColliderChannel = CO_PLAYER;
 }
 
 Npc::Npc(const Npc& obj)

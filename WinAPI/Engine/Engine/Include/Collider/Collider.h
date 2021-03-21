@@ -17,11 +17,8 @@ protected:
 	list<Collider*> m_CollisionList;
 	list <function<void(Collider*, Collider*, float)>> m_FuncList[CS_END];
 	Pos				m_tHitPoint;
-	size_t			m_iSpaceId = ID_MAX;
 public:
 	virtual Rect GetBounds() const = 0;
-	size_t GetSpaceId() const { return m_iSpaceId; }
-	void SetSpaceId(size_t id) { m_iSpaceId = id; }
 	bool IsUICollider() const { return m_bUIColl; }
 	void SetUICollider(bool bUI) { m_bUIColl = bUI; }
 	Pos GetHitPoint() const { return m_tHitPoint; }

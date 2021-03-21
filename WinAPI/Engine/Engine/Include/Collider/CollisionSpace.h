@@ -34,27 +34,29 @@ private:
 		size_t m_iIdx = -1;
 		Rect m_tArea = {};
 		QuadParentPtr m_pParent;
-		array<QuadPtr, 4> m_QuadParitions = {};
+		array<QuadPtr, 4> m_QuadPartitions = {};
 		list<Collider*> m_CollList;
 	private:
 		static QuadPtr MakeQuadPtr(unsigned int level, size_t idx, const Rect& rect);
 		static bool OutSideOfScreen(Collider* pColl);
-		Partition GetPartition(Collider* pColl);
+		static Rect GetScreenRect(Collider* pColl);
+		Partition GetPartition(const Rect& bounds);
 		Rect MakeArea(Partition ePart) const;
 		void SplitArea();
+		void Search(class Object* const& pSrc, const Rect& bounds, vector<Collider*>& dstColliders);
 	public:
 		void Clear();
 		bool Empty() const { return m_CollList.empty(); }
 		bool IsOverLoaded() const;
 		void AddCollider(Collider* const& pColl);
-		void Insert(Collider* const& pColl);
+		void Insert(Collider* const& pColl, const Rect& bounds);
 		void Draw(HDC& hdc, const float& dt);
 	};
 private:
 	using Partition = CollisionSpace::QuadSpace::Partition;
 	using QuadSpace = CollisionSpace::QuadSpace;
 	static int m_iCollideNum;
-	static constexpr size_t m_iMaxObjectNum = 5;
+	static constexpr size_t m_iMaxObjectNum = 2;
 	static constexpr float m_fMinSize = 25.f;
 	static unordered_map<size_t, QuadParentPtr> m_mapQuadParent;
 	static QuadPtr m_QuadHead;
@@ -65,7 +67,7 @@ private:
 public:
 	static CollisionSpace* MakeCollisionSpace();
 	void Observe(Collider* pColl);
-	list<Object*> GetEqualSpaceColliders(Object* pObj);
+	void GetEqualSpaceColliders(Collider* pSrc, vector<Collider*> &dstColliders);
 public:
 	void Draw(HDC hdc, float dt);
 

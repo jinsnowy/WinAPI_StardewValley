@@ -9,7 +9,6 @@
 #include "../../Effect/VanishEffect.h"
 CropCabinet::CropCabinet()
 {
-    m_eColliderChannel = CO_PLAYER;
 }
 
 CropCabinet::CropCabinet(const CropCabinet& obj)

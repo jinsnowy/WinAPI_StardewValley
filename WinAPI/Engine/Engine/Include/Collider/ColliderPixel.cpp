@@ -50,8 +50,8 @@ bool ColliderPixel::SetPixelInfo(const char* pFileName, const string& strPathKey
     fread(&fh, sizeof(fh), 1, pFile);
     fread(&ih, sizeof(ih), 1, pFile);
 
-    m_iWidth = ih.biWidth;
-    m_iHeight = ih.biHeight;
+    m_iWidth = (int) ih.biWidth;
+    m_iHeight = (int) ih.biHeight;
 
     m_vecPixel.clear();
 

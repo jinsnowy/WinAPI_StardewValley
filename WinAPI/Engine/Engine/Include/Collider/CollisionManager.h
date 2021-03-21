@@ -5,10 +5,14 @@ class CollisionManager
 {
 DECLARE_SINGLE(CollisionManager)
 private:
+	static constexpr int m_iExpectedCollNum = 200;
+private:
 	class Texture* m_pCollTex = nullptr;
 	list <class Object*> m_tempCollisionObjList;
 	list <class Object*> m_CollisionObjList;
 	class CollisionSpace* m_pCollisionSpace;
+	vector<class Collider*> m_vecColliders;
+	vector<vector<bool>> m_checkMat;
 	void NaiveAdd(class Object* const& pObj);
 	void DrawCullingAdd(class Object* pObj);
 public:
@@ -19,9 +23,9 @@ public:
 	void AddCollidePoint(const Pos& pos, const string& strTag);
 	void ReadyCollision(float dt);
 	void AddObject(class Object* pObj);
-	void EraseObject(class Object* pObj);
 
 	void Collision(float dt);
+	void Collision2(float dt);
 	void Draw(HDC hdc, float dt);
 	bool CheckCollision(class Object* pSrc, class Object* pDst, float dt);
 	void Clear();

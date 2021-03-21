@@ -10,7 +10,6 @@ class Object : public Ref
 protected:
 	// 씬, 레이어, 텍스쳐, 콜라이더
 	OBJ_TYPE m_eObjType = OBJ_NORMAL;
-	COLL_CHANNEL    m_eColliderChannel = CO_ALL;
 	bool m_bEnableAnimation = true;
 	bool m_bUIObject = false;
 	class Scene* m_pScene;
@@ -23,8 +22,6 @@ public:
 	bool IsUIObject()const { return m_bUIObject; }
 	const Effect* AccessEffect() const { return m_pEffect; }
 	void SetEffect(class Effect* pEffect);
-	void SetColliderChannel(COLL_CHANNEL eChannel) { m_eColliderChannel = eChannel; }
-	COLL_CHANNEL GetColliderChannel() const { return m_eColliderChannel; }
 	OBJ_TYPE GetObjectType() const { return m_eObjType; }
 	template<typename T>
 	static T* CreateObject(const string& strTag)

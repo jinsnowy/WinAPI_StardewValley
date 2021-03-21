@@ -22,7 +22,6 @@ Player::Player()
 	:
 	m_tPrev(Pos())
 {
-	m_eColliderChannel = CO_PLAYER;
 	m_vecItem.resize(m_iMaxItemNum, nullptr);
 }
 

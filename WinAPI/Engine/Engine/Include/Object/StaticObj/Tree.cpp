@@ -86,14 +86,10 @@ void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
 	{
 		SetEffect(new ShakeEffect(this, TOOLSPEED - 0.1f, 0.01f, 5.f, 0.f));
 
-		float power = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetToolPower();
-		GetDamage(power);
+		GetDamageFromPlayerTool();
+		CheckDie();
+
 		SOUND_MANAGER->PlaySound("TreeHit");
-		if (IsDie())
-		{
-			Die();
-			AfterDie();
-		}
 	}
 
 }

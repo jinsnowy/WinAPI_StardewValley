@@ -78,7 +78,15 @@ bool PrototypeManager::Init()
     }
     Safe_Release_VecList(m_seedItem);
 
-
+    Item* pItem = Item::CreateCloneItem<Item>("Fiber", L"SV/Item/Outdoor/Fiber.bmp");
+    pItem->SetItemSellPrice(5);
+    SAFE_RELEASE(pItem);
+    pItem = Item::CreateCloneItem<Item>("Stone", L"SV/Item/Outdoor/Stone.bmp");
+    pItem->SetItemSellPrice(5);
+    SAFE_RELEASE(pItem);
+    pItem = Item::CreateCloneItem<Item>("Wood", L"SV/Item/Outdoor/Wood.bmp");
+    pItem->SetItemSellPrice(5);
+    SAFE_RELEASE(pItem);
     vector<Item*>m_vecItem = Item::LoadItemFromDirectory<Item>(L"SV/Item/Fruit/", RGB(255, 255, 255));
     for (Item* pFruit : m_vecItem)
     {

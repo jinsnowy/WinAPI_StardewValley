@@ -44,7 +44,6 @@ void Item::GenerateBoundEffect()
 
 Item::Item()
 {
-    m_eColliderChannel = CO_PLAYER;
 }
 
 Item::Item(const Item& item)

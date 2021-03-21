@@ -1,10 +1,10 @@
 #include "InteractiveTile.h"
-#include "../../Scene/Scene.h"
-
 #include "../Item/Item.h"
+#include "../../Scene/Scene.h"
+#include "../../Scene/GameScene.h"
+#include "../../Object/MoveObj/Player.h"
 InteractiveTile::InteractiveTile()
 {
-    m_eColliderChannel = CO_PLAYER;
 }
 
 InteractiveTile::InteractiveTile(const InteractiveTile& obj)
@@ -20,6 +20,28 @@ InteractiveTile::~InteractiveTile()
 
 void InteractiveTile::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
+}
+
+void InteractiveTile::GetDamageFromPlayerTool()
+{
+    float power = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetToolPower();
+    GetDamage(power);
+}
+
+void InteractiveTile::CheckDie()
+{
+    if (!GetLife())
+    {
+        return;
+    }
+    else {
+        if (m_iHP <= 0.f || DieCondition())
+        {
+            Die();
+            AfterDie();
+        }
+    }
+    return;
 }
 
 void InteractiveTile::SetDropItem(Item* pItem)
@@ -49,7 +71,7 @@ void InteractiveTile::ItemDrop(int num, bool effect)
     }
 }
 
-void InteractiveTile::AterDie()
+void InteractiveTile::AfterDie()
 {
 }
 

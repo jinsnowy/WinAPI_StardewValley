@@ -15,14 +15,16 @@ protected:
 	InteractiveTile();
 	InteractiveTile(const InteractiveTile& obj);
 	virtual ~InteractiveTile();
+	virtual bool DieCondition() const { return false; }
 	virtual void TileHit(Collider* pSrc, Collider* pDst, float dt);
+	void GetDamageFromPlayerTool();
 public:
 	void SetHP(float hp) { m_iHP = hp; }
 	void GetDamage(float power) { m_iHP -= power; }
-	bool IsDie() const { return m_iHP <= 0.f || !GetLife(); }
+	void CheckDie();
 	void SetDropItem(class Item* pItem);
 	virtual void ItemDrop(int num, bool effect = true);
-	virtual void AterDie();
+	virtual void AfterDie();
 	void SetPosByIndex(const INDEX& index)
 	{
 		float sz = (TILESIZE - GetSize().x) / 2;

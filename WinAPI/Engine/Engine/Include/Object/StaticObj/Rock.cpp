@@ -61,8 +61,8 @@ void Rock::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "PickTool")
 	{
-		Die();
-		AfterDie();
+		GetDamageFromPlayerTool();
+		CheckDie();
 	}
 }
 

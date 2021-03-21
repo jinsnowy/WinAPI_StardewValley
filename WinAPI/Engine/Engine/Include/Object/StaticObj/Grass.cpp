@@ -3,6 +3,7 @@
 #include "../../Collider/ColliderRect.h"
 #include "../../Sound/SoundManager.h"
 #include "../../Resources/Texture.h"
+
 const wchar_t* const Grass::m_strBaseName[] = { L"Grass1.bmp", L"Grass2.bmp", L"Grass3.bmp" };
 
 Grass::Grass()
@@ -62,8 +63,8 @@ void Grass::TileHit(Collider* pSrc, Collider* pDst, float dt)
 	const string& toolTag = pDst->GetTag();
 	if (toolTag == "SwingTool" || toolTag == "AxeTool" || toolTag == "PickTool")
 	{
-		Die();
-		AfterDie();
+		GetDamageFromPlayerTool();
+		CheckDie();
 	}
 }
 

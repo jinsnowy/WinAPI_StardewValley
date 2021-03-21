@@ -38,7 +38,6 @@ bool UISeedStore::Init()
 	m_pExitButton->SetAsTextureSize();
 	m_pExitButton->SetPos(GetPos().x + GetSize().x + 50.f, GetPos().y);
 	m_pExitButton->SetCallback(this, &UISeedStore::Exit);
-	m_pExitButton->SetColliderChannel(CO_UI);
 
 	Size tSize = m_pExitButton->GetSize();
 	ColliderRect* pRC = static_cast<ColliderRect*>(m_pExitButton->GetCollider("ButtonBody"));

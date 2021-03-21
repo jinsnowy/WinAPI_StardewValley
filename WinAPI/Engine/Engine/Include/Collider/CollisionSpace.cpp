@@ -17,22 +17,17 @@ CollisionSpace::~CollisionSpace()
 {
 }
 
-list<Object*> CollisionSpace::GetEqualSpaceColliders(Object* pObj)
-{
-	return list<Object*>();
-}
-
 void CollisionSpace::QuadSpace::Clear()
 {
 	m_iCollideNum = 0;
 	m_CollList.clear();
 	for (int i = 0; i < 4; ++i)
 	{
-		if (m_QuadParitions[i])
+		if (m_QuadPartitions[i])
 		{
-			m_QuadParitions[i]->Clear();
+			m_QuadPartitions[i]->Clear();
 		}
-		m_QuadParitions[i] = nullptr;
+		m_QuadPartitions[i] = nullptr;
 	}
 }
 
@@ -55,22 +50,22 @@ void CollisionSpace::Observe(Collider* pColl)
 	}
 
 	++m_iCollideNum;
-	m_QuadHead->Insert(pColl);
+	m_QuadHead->Insert(pColl, QuadSpace::GetScreenRect(pColl));
 }
 
-void CollisionSpace::QuadSpace::Insert(Collider* const& pColl)
+void CollisionSpace::QuadSpace::Insert(Collider* const& pColl, const Rect& bounds)
 {
 	// 이미 분할된 공간이 있는 경우
-	if (m_QuadParitions[(int)Partition::LEFT_TOP])
+	if (m_QuadPartitions[(int)Partition::LEFT_TOP])
 	{
 		// 공간이 작은 경우 같은 공간에 넣음
 		bool tooSmall = m_tArea.right - m_tArea.left < m_fMinSize;
-		Partition ePart = tooSmall ? Partition::EQUAL_AREA : GetPartition(pColl);
+		Partition ePart = tooSmall ? Partition::EQUAL_AREA : GetPartition(bounds);
 
 		// 분할 공간으로 재귀
 		if (ePart != Partition::EQUAL_AREA)
 		{
-			m_QuadParitions[(int)ePart]->Insert(pColl);
+			m_QuadPartitions[(int)ePart]->Insert(pColl, bounds);
 			return;
 		}
 	}
@@ -86,11 +81,12 @@ void CollisionSpace::QuadSpace::Insert(Collider* const& pColl)
 		// 충돌체를 서브 영역으로 삽입
 		for (auto iter = m_CollList.begin(); iter != m_CollList.end();)
 		{
-			Partition ePart = GetPartition((*iter));
+			Rect screenRect = GetScreenRect((*iter));
+			Partition ePart = GetPartition(screenRect);
 
 			if (ePart != Partition::EQUAL_AREA)
 			{
-				m_QuadParitions[(int)ePart]->Insert((*iter));
+				m_QuadPartitions[(int)ePart]->Insert((*iter), screenRect);
 				iter = m_CollList.erase(iter);
 			}
 			else
@@ -98,6 +94,14 @@ void CollisionSpace::QuadSpace::Insert(Collider* const& pColl)
 				++iter;
 			}
 		}
+	}
+}
+
+void CollisionSpace::GetEqualSpaceColliders(Collider* pSrc, vector<Collider*>& dstColliders)
+{
+	if (m_QuadHead)
+	{
+		m_QuadHead->Search(pSrc->GetObj(), QuadSpace::GetScreenRect(pSrc), dstColliders);
 	}
 }
 
@@ -109,9 +113,9 @@ void CollisionSpace::QuadSpace::Draw(HDC& hdc, const float& dt)
 	DrawVoidRectWithBorderColor(hdc, m_tArea, util::Green);
 	for (int i = 0; i < 4; ++i)
 	{
-		if (m_QuadParitions[i])
+		if (m_QuadPartitions[i])
 		{
-			m_QuadParitions[i]->Draw(hdc, dt);
+			m_QuadPartitions[i]->Draw(hdc, dt);
 		}
 	}
 }
@@ -182,8 +186,40 @@ void CollisionSpace::QuadSpace::SplitArea()
 	for (int i = 0; i < 4; ++i)
 	{
 		size_t idx = 4 * m_iIdx + i;
-		m_QuadParitions[i] = MakeQuadPtr(m_iLevel + 1, idx, MakeArea(static_cast<Partition>(i)));
-		m_mapQuadParent.insert(make_pair(idx, m_QuadParitions[i].get()));
+		m_QuadPartitions[i] = MakeQuadPtr(m_iLevel + 1, idx, MakeArea(static_cast<Partition>(i)));
+		m_mapQuadParent.insert(make_pair(idx, m_QuadPartitions[i].get()));
+	}
+}
+
+void CollisionSpace::QuadSpace::Search(Object* const& pSrc, const Rect& bounds, vector<Collider*>& dstColliders)
+{
+	const auto InsertNotEqObj = [&](Collider* pColl)
+	{
+		if (pSrc != pColl->GetObj())
+		{
+			dstColliders.push_back(pColl);
+		}
+	};
+	for_each(m_CollList.begin(), m_CollList.end(), InsertNotEqObj);
+
+	if (m_QuadPartitions[0])
+	{
+		Partition ePart = GetPartition(bounds);
+
+		if (ePart == Partition::EQUAL_AREA)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				if (m_QuadPartitions[i]->m_tArea.IsCollideRect(bounds))
+				{
+					m_QuadPartitions[i]->Search(pSrc, bounds, dstColliders);
+				}
+			}
+		}
+		else 
+		{
+			m_QuadPartitions[(int)ePart]->Search(pSrc, bounds, dstColliders);
+		}
 	}
 }
 
@@ -192,13 +228,17 @@ bool CollisionSpace::QuadSpace::OutSideOfScreen(Collider* pColl)
 	if (pColl->IsUICollider())
 		return false;
 
-	Rect rect = pColl->GetBounds();
-	rect = rect.SubtractOffset(CAMERA->GetTopLeft());
+	Rect rect = GetScreenRect(pColl);
 	if (rect.right < 0) return true;
 	if (rect.left >= GETRESOLUTION.x) return true;
 	if (rect.bottom < 0) return true;
 	if (rect.top >= GETRESOLUTION.y) return true;
 	return false;
+}
+
+Rect CollisionSpace::QuadSpace::GetScreenRect(Collider* pColl)
+{
+	return pColl->GetBounds().SubtractOffset(CAMERA->GetTopLeft());
 }
 
 shared_ptr<CollisionSpace::QuadSpace> CollisionSpace::QuadSpace::MakeQuadPtr(unsigned int level, size_t idx, const Rect& rect)
@@ -218,20 +258,18 @@ CollisionSpace::QuadSpace::QuadSpace(unsigned int level, size_t idx, const Rect&
 
 bool CollisionSpace::QuadSpace::IsOverLoaded() const
 {
-	return m_CollList.size() > m_iMaxObjectNum && m_QuadParitions[0] == nullptr
+	return m_CollList.size() > m_iMaxObjectNum && m_QuadPartitions[0] == nullptr
 		&& (m_tArea.right - m_tArea.left) / 2.f >= m_fMinSize;
 }
 
 void CollisionSpace::QuadSpace::AddCollider(Collider* const& pColl)
 {
 	m_CollList.push_back(pColl);
-	pColl->SetSpaceId(m_iIdx);
 }
 
 CollisionSpace::QuadSpace::Partition CollisionSpace::QuadSpace
-::GetPartition(Collider* pColl)
+::GetPartition(const Rect& bounds)
 {
-	Rect bounds = pColl->GetBounds().SubtractOffset(CAMERA->GetTopLeft());
 	float CenterX = (m_tArea.left + m_tArea.right) / 2.f;
 	float CenterY = (m_tArea.top + m_tArea.bottom) / 2.f;
 

@@ -172,10 +172,8 @@ void GameManager::UpdateFarm()
 		{
 			(*iter)->Grow();
 		}
-		else {
-			// 말라 죽는 메커니즘 구현
-		}
-		if ((*iter)->IsDie())
+
+		if (!(*iter)->GetLife())
 		{
 			SAFE_RELEASE((*iter));
 			iter = m_plantList.erase(iter);

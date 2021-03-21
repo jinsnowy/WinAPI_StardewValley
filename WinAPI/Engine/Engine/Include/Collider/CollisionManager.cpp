@@ -15,6 +15,10 @@
 
 DEFINITION_SINGLE(CollisionManager)
 
+size_t quad_build_total_us = 0;
+size_t collision_total_us = 0;
+int frame_count = 0;
+
 CollisionManager::CollisionManager()
 {
 }
@@ -31,6 +35,8 @@ bool CollisionManager::Init()
     m_pCollTex->SetColorKey(util::Black);
     m_pCollisionSpace = CollisionSpace::MakeCollisionSpace();
 
+    m_checkMat.resize(m_iExpectedCollNum);
+    fill(m_checkMat.begin(), m_checkMat.end(), vector<bool>(m_iExpectedCollNum, false));
     return true;
 }
 
@@ -41,55 +47,63 @@ void CollisionManager::ClickPoint()
 
 void CollisionManager::AddCollideObject(Object* pObj)
 {
-    pObj->SetColliderChannel(CO_PLAYER);
+    pObj->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pObj);
-    m_CollisionObjList.push_back(pObj);
+    const auto& collList = pObj->GetColliderList();
+    for (auto iter = collList->begin(); iter != collList->end(); ++iter)
+    {
+        const auto& pColl = (*iter);
+        if (pColl->GetEnable())
+        {
+            m_vecColliders.push_back(pColl);
+            m_pCollisionSpace->Observe(pColl);
+        }
+    }
 }
 
 void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
     pPoint->SetPos(pos.x, pos.y);
-    pPoint->SetColliderChannel(CO_PLAYER);
 
     ColliderRect* pColl = pPoint->AddCollider<ColliderRect>(strTag);
     pColl->SetRect(rect.left, rect.top, rect.right, rect.bottom);
-    SAFE_RELEASE(pColl);
 
+    pPoint->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pPoint);
-    m_CollisionObjList.push_back(pPoint);
+    m_vecColliders.push_back(pColl);
+    m_pCollisionSpace->Observe(pColl);
+    SAFE_RELEASE(pColl);
 }
 
 void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
     pPoint->SetPos(pos.x, pos.y);
-    pPoint->SetColliderChannel(CO_PLAYER);
 
     ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
-    SAFE_RELEASE(pColl);
-
+    pPoint->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pPoint);
-    m_CollisionObjList.push_back(pPoint);
+    m_vecColliders.push_back(pColl);
+    m_pCollisionSpace->Observe(pColl);
+    SAFE_RELEASE(pColl);
 }
 
 void CollisionManager::ReadyCollision(float dt)
 {
-    for (auto iter = m_tempCollisionObjList.begin();
-        iter != m_tempCollisionObjList.end();
-        ++iter)
+    int collNum = (int) m_vecColliders.size();
+    if (m_vecColliders.size() > m_iExpectedCollNum)
     {
-        (*iter)->LateUpdate(dt);
-        for (Collider* coll : *((*iter)->GetColliderList()))
-        {
-            m_pCollisionSpace->Observe(coll);
-        }
+        m_checkMat.resize(collNum, vector<bool>(collNum, false));
     }
 }
 
 void CollisionManager::Clear()
 {
+    quad_build_total_us = 0.f;
+
     m_CollisionObjList.clear();
+
     for (auto iter = m_tempCollisionObjList.begin();
         iter != m_tempCollisionObjList.end();
         ++iter)
@@ -103,7 +117,17 @@ void CollisionManager::Clear()
         m_pCollTex->ClearBuffer(0, 0, GETRESOLUTION.x, GETRESOLUTION.y);
         m_pCollisionSpace->Draw(m_pCollTex->GetDC(), 0.f);
     }
+
+    // 쿼드 트리 초기화
     m_pCollisionSpace->Clear();
+
+    // 충돌 정보 초기화
+    m_vecColliders.clear();
+    m_vecColliders.reserve(m_iExpectedCollNum);
+
+    // 충돌 체크 정보 초기화
+    m_checkMat.resize(m_iExpectedCollNum);
+    fill(m_checkMat.begin(), m_checkMat.end(), vector<bool>(m_iExpectedCollNum, false));
 }
 
 void CollisionManager::NaiveAdd(Object* const& pObj)
@@ -111,53 +135,23 @@ void CollisionManager::NaiveAdd(Object* const& pObj)
     m_CollisionObjList.push_back(pObj);
 }
 
-void CollisionManager::DrawCullingAdd(Object* pObj)
-{
-    if (pObj->IsUIObject())
-    {
-        m_CollisionObjList.push_back(pObj);
-        return;
-    }
-
-    const Size& tSize = pObj->GetSize();
-    Pos tPos = pObj->GetPos() - tSize * pObj->GetPivot();
-    tPos -= CAMERA->GetTopLeft();
-
-    // 카메라 컬링
-    const RESOLUTION& tClientRS = CAMERA->GetClientRS();
-    if (tPos.x + tSize.x < 0 || tPos.x > tClientRS.x || tPos.y + tSize.y < 0 || tPos.y > tClientRS.y)
-    {
-        return;
-    }
-    m_CollisionObjList.push_back(pObj);
-}
 void CollisionManager::AddObject(Object* pObj)
 {
+    auto tic = chrono::steady_clock::now();
     if (pObj->CheckCollider())
     {
-        NaiveAdd(pObj);
+        // NaiveAdd(pObj);
         for (Collider* coll : *(pObj->GetColliderList()))
         {
             if (coll->GetEnable())
             {
                 m_pCollisionSpace->Observe(coll);
+                m_vecColliders.push_back(coll);
             }
         }
     }
-}
-
-void CollisionManager::EraseObject(Object* pObj)
-{
-    for (auto iter = m_CollisionObjList.begin();
-        iter != m_CollisionObjList.end();
-        ++iter)
-    {
-        if ((*iter) == pObj)
-        {
-            m_CollisionObjList.erase(iter);
-            return;
-        }
-    }
+    auto toc = chrono::steady_clock::now();
+    quad_build_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
 }
 
 void CollisionManager::Collision(float dt)
@@ -186,6 +180,97 @@ void CollisionManager::Collision(float dt)
         }
     }
     
+    Clear();
+}
+
+void CollisionManager::Collision2(float dt)
+{
+    int srcCollNum = (int)m_vecColliders.size();
+
+    if (srcCollNum < 2)
+    {
+        Clear();
+        return;
+    }
+
+    auto tic = chrono::steady_clock::now();
+
+    ReadyCollision(dt);
+
+    for (int i = 0; i < srcCollNum; ++i)
+    {
+        const auto& pSrc = m_vecColliders[i];
+        // 충돌체 검색
+        vector<Collider*> pDstList;
+        m_pCollisionSpace->GetEqualSpaceColliders(pSrc, pDstList);
+        vector<Collider*>::const_iterator iterDst;
+        vector<Collider*>::const_iterator iterDstEnd = pDstList.end();
+
+        int dstCollNum = (int)pDstList.size();
+        for (int j = 0; j < dstCollNum; ++j)
+        {
+            const auto& pDst = pDstList[j];
+
+            // 이미 체크한 충돌체 쌍
+            if (m_checkMat[i][j] || m_checkMat[j][i])
+            {
+                continue;
+            }
+
+            m_checkMat[i][j] = m_checkMat[j][i] = true;
+
+            // 충돌체가 서로 충돌했는가
+            if (pSrc->CheckCollision(pDst))
+            {
+
+                // 히트 포인트 셋팅
+                pDst->SetHitPoint(pSrc->GetHitPoint());
+
+                // 충돌목록에서 이전에 충돌된 적이 없다면
+                // 처음 막 충돌되었다는 의미
+                if (!pSrc->CheckCollisionList(pDst))
+                {
+                    // 서로 상대방을 충돌 목록으로 추가한다.
+                    pSrc->AddCollider(pDst);
+                    pDst->AddCollider(pSrc);
+
+                    pSrc->CallFunction(CS_ENTER, pDst, dt);
+                    pDst->CallFunction(CS_ENTER, pSrc, dt);
+                }
+                // 기존 충돌된 적이 있다면 계속 충돌 상태인 것이다.
+                else
+                {
+                    pSrc->CallFunction(CS_STAY, pDst, dt);
+                    pDst->CallFunction(CS_STAY, pSrc, dt);
+                }
+            }
+            // 현재 충돌하지 않았다면,
+            // 현재 충돌이 안된 상태에서 이전에 충돌이 되고 있엇
+            // 다면 이제 막 충돌상태에서 떨어졌다는 의미이다.
+            else if (pSrc->CheckCollisionList(pDst))
+            {
+                // 서로 충돌이 안되므로 충돌목록에서 지워준다.
+                pSrc->EraseCollisionList(pDst);
+                pDst->EraseCollisionList(pSrc);
+
+                pSrc->CallFunction(CS_LEAVE, pDst, dt);
+                pDst->CallFunction(CS_LEAVE, pSrc, dt);
+            }
+        }
+    }
+    auto toc = chrono::steady_clock::now();
+
+    collision_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
+    ++frame_count;
+    if (frame_count == 60)
+    {
+        frame_count = 0;
+        quad_build_total_us /= 60.f;
+        collision_total_us /= 60.f;
+        _cprintf("QuaddTree build takes %f ms\t", quad_build_total_us/1000.f);
+        _cprintf("Collision takes %f ms\n", collision_total_us/1000.f);
+    }
+
     Clear();
 }
 
