@@ -10,10 +10,8 @@
 #include "../Core/Input.h"
 #include "../Core/Camera.h"
 #include "../Scene/GameScene.h"
-
-
-ColliderRect* CollisionManager::m_tCamWorldColl = nullptr;
-ColliderRect* CollisionManager::m_tCamScreenColl = nullptr;
+#include "CollisionSpace.h"
+#include "../Application/Window.h"
 
 DEFINITION_SINGLE(CollisionManager)
 
@@ -23,14 +21,16 @@ CollisionManager::CollisionManager()
 
 CollisionManager::~CollisionManager()
 {
-    SAFE_RELEASE(m_tCamScreenColl);
-    SAFE_RELEASE(m_tCamWorldColl);
+    SAFE_DELETE(m_pCollisionSpace);
+    SAFE_RELEASE(m_pCollTex);
 }
 
 bool CollisionManager::Init()
 {
-    m_tCamWorldColl = Object::CreateObject<ColliderRect>("CameraWorld");
-    m_tCamScreenColl = Object::CreateObject<ColliderRect>("CameraScreen");
+    m_pCollTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), GETRESOLUTION.x, GETRESOLUTION.y);
+    m_pCollTex->SetColorKey(util::Black);
+    m_pCollisionSpace = CollisionSpace::MakeCollisionSpace();
+
     return true;
 }
 
@@ -73,13 +73,17 @@ void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
     m_CollisionObjList.push_back(pPoint);
 }
 
-void CollisionManager::TempLateUpdate(float dt)
+void CollisionManager::ReadyCollision(float dt)
 {
     for (auto iter = m_tempCollisionObjList.begin();
         iter != m_tempCollisionObjList.end();
         ++iter)
     {
         (*iter)->LateUpdate(dt);
+        for (Collider* coll : *((*iter)->GetColliderList()))
+        {
+            m_pCollisionSpace->Observe(coll);
+        }
     }
 }
 
@@ -93,42 +97,18 @@ void CollisionManager::Clear()
         SAFE_RELEASE((*iter));
     }
     m_tempCollisionObjList.clear();
+
+    if (SHOWCHECK(SHOW_COLL))
+    {
+        m_pCollTex->ClearBuffer(0, 0, GETRESOLUTION.x, GETRESOLUTION.y);
+        m_pCollisionSpace->Draw(m_pCollTex->GetDC(), 0.f);
+    }
+    m_pCollisionSpace->Clear();
 }
 
 void CollisionManager::NaiveAdd(Object* const& pObj)
 {
     m_CollisionObjList.push_back(pObj);
-}
-
-void CollisionManager::ColliderCheckAdd(Object* const& pObj)
-{
-    bool isInsideObject = false;
-    bool isInside = false;
-    const list<Collider*>* collList = pObj->GetColliderList();
-    for (auto iter = collList->begin(); iter != collList->end(); ++iter)
-    {
-        if ((*iter)->GetColliderType() == CT_PIXEL)
-        {
-            (*iter)->SetEnable(true);
-            continue;
-        }
-        if ((*iter)->IsUICollider())
-        {
-            m_CollisionObjList.push_back(pObj);
-            return;
-        }
-        else
-        {
-            isInside = m_tCamWorldColl->CheckCollision(*iter);
-            (*iter)->SetEnable(isInside);
-            isInsideObject = true;
-        }
-    }
-
-    if (isInsideObject)
-    {
-        m_CollisionObjList.push_back(pObj);
-    }
 }
 
 void CollisionManager::DrawCullingAdd(Object* pObj)
@@ -156,20 +136,14 @@ void CollisionManager::AddObject(Object* pObj)
     if (pObj->CheckCollider())
     {
         NaiveAdd(pObj);
-        // DrawCullingAdd(pObj);
-        Scene* pScene = pObj->GetScene();
-        if (pScene)
+        for (Collider* coll : *(pObj->GetColliderList()))
         {
-            bool isGameScene = (pScene->GetSceneType() != SC_START && pScene->GetSceneType() != SC_MAPEDIT);
-            if (isGameScene)
+            if (coll->GetEnable())
             {
-                static_cast<GameScene*>(pScene)->AddQuadSpacePoint(pObj->GetTopLeft());
+                m_pCollisionSpace->Observe(coll);
             }
         }
-        // ColliderCheckAdd(pObj);
-        // 
     }
-
 }
 
 void CollisionManager::EraseObject(Object* pObj)
@@ -186,15 +160,6 @@ void CollisionManager::EraseObject(Object* pObj)
     }
 }
 
-void CollisionManager::Update(float dt)
-{
-    const RESOLUTION& tClientRS = CAMERA->GetClientRS();
-    const Pos& topLeft = CAMERA->GetTopLeft();
-
-    m_tCamWorldColl->SetRect(topLeft.x, topLeft.y, topLeft.x + tClientRS.x, topLeft.y + tClientRS.y);
-    m_tCamScreenColl->SetRect(0, 0, tClientRS.x, tClientRS.y);
-}
-
 void CollisionManager::Collision(float dt)
 {
     if (m_CollisionObjList.size() < 2)
@@ -203,8 +168,7 @@ void CollisionManager::Collision(float dt)
         return;
     }
 
-    // 임시 콜라이더 위치 업데이트
-    TempLateUpdate(dt);
+    ReadyCollision(dt);
 
     // 오브젝트 간 충돌 처리를 한다.
     list<Object*>::iterator iter;
@@ -223,6 +187,11 @@ void CollisionManager::Collision(float dt)
     }
     
     Clear();
+}
+
+void CollisionManager::Draw(HDC hdc, float dt)
+{
+    m_pCollTex->DrawImageAt(hdc, Pos(0.f, 0.f));
 }
 
 bool CollisionManager::CheckCollision(Object* pSrc, Object* pDst, float dt)

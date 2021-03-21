@@ -1,6 +1,7 @@
 #include "../framework.h"
 #include "Texture.h"
-class ResourceManager {
+class ResourceManager 
+{
 	DECLARE_SINGLE(ResourceManager)
 private:
 	unordered_map<string, class Texture*> m_mapTexture;

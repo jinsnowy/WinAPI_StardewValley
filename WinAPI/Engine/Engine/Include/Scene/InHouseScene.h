@@ -17,6 +17,7 @@ private:
     InHouseScene();
     ~InHouseScene();
 public:
+    virtual void SetUpCamera();
     virtual bool Init();
     virtual void Input(float dt);
     virtual void Update(float dt);

@@ -16,6 +16,11 @@ MiddlewayScene::~MiddlewayScene()
 
 bool MiddlewayScene::Init()
 {
+	if (!GameScene::Init())
+	{
+		return false;
+	}
+
 	GameScene::SetUpScene(pGameDataFileName);
 
 	return true;

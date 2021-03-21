@@ -24,7 +24,6 @@ GameScene::~GameScene()
     SAFE_RELEASE(m_pGroundStage);
     SAFE_RELEASE(m_pStaticStage);
     SAFE_RELEASE(m_pPlayer);
-    SAFE_DELETE(m_pCollSpace);
 }
 
 Pos GameScene::FindBeacon(BEACON_TAG bc)
@@ -191,21 +190,20 @@ void GameScene::SpawnPlant(const Pos& worldPos)
     }
 }
 
-void GameScene::AddQuadSpacePoint(const Pos& point)
-{
-    m_pCollSpace->AddPoint(point);
-}
 
 bool GameScene::Init()
 {
+    if (!Scene::Init())
+    {
+        return false;
+    }
+
     return true;
 }
 
 void GameScene::Input(float dt)
 {
     Scene::Input(dt);
-
-    m_pCollSpace->Clear();
 }
 
 void GameScene::Update(float dt)
@@ -277,10 +275,6 @@ void GameScene::Draw(HDC hdc, float dt)
     ss.clear();
     ss.str("");
 #endif
-    if (SHOWCHECK(SHOW_COLL))
-    {
-        m_pCollSpace->Draw(hdc, dt);
-    }
 }
 
 void GameScene::SetUpScene(const SceneState &state, Player* player)
@@ -338,11 +332,6 @@ void GameScene::SetUpScene(const SceneState &state, Player* player)
     CAMERA->SetTarget(m_pPlayer);
     CAMERA->SetPivot(0.5f, 0.5f);
     CAMERA->SetPos(m_pPlayer->GetPos());
-
-    // 충돌 공간 설정
-    Rect rect = {};
-    rect.SetRect(0.f, 0.f, worldX, worldY);
-    m_pCollSpace = CollisionSpace::MakeCollisionSpace(rect);
 }
 
 void GameScene::SetUpScene(const char* fileName)

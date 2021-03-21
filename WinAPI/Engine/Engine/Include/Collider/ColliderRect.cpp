@@ -30,6 +30,7 @@ void ColliderRect::SetRect(float l, float t, float r, float b)
 	m_tInfo.SetRect(l, t, r, b);
 }
 
+
 bool ColliderRect::Init()
 {
 	return true;

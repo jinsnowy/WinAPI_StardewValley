@@ -4,7 +4,6 @@ class GameScene : public Scene
 {
     friend class SceneManager;
 protected:
-    class CollisionSpace* m_pCollSpace = nullptr;
     class Stage* m_pGroundStage = nullptr;
     class Stage* m_pStaticStage = nullptr;
     class Player* m_pPlayer = nullptr;
@@ -25,7 +24,6 @@ public:
     void DigTile(const Pos& worldPos);
     void WaterTile(const Pos& worldPos);
     void SpawnPlant(const Pos& worldPos);
-    void AddQuadSpacePoint(const Pos& point);
 public:
     virtual void SetUpScene(const char* fileName);
     virtual bool Init();

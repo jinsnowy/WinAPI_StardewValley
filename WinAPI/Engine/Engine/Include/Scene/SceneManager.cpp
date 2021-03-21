@@ -83,11 +83,6 @@ void SceneManager::Input(float dt)
 	}
 	m_pScene->Input(dt);
 	GAME_MANAGER->Input(dt);
-
-	//if (SOUND_MANAGER->IsEnd("StartLongBGM") && SOUND_MANAGER->IsEnd(SD_BACKGROUND))
-	//{
-	//	SOUND_MANAGER->PlaySound("BGM");
-	//}
 }
 
 int SceneManager::Update(float dt)
@@ -115,6 +110,11 @@ void SceneManager::Draw(HDC hdc, float dt)
 	DrawScreenDarkness(hdc);
 	if(m_pScene->GetSceneType() != SC_START && m_pScene->GetSceneType() != SC_MAPEDIT)
 		GAME_MANAGER->Draw(hdc, dt);
+
+	if (SHOWCHECK(SHOW_COLL))
+	{
+		COLLISION_MANAGER->Draw(hdc, dt);
+	}
 }
 
 void SceneManager::ChangeScene()
@@ -170,6 +170,7 @@ void SceneManager::ChangeScene()
 	}
 
 	FadeIn();
+
 	COLLISION_MANAGER->Clear();
 	m_iSignal = 0;
 	m_tNextState.bSleep = false;

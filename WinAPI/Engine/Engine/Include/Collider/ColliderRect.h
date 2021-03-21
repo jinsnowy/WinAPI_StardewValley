@@ -21,6 +21,10 @@ public:
 	{
 		return m_tWorldInfo;
 	}
+	Rect GetBounds() const
+	{
+		return m_tWorldInfo;
+	}
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

@@ -32,6 +32,11 @@ public:
 	{
 		m_tPos = tDist;
 	}
+	Rect GetBounds() const
+	{
+		return Rect(m_tWorldPos.x - 0.5f, m_tWorldPos.y - 0.5f,
+					m_tWorldPos.x + 0.5f, m_tWorldPos.y + 0.5f);
+	}
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

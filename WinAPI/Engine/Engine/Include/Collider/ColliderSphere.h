@@ -25,6 +25,13 @@ public:
 	{
 		return m_tWorldInfo;
 	}
+	Rect GetBounds() const
+	{
+		const Pos& center = m_tWorldInfo.center;
+		const float halfRaidus = m_tWorldInfo.radius/2.f;
+		return Rect(center.x - halfRaidus, center.y - halfRaidus,
+					center.x + halfRaidus, center.y + halfRaidus);
+	}
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

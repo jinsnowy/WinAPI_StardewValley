@@ -7,6 +7,8 @@
 #include "../Application/Window.h"
 #include "../Core/Camera.h"
 #include "../Core/PathManager.h"
+#include "../Collider/CollisionSpace.h"
+
 Scene::Scene()
 {
 	Layer* pLayer = CreateLayer("UI", INT_MAX);
@@ -226,15 +228,11 @@ void Scene::Collision(float dt)
 
 void Scene::Draw(HDC hdc, float dt)
 {
-	DrawHDCWithColor(hdc, GETRESOLUTION.x, GETRESOLUTION.y, RGB(0, 0, 0));
+	DrawHDCWithColor(hdc, GETRESOLUTION.x, GETRESOLUTION.y, util::Black);
 
 	auto iterEnd = m_LayerList.end();
 	for (auto it = m_LayerList.begin(); it != iterEnd;)
 	{
-#ifdef _DEBUG
-		const string& layerTag = (*it)->GetTag();
-#endif
-
 		if (!(*it)->GetEnable())
 		{
 			++it;

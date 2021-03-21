@@ -155,7 +155,6 @@ int App::Update(float dt)
 	res = SCENE_MANAGER->Update(dt);
 	CAMERA->Update(dt);
 	SOUND_MANAGER->Update(dt);
-	COLLISION_MANAGER->Update(dt);
 	return res;
 }
 

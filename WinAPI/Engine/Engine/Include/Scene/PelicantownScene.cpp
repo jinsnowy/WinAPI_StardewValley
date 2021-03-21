@@ -15,6 +15,11 @@ PelicantownScene::~PelicantownScene()
 
 bool PelicantownScene::Init()
 {
+	if (!GameScene::Init())
+	{
+		return false;
+	}
+
 	GameScene::SetUpScene(pGameDataFileName);
 	return true;
 }

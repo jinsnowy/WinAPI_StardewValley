@@ -30,6 +30,7 @@ public:
 	}
 public:
 	bool SetPixelInfo(const char* pFileName, const string& strPathKey = TEXTURE_PATH);
+	Rect GetBounds() const;
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

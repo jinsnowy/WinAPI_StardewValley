@@ -2,6 +2,7 @@
 #include "ColliderRect.h"
 #include "ColliderSphere.h"
 #include "ColliderPoint.h"
+#include "../Object/Object.h"
 #include "../Core/PathManager.h"
 
 ColliderPixel::ColliderPixel()
@@ -84,6 +85,12 @@ bool ColliderPixel::SetPixelInfo(const char* pFileName, const string& strPathKey
     fclose(pFile);*/
 
     return true;
+}
+
+Rect ColliderPixel::GetBounds() const
+{
+    Pos tPos = m_pObject->GetPos();
+    return Rect(tPos.x, tPos.y, tPos.x + m_iWidth, tPos.y + m_iHeight);
 }
 
 bool ColliderPixel::Init()
