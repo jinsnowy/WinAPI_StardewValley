@@ -1,12 +1,19 @@
 #include "Effect.h"
 
-Effect::Effect(Object* pObj, float duration)
-	: m_pSubject(pObj), m_fMaxDuration(duration)
+namespace std
 {
-	if (m_pSubject)
+	template<>
+	struct default_delete<class Effect>
 	{
-		m_tOrigin = m_pSubject->GetPos();
-	}
+		void operator()(Effect* ptr)
+		{
+			delete ptr;
+		}
+	};
+}
+Effect::Effect(Object* pObj, float duration)
+	: m_tOrigin(pObj->GetPos()), m_pSubject(pObj), m_fMaxDuration(duration)
+{
 }
 
 Effect::~Effect()

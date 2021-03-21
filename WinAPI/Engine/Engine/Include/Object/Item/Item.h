@@ -37,6 +37,7 @@ public:
 
 			pItem->AddRef();
 			m_mapItem.insert(make_pair(strItemKey, pItem));
+			return pItem;
 		}
 
 		Item* pClone = pItem->Clone();

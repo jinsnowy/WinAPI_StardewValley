@@ -15,7 +15,6 @@ UIFastItemList::UIFastItemList()
 UIFastItemList::~UIFastItemList()
 {
 	Safe_Release_VecList(m_vecSmallNumbers);
-	
 }
 
 void UIFastItemList::SellItem()

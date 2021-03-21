@@ -1,8 +1,10 @@
 #pragma once
 #include "../framework.h"
 #include "../Object/Object.h"
+
 class Effect
 {
+	friend class default_delete<Effect>;
 protected:
 	Pos m_tOrigin;
 	class Object* m_pSubject = nullptr;
@@ -14,10 +16,12 @@ private:
 protected:
 	explicit Effect(class Object* pObj, float duration);
 	Effect(const Effect& effet) = delete;
+	virtual ~Effect() = 0;
 	virtual void Process(float dt) = 0;
 	virtual bool Predicate() const { return false; }
 public:
-	virtual ~Effect() = 0;
 	bool IsEnd() const { return m_bEnd; }
 	void Step(float dt);
 };
+
+typedef shared_ptr<Effect> EffectPtr;

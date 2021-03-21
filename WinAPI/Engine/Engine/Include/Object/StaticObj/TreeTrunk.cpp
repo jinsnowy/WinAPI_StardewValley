@@ -54,9 +54,11 @@ void TreeTrunk::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
 	{
-		SetEffect(new ShakeEffect(this, TOOLSPEED - 0.1f, 0.01f, 5.f, 0.f));
+		SetEffect(make_shared<ShakeEffect>(this, TOOLSPEED - 0.1f, 0.01f, 5.f, 0.f));
 		GetDamageFromPlayerTool();
 		CheckDie();
+
+		SOUND_MANAGER->PlaySound("TreeHit");
 	}
 }
 

@@ -18,12 +18,20 @@ public:
 	virtual void Draw(HDC hDC, float dt);
 	virtual CropCabinet* Clone();
 private:
+	enum class State
+	{
+		OPEN,
+		CLOSE,
+	};
+	State m_State = State::CLOSE;
 	static constexpr float m_fPosX = 1600.f;
-	static constexpr float m_fPosY = 820.f;
+	static constexpr float m_fPosY = 780.f;
 	static constexpr float m_iWidth = 18.f;
 	static constexpr float m_iHeight = 36.f;
 	void Click(class Collider* pSrc, class Collider* pDst, float dt);
-	void SoldEffect(int price);
+	void OnSite(class Collider* pSrc, class Collider* pDst, float dt);
+	void OffSite(class Collider* pSrc, class Collider* pDst, float dt);
+	void SoldEffect(class Item* pItem);
 public:
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);

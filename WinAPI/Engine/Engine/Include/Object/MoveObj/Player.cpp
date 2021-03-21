@@ -13,6 +13,7 @@
 #include "../../Scene/SceneManager.h"
 #include "../../Scene/GameScene.h"
 #include "../../Sound/SoundManager.h"
+#include "../../Collider/ColliderPoint.h"
 #include "PlayerTool.h"
 #include "../Item/Item.h"
 #include "../Item/Seed.h"
@@ -705,15 +706,15 @@ void Player::Draw(HDC hDC, float dt)
 	swprintf_s(playerPos, L"Pos: %.1f, %.1f", GetPos().x, GetPos().y);
 	Pos tPos = m_tPos - m_tSize * m_tPivot;
 	tPos -= CAMERA->GetTopLeft();
-	TextOut(hDC, tPos.x, tPos.y - 10, playerPos, lstrlen(playerPos));
+	TextOut(hDC, int(tPos.x), int(tPos.y) - 10, playerPos, lstrlen(playerPos));
 
 	INDEX rcIndex = static_cast<GameScene*>(m_pScene)->GetTileRowColIndex(MOUSEWORLDPOS);
 	Object* pObj = m_pScene->FindObjectByIndex(rcIndex);
 	if (pObj)
 	{
 		string str = "Object: " + pObj->GetTexTag();
-		size_t length = str.size();
-		TextOut(hDC, MOUSECLIENTPOS.x, MOUSECLIENTPOS.y + 20, GetWChar(str.c_str()), length);
+		int length = (int) str.size();
+		TextOut(hDC, int(MOUSECLIENTPOS.x), int(MOUSECLIENTPOS.y) + 20, GetWChar(str.c_str()), length);
 	}
 
 #endif
@@ -739,9 +740,12 @@ void Player::Hit(Collider* pSrc, Collider* pDst, float dt)
 	if (pDst->GetTag() == "ItemBody")
 	{
 		Item* pItem = static_cast<Item*>(pDst->GetObj());
-		AddItem(pItem);
-		SOUND_MANAGER->PlaySound("ItemGet");
-		pItem->Die();
+		if (pItem->GetLife())
+		{
+			AddItem(pItem);
+			SOUND_MANAGER->PlaySound("ItemGet");
+			pItem->Die();
+		}
 	}
 }
 

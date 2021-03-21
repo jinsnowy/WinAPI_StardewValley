@@ -82,20 +82,29 @@ void SceneManager::Input(float dt)
 		GAME_MANAGER->GameTimerTick();
 	}
 	m_pScene->Input(dt);
-	GAME_MANAGER->Input(dt);
+	if (m_bInGameScene)
+	{
+		GAME_MANAGER->Input(dt);
+	}
 }
 
 int SceneManager::Update(float dt)
 {
 	m_pScene->Update(dt);
-	GAME_MANAGER->Update(dt);
+	if (m_bInGameScene)
+	{
+		GAME_MANAGER->Update(dt);
+	}
 	return m_iSignal;
 }
 
 int SceneManager::LateUpdate(float dt)
 {
 	m_pScene->LateUpdate(dt);
-	GAME_MANAGER->LateUpdate(dt);
+	if (m_bInGameScene)
+	{
+		GAME_MANAGER->LateUpdate(dt);
+	}
 	return m_iSignal;
 }
 
@@ -108,8 +117,12 @@ void SceneManager::Draw(HDC hdc, float dt)
 {
 	m_pScene->Draw(hdc, dt);
 	DrawScreenDarkness(hdc);
-	if(m_pScene->GetSceneType() != SC_START && m_pScene->GetSceneType() != SC_MAPEDIT)
+
+	if (m_bInGameScene)
+	{
 		GAME_MANAGER->Draw(hdc, dt);
+	}
+		
 
 	if (SHOWCHECK(SHOW_COLL))
 	{
@@ -136,7 +149,7 @@ void SceneManager::ChangeScene()
 		{
 		case SCENE_CREATE::SC_INHOUSE:
 			CreateScene<InHouseScene>(nxt);
-			GAME_MANAGER->StartTick();
+			GAME_MANAGER->Start();
 			break;
 		case SCENE_CREATE::SC_MAPEDIT:
 			CreateScene<MapEditScene>(nxt);
@@ -162,11 +175,11 @@ void SceneManager::ChangeScene()
 	}
 
 	m_pScene = m_vecScene[nxt];
-	
-	GameScene* gameScene = dynamic_cast<GameScene*>(m_pScene);
-	if (gameScene)
+
+	m_bInGameScene = IsInGameScene();
+	if (m_bInGameScene)
 	{
-		gameScene->SetUpScene(m_tNextState, m_pPlayer);
+		static_cast<GameScene*>(m_pScene)->SetUpScene(m_tNextState, m_pPlayer);
 	}
 
 	FadeIn();
@@ -274,6 +287,13 @@ void SceneManager::DrawScreenDarkness(HDC hdc)
 	SAFE_RELEASE(pEmptyTex);
 }
 
+bool SceneManager::IsInGameScene() const
+{
+	if (m_pScene == nullptr)
+		return false;
+
+	return m_pScene->GetSceneType() != SC_START && m_pScene->GetSceneType() != SC_MAPEDIT;
+}
 void SceneManager::SignalizeSceneChange(const SceneState& state)
 {
 	m_iSignal = m_iChangeSignal;

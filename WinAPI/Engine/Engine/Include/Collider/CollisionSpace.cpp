@@ -238,6 +238,10 @@ bool CollisionSpace::QuadSpace::OutSideOfScreen(Collider* pColl)
 
 Rect CollisionSpace::QuadSpace::GetScreenRect(Collider* pColl)
 {
+	if (pColl->IsUICollider())
+	{
+		return pColl->GetBounds();
+	}
 	return pColl->GetBounds().SubtractOffset(CAMERA->GetTopLeft());
 }
 

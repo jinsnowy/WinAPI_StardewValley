@@ -42,7 +42,7 @@ private:
 	float m_iMP = m_iMaxMP;
 	float m_fAttackRange = TILESIZE;
 	int m_iCurItemSel = 0;
-	int m_iMoney = 500;
+	int m_iMoney = 5000;
 public:
 	void DisableMovement() { m_bMoveEnabled = false; }
 	void EnableMovement() { m_bMoveEnabled = true; }

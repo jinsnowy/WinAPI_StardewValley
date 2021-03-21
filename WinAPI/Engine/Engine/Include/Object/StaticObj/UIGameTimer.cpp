@@ -49,13 +49,14 @@ void UIGameTimer::Input(float dt)
 	if (PLAYER->GetMPRemainRatio() < m_iMPShakeStart)
 	{
 		// Ã¼·Â¹Ù ¶³¸²
-		if (!m_pPlayerMPPanel->AccessEffect())
+		if (!m_pPlayerMPPanel->HasEffect())
 		{
-			m_pPlayerMPPanel->SetEffect(new ShakeEffect(m_pPlayerMPPanel, FLT_MAX, 5.f, 5.f, 10.f, 1.0f));
+			EffectPtr pEffect = make_shared<ShakeEffect>(m_pPlayerMPPanel, FLT_MAX, 0.01f, 3.f, 0.f, 8.0f, 1.0f);
+			m_pPlayerMPPanel->SetEffect(pEffect);
 		}
 	}
 	else {
-		if (m_pPlayerMPPanel->AccessEffect())
+		if (m_pPlayerMPPanel->HasEffect())
 		{
 			m_pPlayerMPPanel->SetEffect(nullptr);
 		}

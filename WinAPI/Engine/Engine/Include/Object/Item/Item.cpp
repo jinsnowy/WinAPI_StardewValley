@@ -38,7 +38,7 @@ void Item::GenerateBoundEffect()
     
     angle = (rand() % 2 == 1) ? angle : PI - angle;
 
-    Effect* pEffect = new BoundEffect(this, 2.5f, 4, angle, velo, GetPos().y + 0.5f);
+    EffectPtr pEffect = make_shared<BoundEffect>(this, 2.5f, 4, angle, velo, GetPos().y + 0.5f);
     SetEffect(pEffect);
 }
 

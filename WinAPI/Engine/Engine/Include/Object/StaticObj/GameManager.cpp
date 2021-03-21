@@ -1,4 +1,8 @@
 #include "GameManager.h"
+#include "UIGameTimer.h"
+#include "UISeedStore.h"
+#include "UIFastItemList.h"
+#include "UIPlayerInfo.h"
 #include "UIPanel.h"
 #include "../../Application/Window.h"
 #include "../../Core/Input.h"
@@ -8,106 +12,101 @@
 #include "../MoveObj/Player.h"
 #include "../Item/Item.h"
 #include "../StaticObj/Plant.h"
+#include "../../Sound/SoundManager.h"
 
 DEFINITION_SINGLE(GameManager);
 
 bool GameManager::Init()
 {
 	INPUT->AddKey("PlayerUI", 'E');
+	SOUND_MANAGER->LoadSound("OpenUI", false, SD_EFFECT, "OpenUI.mp3");
+	SOUND_MANAGER->LoadSound("CloseUI", false, SD_EFFECT, "CloseUI.mp3");
+	SOUND_MANAGER->LoadSound("InteractUI", false, SD_EFFECT, "InteractUI.mp3");
+
+	m_uiPanels.resize((int)PANEL_TYPE::PANEL_END);
+	m_uiPanels[(int)PANEL_TYPE::PLAYER_INFO] = make_unique<UIPlayerInfo>();
+	m_uiPanels[(int)PANEL_TYPE::GAME_TIMER] = make_unique<UIGameTimer>();
+	m_uiPanels[(int)PANEL_TYPE::FAST_ITEMLIST] = make_unique<UIFastItemList>();
+	m_uiPanels[(int)PANEL_TYPE::SEED_STORE] = make_unique<UISeedStore>();
+	m_uiStates.reset();
 	return true;
+}
+
+void GameManager::Start()
+{
+	m_uiStates[(int)PANEL_TYPE::GAME_TIMER] = true;
+	m_uiStates[(int)PANEL_TYPE::FAST_ITEMLIST] = true;
 }
 
 void GameManager::Input(float dt)
 {
 	if (KEYDOWN("PlayerUI"))
 	{
-		m_bPlayerInfoSelect = !m_bPlayerInfoSelect;
+		m_uiStates.flip((int)PANEL_TYPE::PLAYER_INFO);
+		m_uiStates.flip((int)PANEL_TYPE::FAST_ITEMLIST);
+		Activated((int)PANEL_TYPE::PLAYER_INFO) ? 
+			SOUND_MANAGER->PlaySound("OpenUI") : SOUND_MANAGER->PlaySound("CloseUI");
 	}
-	m_clockPanel->Input(dt);
-	if (m_bPlayerInfoSelect)
+	for (int i = 0; i < (int)PANEL_TYPE::PANEL_END; ++i)
 	{
-		m_playerInfoPanel->Input(dt);
-	}
-	else
-	{
-		m_fastItemPanel->Input(dt);
-		if (m_bSeedStoreSelect)
+		if (Activated(i))
 		{
-			m_fastItemPanel->SellItem();
+			m_uiPanels[i]->Input(dt);
 		}
-	}
-	if (m_bSeedStoreSelect)
-	{
-		m_storePanel->Input(dt);
 	}
 }
 
 int GameManager::Update(float dt)
 {
-	if (m_bTickStart)
+	for (int i = 0; i < (int)PANEL_TYPE::PANEL_END; ++i)
 	{
-		m_clockPanel->Update(dt);
-
-		// 식물 성장
-		if (m_clockPanel->GetTicked())
+		if (Activated(i))
 		{
-			UpdateFarm();
+			m_uiPanels[i]->Update(dt);
+
+			if (i == (int)PANEL_TYPE::GAME_TIMER)
+			{
+				if (((UIGameTimer*)m_uiPanels[i].get())->GetTicked())
+				{
+					UpdateFarm();
+				}
+			}
 		}
 	}
-
-	if (m_bPlayerInfoSelect)
-	{
-		m_playerInfoPanel->Update(dt);
-	}
-	else
-	{
-		m_fastItemPanel->Update(dt);
-	}
-
-	if (m_bSeedStoreSelect)
-	{
-		m_storePanel->Update(dt);
-	}
-
 	return 0;
 }
 
 int GameManager::LateUpdate(float dt)
 {
-	m_clockPanel->LateUpdate(dt);
-	if (m_bPlayerInfoSelect)
+	for (int i = 0; i < (int)PANEL_TYPE::PANEL_END; ++i)
 	{
-		m_playerInfoPanel->LateUpdate(dt);
-	}
-	else
-	{
-		m_fastItemPanel->LateUpdate( dt);
-	}
-	if (m_bSeedStoreSelect)
-	{
-		m_storePanel->LateUpdate(dt);
+		if (Activated(i))
+		{
+			m_uiPanels[i]->LateUpdate(dt);
+		}
 	}
     return 0;
 }
 
 void GameManager::Collision(float dt)
 {
+	for (int i = 0; i < (int)PANEL_TYPE::PANEL_END; ++i)
+	{
+		if (Activated(i))
+		{
+			m_uiPanels[i]->Collision(dt);
+		}
+	}
 }
 
 void GameManager::Draw(HDC hdc, float dt)
 {
-	m_clockPanel->Draw(hdc, dt);
-	if (m_bPlayerInfoSelect)
+	for (int i = 0; i < (int)PANEL_TYPE::PANEL_END; ++i)
 	{
-		m_playerInfoPanel->Draw(hdc, dt);
-	}
-	else
-	{
-		m_fastItemPanel->Draw(hdc, dt);
-	}
-	if (m_bSeedStoreSelect)
-	{
-		m_storePanel->Draw(hdc, dt);
+		if (Activated(i))
+		{
+			m_uiPanels[i]->Draw(hdc, dt);
+		}
 	}
 }
 
@@ -193,25 +192,29 @@ void GameManager::AddPlantList(Plant* pPlant)
 
 void GameManager::SetSeedStore(bool bSelect)
 {
-	m_bSeedStoreSelect = bSelect;
-	if (m_bSeedStoreSelect)
+	m_uiStates[(int)PANEL_TYPE::SEED_STORE] = bSelect;
+	UIGameTimer* pTimer = static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get());
+	UISeedStore* pStore = static_cast<UISeedStore*>(m_uiPanels[(int)PANEL_TYPE::SEED_STORE].get());
+	if (bSelect)
 	{
-		Pos tPos = m_storePanel->GetPos();
-		tPos.y += m_storePanel->GetSize().y;
-		tPos.y -= m_clockPanel->GetSize().y - 70.f;
-		m_clockPanel->SetPos(tPos);
-		m_storePanel->SetClickDelay();
+		Pos tPos = pTimer->GetPos();
+		tPos.y -= pTimer->GetSize().y - 70.f;
+		tPos.y += pStore->GetSize().y;
+		pTimer->SetPos(tPos);
+		pStore->SetClickDelay();
 		m_pPlayer->DisableMovement();
+		SOUND_MANAGER->PlaySound("OpenUI");
 	}
 	else {
-		m_clockPanel->SetNormalPos();
+		pTimer->SetNormalPos();
 		m_pPlayer->EnableMovement();
+		SOUND_MANAGER->PlaySound("CloseUI");
 	}
 }
 
 void GameManager::GameTimerTick()
 {
-	m_clockPanel->GameTimerTick();
+	static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get())->GameTimerTick();
 	UpdateFarm();
 }
 
@@ -224,19 +227,20 @@ void GameManager::SetPlayer(Player* pPlayer)
 
 unsigned long long GameManager::GetWorldTime() const
 {
-	return m_clockPanel->GetWorldTime();
+	return static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get())->GetWorldTime();
 }
 
 float GameManager::GetDayDarkNess() const
 {
-	if (!m_bTickStart) return 0.0f;
-	return m_clockPanel->GetDayDarkNess(); 
+	if (!m_uiPanels[(int)PANEL_TYPE::GAME_TIMER]) return 0.0f;
+	return static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get())->GetDayDarkNess();
 }
 
 void GameManager::SleepUntilMorning()
 {
 	m_pPlayer->Sleep();
-	while (!m_clockPanel->IsMorning())
+	UIGameTimer* pTimer = static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get());
+	while (!pTimer->IsMorning())
 	{
 		GameTimerTick();
 	}

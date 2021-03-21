@@ -41,21 +41,10 @@ bool UIButton::Init()
 void UIButton::Input(float dt)
 {
 	UI::Input(dt);
-}
 
-int UIButton::Update(float dt)
-{
-	UI::Update(dt);
-	return 0;
-}
-
-int UIButton::LateUpdate(float dt)
-{
-	UI::LateUpdate(dt);
-	
-	if (m_eState != BUTTON_STATE::BS_NONE)
+	if (m_eState == BUTTON_STATE::BS_MOUSEON)
 	{
-		if (KEYPRESS("MouseLButton"))
+		if (KEYDOWN("MouseLButton"))
 		{
 			m_eState = BUTTON_STATE::BS_CLICK;
 		}
@@ -68,7 +57,18 @@ int UIButton::LateUpdate(float dt)
 			m_BtnCallback(dt);
 		}
 	}
+}
 
+int UIButton::Update(float dt)
+{
+	UI::Update(dt);
+	return 0;
+}
+
+int UIButton::LateUpdate(float dt)
+{
+	UI::LateUpdate(dt);
+	
 	return 0;
 }
 
@@ -92,8 +92,10 @@ void UIButton::MouseOn(Collider* pSrc, Collider* pDst, float dt)
 	if (pDst->GetTag() == "Mouse")
 	{
 		m_eState = BUTTON_STATE::BS_MOUSEON;
+
 		if(m_bUseMouseOnOutImage)
 			SetImageOffset(m_tMouseOnImageOffset);
+
 		if (m_bUseSound)
 		{
 			SOUND_MANAGER->PlaySound(m_strSoundTag);

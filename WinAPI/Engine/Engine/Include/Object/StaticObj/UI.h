@@ -4,7 +4,7 @@ class UI : public Object
 {
 private:
 	friend class Object;
-protected:
+public:
 	UI();
 	UI(const UI& ui);
 	virtual ~UI() = 0;

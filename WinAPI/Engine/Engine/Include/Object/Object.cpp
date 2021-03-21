@@ -71,14 +71,12 @@ Object::~Object()
 {
     SAFE_RELEASE(m_pAnimation);
     SAFE_RELEASE(m_pTexture);
-    SAFE_DELETE(m_pEffect)
     Safe_Release_VecList(m_ColliderList);
 }
 
-void Object::SetEffect(Effect* pEffect)
+void Object::SetEffect(const shared_ptr<class Effect>& pEffect)
 {
-    SAFE_DELETE(m_pEffect);
-    m_pEffect = pEffect;
+    m_pEffect = std::move(pEffect);
 }
 
 Object* Object::CreateObjectByType(OBJ_TYPE eType)
@@ -257,7 +255,7 @@ int Object::Update(float dt)
         m_pEffect->Step(dt);
         if (m_pEffect->IsEnd())
         {
-            SAFE_DELETE(m_pEffect);
+            m_pEffect = nullptr;
         }
     }
     list<Collider*>::iterator iter;

@@ -10,6 +10,7 @@
 #include "../Item/Item.h"
 #include "../Item/Seed.h"
 #include "../../Core/Input.h"
+#include "../../Sound/SoundManager.h"
 
 UISeedStore::UISeedStore()
 {
@@ -65,6 +66,7 @@ void UISeedStore::Input(float dt)
 {
     UI::Input(dt);
 	m_pScrollBar->Input(dt);
+	m_pExitButton->Input(dt);
 }
 
 int UISeedStore::Update(float dt)
@@ -74,6 +76,7 @@ int UISeedStore::Update(float dt)
 	m_pExitButton->Update(dt);
 	m_pExitButton->LateUpdate(dt);
 	COLLISION_MANAGER->AddObject(m_pExitButton);
+
 	m_pScrollBar->Update(dt);
 	m_pScrollBar->LateUpdate(dt);
     return 0;
@@ -125,9 +128,10 @@ void UISeedStore::BuyingCallback(Collider* pSrc, Collider* pDst, float dt, int i
 	}
 	if (pDst->GetTag() == "Mouse" && KEYUP("MouseLButton"))
 	{
+		SOUND_MANAGER->PlaySound("InteractUI");
 		int curBlock = m_pScrollBar->GetCurBlock() + id;
-			Item* curItem = m_vecSellingSeeds[curBlock];
-			PLAYER->BuyItem(curItem);
+		Item* curItem = m_vecSellingSeeds[curBlock];
+		PLAYER->BuyItem(curItem);
 	}
 }
 
@@ -150,4 +154,5 @@ void UISeedStore::SetUpItemBuyColliders()
 void UISeedStore::Exit(float dt)
 {
 	GAME_MANAGER->SetSeedStore(false);
+	m_pExitButton->Reset();
 }

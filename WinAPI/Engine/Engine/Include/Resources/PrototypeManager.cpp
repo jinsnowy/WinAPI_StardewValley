@@ -87,6 +87,7 @@ bool PrototypeManager::Init()
     pItem = Item::CreateCloneItem<Item>("Wood", L"SV/Item/Outdoor/Wood.bmp");
     pItem->SetItemSellPrice(5);
     SAFE_RELEASE(pItem);
+
     vector<Item*>m_vecItem = Item::LoadItemFromDirectory<Item>(L"SV/Item/Fruit/", RGB(255, 255, 255));
     for (Item* pFruit : m_vecItem)
     {

@@ -30,6 +30,11 @@ Collider::~Collider()
 	}
 }
 
+bool Collider::IsUICollider() const
+{
+	return GetObj()->IsUIObject();
+}
+
 void Collider::SetObj(Object* pObject)
 {
 	m_pObject = pObject;

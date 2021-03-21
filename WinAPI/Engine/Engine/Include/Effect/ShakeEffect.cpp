@@ -29,8 +29,8 @@ void ShakeEffect::Process(float dt)
 	{
 		m_fShakeTime = m_fDuration;
 
-		float posX = m_tOrigin.x + m_fAlpha * m_fRangeX + m_noiseDist(util::_rng);
-		float posY = m_tOrigin.y + m_fAlpha * m_fRangeY + m_noiseDist(util::_rng);
+		float posX = m_tOrigin.x + m_fAlpha * (m_fRangeX + m_noiseDist(util::_rng));
+		float posY = m_tOrigin.y + m_fAlpha * (m_fRangeY + m_noiseDist(util::_rng));
 
 		m_pSubject->SetPos(posX, posY);
 

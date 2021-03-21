@@ -15,13 +15,13 @@ protected:
 	class Scene* m_pScene;
 	class Layer* m_pLayer;
 	class Texture* m_pTexture;
-	class Effect* m_pEffect;
+	shared_ptr<class Effect> m_pEffect;
 	Animation* m_pAnimation;
 	list<Collider*> m_ColliderList;
 public:
 	bool IsUIObject()const { return m_bUIObject; }
-	const Effect* AccessEffect() const { return m_pEffect; }
-	void SetEffect(class Effect* pEffect);
+	bool HasEffect() const { return m_pEffect != nullptr; }
+	void SetEffect(const shared_ptr<class Effect>& pEffect);
 	OBJ_TYPE GetObjectType() const { return m_eObjType; }
 	template<typename T>
 	static T* CreateObject(const string& strTag)

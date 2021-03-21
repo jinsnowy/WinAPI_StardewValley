@@ -1,9 +1,5 @@
 #pragma once
 #include "../../framework.h"
-#include "UIGameTimer.h"
-#include "UISeedStore.h"
-#include "UIFastItemList.h"
-#include "UIPlayerInfo.h"
 
 class GameManager
 {
@@ -28,11 +24,19 @@ private:
 	unordered_set<int> m_setWateredTileIndices;
 	list<class Plant*> m_plantList;
 private:
+	enum class PANEL_TYPE
+	{
+		PLAYER_INFO = 0,
+		GAME_TIMER,
+		FAST_ITEMLIST,
+		SEED_STORE,
+		PANEL_END,
+	};
+	typedef unique_ptr<class UI> UIPtr;
 	class Player* m_pPlayer = nullptr;
-	unique_ptr<UIPlayerInfo> m_playerInfoPanel = make_unique<UIPlayerInfo>();
-	unique_ptr<UIGameTimer> m_clockPanel = make_unique<UIGameTimer>();
-	unique_ptr<UIFastItemList> m_fastItemPanel = make_unique<UIFastItemList>();
-	unique_ptr<UISeedStore> m_storePanel = make_unique<UISeedStore>();
+	vector<UIPtr> m_uiPanels;
+	bitset<(int)PANEL_TYPE::PANEL_END> m_uiStates;
+	bool Activated(int id) { return m_uiStates[id]; }
 public:
 	virtual bool Init();
 	virtual void Input(float dt);
@@ -41,8 +45,6 @@ public:
 	virtual void Collision(float dt);
 	virtual void Draw(HDC hdc, float dt);
 private:
-	bool m_bTickStart = false;
-	bool m_bSeedStoreSelect = false;
 	bool m_bPlayerInfoSelect = false;
 public:
 	void AddWateredTile(int index);
@@ -54,10 +56,10 @@ public:
 	}
 	void AddPlantList(class Plant* pPlant);
 	void SetSeedStore(bool bSelect);
-	void StartTick() { m_bTickStart = true; }
+	void Start();
 	void GameTimerTick();
 	void SetPlayer(Player* pPlayer);
-	bool IsStoreSelect() const { return m_bSeedStoreSelect; }
+	bool IsStoreSelect() const { return m_uiStates[(int)PANEL_TYPE::SEED_STORE]; }
 	Player* AccessPlayer() { return m_pPlayer; }
 	unsigned long long GetWorldTime() const;
 	float GetDayDarkNess() const;

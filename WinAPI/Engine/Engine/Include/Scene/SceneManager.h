@@ -13,6 +13,7 @@ private:
 	static constexpr int m_iChangeSignal = 0xabcdef;
 	SceneState m_tNextState = {};
 
+	bool m_bInGameScene = false;
 	class Player* m_pPlayer = nullptr;
 	Scene* m_pScene = nullptr;
 	vector<Scene*> m_vecScene;
@@ -25,6 +26,7 @@ private:
 	void FadeOut();
 	void FadeIn();
 	void DrawScreenDarkness(HDC hdc);
+	bool IsInGameScene() const;
 public:
 	int GetShowMode()const { return m_iShowMode; }
 	bool CheckShowMode(STAGE_SHOW eShow)

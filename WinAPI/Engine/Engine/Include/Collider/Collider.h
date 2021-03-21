@@ -19,7 +19,7 @@ protected:
 	Pos				m_tHitPoint;
 public:
 	virtual Rect GetBounds() const = 0;
-	bool IsUICollider() const { return m_bUIColl; }
+	bool IsUICollider() const;
 	void SetUICollider(bool bUI) { m_bUIColl = bUI; }
 	Pos GetHitPoint() const { return m_tHitPoint; }
 	void SetHitPoint(const Pos& tPos) { m_tHitPoint = tPos; }

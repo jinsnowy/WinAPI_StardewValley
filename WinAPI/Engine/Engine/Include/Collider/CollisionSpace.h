@@ -56,8 +56,8 @@ private:
 	using Partition = CollisionSpace::QuadSpace::Partition;
 	using QuadSpace = CollisionSpace::QuadSpace;
 	static int m_iCollideNum;
-	static constexpr size_t m_iMaxObjectNum = 2;
-	static constexpr float m_fMinSize = 25.f;
+	static constexpr size_t m_iMaxObjectNum = 4;
+	static constexpr float m_fMinSize = 20.f;
 	static unordered_map<size_t, QuadParentPtr> m_mapQuadParent;
 	static QuadPtr m_QuadHead;
 	Rect m_tScreenSpace = {};

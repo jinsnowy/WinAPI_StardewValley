@@ -7,6 +7,8 @@
 #include "../../Application/Window.h"
 #include "../../Scene/Scene.h"
 #include "../../Effect/VanishEffect.h"
+#include "../../Core/Input.h"
+#include "../../Sound/SoundManager.h"
 CropCabinet::CropCabinet()
 {
 }
@@ -22,16 +24,29 @@ CropCabinet::~CropCabinet()
 
 bool CropCabinet::Init()
 {
-    SetTexture("CropCabinet", L"SV/Object/CropCabinet/CropCabinet.bmp");
-    SetAsTextureSize();
+    SOUND_MANAGER->LoadSound("CabinetOpen", false, SD_EFFECT, "Object/CabinetOpen.mp3");
+    SOUND_MANAGER->LoadSound("CabinetClose", false, SD_EFFECT, "Object/CabinetClose.mp3");
+    SOUND_MANAGER->LoadSound("CabinetDump", false, SD_EFFECT, "Object/CabinetDump.mp3");
+
+    SetTexture("CropCabinetOpen", L"SV/Object/CropCabinet/CropCabinetOpen.bmp");
     SetColorKey(255, 255, 255);
-    SetPivot(0.f, 1.0f);
+    SetTexture("CropCabinetClose", L"SV/Object/CropCabinet/CropCabinetClose.bmp");
+    SetAsTextureSize();
+    SetPivot(0.f, (GetSize().y - TILESIZE) / GetSize().y);
+    SetColorKey(255, 255, 255);
     SetPos(m_fPosX, m_fPosY);
 
-    ColliderRect* pRC = AddCollider<ColliderRect>("CabinetBody");
-    pRC->SetRect(0.f, -GetSize().y, GetSize().x, 0.f);
+    ColliderRect* pRC = AddCollider<ColliderRect>("CabinetSellBody");
+    pRC->SetRect(0.f, -TILESIZE, GetSize().x, GetSize().y - TILESIZE);
     pRC->AddCollisionFunction(CS_ENTER, this, &CropCabinet::Click);
     pRC->AddCollisionFunction(CS_STAY, this, &CropCabinet::Click);
+    SAFE_RELEASE(pRC);
+
+    pRC = AddCollider<ColliderRect>("CabinetBody");
+    pRC->SetRect(-TILESIZE, -GetSize().y, GetSize().x + TILESIZE, 2 * TILESIZE);
+    pRC->AddCollisionFunction(CS_ENTER, this, &CropCabinet::OnSite);
+    pRC->AddCollisionFunction(CS_STAY, this, &CropCabinet::OnSite);
+    pRC->AddCollisionFunction(CS_LEAVE, this, &CropCabinet::OffSite);
     SAFE_RELEASE(pRC);
 
     return true;
@@ -71,20 +86,82 @@ CropCabinet* CropCabinet::Clone()
 
 void CropCabinet::Click(Collider* pSrc, Collider* pDst, float dt)
 {
-    if (pDst->GetTag() == "ItemPointBody")
+    if (m_State == State::OPEN)
     {
-        Item* pItem = static_cast<Item*>(pDst->GetObj());
-        bool bSold = PLAYER->SellItem(pItem->GetTag());
-
-        if (bSold)
+        if (pDst->GetTag() == "ItemPointBody")
         {
-            SoldEffect(pItem->GetItemSellPrice());
+            Item* pItem = static_cast<Item*>(pDst->GetObj());
+            bool bSold = PLAYER->SellItem(pItem->GetTag());
+            if (bSold)
+            {
+                SoldEffect(pItem);
+            }
+        }
+        if (pDst->GetTag() == "Click")
+        {
+            Item* pItem = PLAYER->GetCurItem();
+            if (pItem && !pItem->IsToolItem())
+            {
+                bool bSold = PLAYER->SellItem(pItem->GetTag());
+                if (bSold)
+                {
+                    SoldEffect(pItem);
+                }
+                SAFE_RELEASE(pItem);
+            }
         }
     }
 }
 
-void CropCabinet::SoldEffect(int price)
+void CropCabinet::OnSite(Collider* pSrc, Collider* pDst, float dt)
 {
+    if (pDst->GetTag() == "PlayerBody")
+    {
+        if (m_State == State::CLOSE)
+        {
+            SOUND_MANAGER->PlaySound("CabinetOpen");
+            SetTexture("CropCabinetOpen");
+            SetAsTextureSize();
+            SetPivot(0.f, (GetSize().y - TILESIZE) / GetSize().y);
+        }
+        m_State = State::OPEN;
+    }
+}
+
+void CropCabinet::OffSite(Collider* pSrc, Collider* pDst, float dt)
+{
+    if (pDst->GetTag() == "PlayerBody")
+    {
+        if (m_State == State::OPEN)
+        {
+            SOUND_MANAGER->PlaySound("CabinetClose");
+            SetTexture("CropCabinetClose");
+            SetAsTextureSize();
+            SetPivot(0.f, (GetSize().y - TILESIZE) / GetSize().y);
+        }
+        m_State = State::CLOSE;
+    }
+}
+
+
+void CropCabinet::SoldEffect(Item* pItem)
+{
+    SOUND_MANAGER->PlaySound("CabinetDump");
+
+    TempObject* pObj = Object::CreateObject<TempObject>("SoldItem");
+
+    Pos tPos = GetCenter();
+    tPos.y -= 30.f;
+    tPos.x -= pItem->GetImageSize().x / 2.f;
+    pObj->SetPos(tPos);
+    pObj->SetLifeDuration(1.0f);
+    pObj->SetTexture(pItem->AccessTexture());
+    pObj->SetAsTextureSize();
+    pObj->SetEffect(make_shared<VanishEffect>(pObj, 1.0f, Pos(0.0, -30.f)));
+    m_pScene->FindLayer("Effect")->AddObject(pObj);
+    SAFE_RELEASE(pObj);
+
+    int price = pItem->GetItemSellPrice();
     vector<int> digits;
     do
     {
@@ -95,7 +172,7 @@ void CropCabinet::SoldEffect(int price)
     reverse(digits.begin(), digits.end());
 
     int NumOfDigits = (int)digits.size();
-    Texture* pTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), m_iWidth * NumOfDigits, m_iHeight, util::White);
+    Texture* pTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), int(m_iWidth * NumOfDigits), int(m_iHeight), util::White);
     pTex->SetColorKey(util::White);
 
     int stX = 0, stY = 0;
@@ -106,18 +183,18 @@ void CropCabinet::SoldEffect(int price)
         baseName[5] = '0' + digit;
         Texture* pNumTex = RESOURCE_MANAGER->FindTexture(baseName);
 
-        pTex->DrawImageFrom(stX, stY, m_iWidth, m_iHeight, pNumTex, 0, 0);
-        stX += m_iWidth;
+        pTex->DrawImageFrom(stX, stY, int(m_iWidth), int(m_iHeight), pNumTex, 0, 0);
+        stX += int(m_iWidth);
 
         SAFE_RELEASE(pNumTex);
     }
 
-    TempObject* pObj = Object::CreateObject<TempObject>("SoldEffect");
+    pObj = Object::CreateObject<TempObject>("SoldEffect");
     pObj->SetPos(GetRight(), GetTop());
     pObj->SetLifeDuration(1.0f);
     pObj->SetTexture(pTex);
     pObj->SetAsTextureSize();
-    pObj->SetEffect(new VanishEffect(pObj, 1.0f, Pos(0.0, -30.f)));
+    pObj->SetEffect(make_shared<VanishEffect>(pObj, 1.0f, Pos(0.0, -30.f)));
     m_pScene->FindLayer("Effect")->AddObject(pObj);
 
     SAFE_RELEASE(pTex);
