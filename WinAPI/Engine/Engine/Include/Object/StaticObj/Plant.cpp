@@ -55,7 +55,12 @@ void Plant::SetGrowTexture(const string& plantTag)
 
 void Plant::AddHarvestCollider()
 {
-    EraseAllColiders();
+    Collider* pColl = GetCollider("HarvestBody");
+    if (pColl)
+    {
+        pColl->SetEnable(true);
+        return;
+    }
     ColliderRect* pRC = AddCollider<ColliderRect>("HarvestBody");
     pRC->SetRect(0.f, 0.f, TILESIZE, TILESIZE);
     pRC->AddCollisionFunction(CS_ENTER, this, &Plant::PlantHit);
@@ -84,9 +89,11 @@ void Plant::PlantHit(Collider* pSrc, Collider* pDst, float dt)
     {
         if (m_iCurLevel == m_iMaxLevel - 2)
         {
-            HarvestFruit();
-            m_iGrowTime = GAMEWORLDTIME;
             ++m_iCurLevel;
+            m_iGrowTime = GAMEWORLDTIME;
+
+            pSrc->SetEnable(false);
+            HarvestFruit();
             GrowAsNextPlant();
         }
     }
@@ -103,11 +110,13 @@ void Plant::Grow()
             {
                 ++m_iCurLevel;
                 GrowAsNextPlant();
+                // 열매 있는 상태
                 if (m_iCurLevel == m_iMaxLevel - 2)
                 {
                     AddHarvestCollider();
                 }
             }
+            // 열매 없는 상태
             else if (m_iCurLevel == m_iMaxLevel - 1)
             {
                 --m_iCurLevel;

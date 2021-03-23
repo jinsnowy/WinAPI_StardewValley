@@ -4,6 +4,7 @@
 class GameManager
 {
 	DECLARE_SINGLE(GameManager)
+	friend class Npc;
 private:
 	class WateredTile
 	{
@@ -14,13 +15,15 @@ private:
 		unsigned long long m_iWaterTime = 0;
 		int m_iIndex = -1;
 	public:
+		WateredTile(int index);
+		~WateredTile();
+	public:
 		void Reset();
 		bool IsDrought() const { return m_bDrought; }
 		int GetIndex() const { return m_iIndex; }
-		WateredTile(int index);
 		void Update();
 	};
-	deque<WateredTile> m_queWateredTile;
+	list<WateredTile> m_WateredTiles;
 	unordered_set<int> m_setWateredTileIndices;
 	list<class Plant*> m_plantList;
 private:
@@ -32,11 +35,15 @@ private:
 		SEED_STORE,
 		PANEL_END,
 	};
-	typedef unique_ptr<class UI> UIPtr;
+	typedef shared_ptr<class UI> UIPtr;
 	class Player* m_pPlayer = nullptr;
 	vector<UIPtr> m_uiPanels;
 	bitset<(int)PANEL_TYPE::PANEL_END> m_uiStates;
+	unsigned long long m_iWorldTime = 0;
+private:
 	bool Activated(int id) { return m_uiStates[id]; }
+	class UIGameTimer* GetTimer() const;
+	class UISeedStore* GetStore() const;
 public:
 	virtual bool Init();
 	virtual void Input(float dt);
@@ -47,21 +54,21 @@ public:
 private:
 	bool m_bPlayerInfoSelect = false;
 public:
+	Player* AccessPlayer() { return m_pPlayer; }
+	void SetPlayer(Player* pPlayer);
 	void AddWateredTile(int index);
 	vector<int> GetDroughtTiles();
-	void UpdateFarm();
-	bool IsWateredTile(int index)
-	{
-		return m_setWateredTileIndices.find(index) != m_setWateredTileIndices.end();
-	}
-	void AddPlantList(class Plant* pPlant);
-	void SetSeedStore(bool bSelect);
-	void Start();
-	void GameTimerTick();
-	void SetPlayer(Player* pPlayer);
-	bool IsStoreSelect() const { return m_uiStates[(int)PANEL_TYPE::SEED_STORE]; }
-	Player* AccessPlayer() { return m_pPlayer; }
+	bool IsWateredTile(int index) const;
+
 	unsigned long long GetWorldTime() const;
+
+	void UpdateFarm();
+	void AddPlantList(class Plant* pPlant);
+	void Start();
+	void Acknowleged(UI* changedUI);
+	void GameTimerFastForward();
+
+	bool IsStoreSelect() const { return m_uiStates[(int)PANEL_TYPE::SEED_STORE]; }
 	float GetDayDarkNess() const;
 	void SleepUntilMorning();
 };

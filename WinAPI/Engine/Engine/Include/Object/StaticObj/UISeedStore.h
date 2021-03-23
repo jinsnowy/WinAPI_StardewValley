@@ -18,6 +18,7 @@ private:
 	virtual void Draw(HDC hdc, float dt);
 	virtual UISeedStore* Clone() { throw EXCEPT(L"UISeedStore cloned"); return nullptr; }
 private:
+	bool m_bShow = false;
 	class UIButton* m_pExitButton = nullptr;
 	class UIScrollBar* m_pScrollBar = nullptr;
 	vector<class Seed*> m_vecSellingSeeds;
@@ -26,6 +27,9 @@ private:
 	static constexpr float m_fPanelWidth = 938.f;
 	static constexpr float m_fPanelHeight = 88.f;
 	float m_fClickDelay = 0.f;
+public:
+	bool IsOn() const { return m_bShow; }
+	void SetSeedStore(bool show);
 private:
 	void SetClickDelay() { m_fClickDelay = 0.5f; }
 	void BuyingCallback(Collider* pSrc, Collider* pDst, float dt, int id);

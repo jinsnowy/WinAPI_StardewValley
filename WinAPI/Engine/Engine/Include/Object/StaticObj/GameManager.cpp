@@ -16,6 +16,16 @@
 
 DEFINITION_SINGLE(GameManager);
 
+UIGameTimer* GameManager::GetTimer() const
+{
+	return static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get());
+}
+
+UISeedStore* GameManager::GetStore() const
+{
+	return static_cast<UISeedStore*>(m_uiPanels[(int)PANEL_TYPE::SEED_STORE].get());
+}
+
 bool GameManager::Init()
 {
 	INPUT->AddKey("PlayerUI", 'E');
@@ -24,10 +34,10 @@ bool GameManager::Init()
 	SOUND_MANAGER->LoadSound("InteractUI", false, SD_EFFECT, "InteractUI.mp3");
 
 	m_uiPanels.resize((int)PANEL_TYPE::PANEL_END);
-	m_uiPanels[(int)PANEL_TYPE::PLAYER_INFO] = make_unique<UIPlayerInfo>();
-	m_uiPanels[(int)PANEL_TYPE::GAME_TIMER] = make_unique<UIGameTimer>();
-	m_uiPanels[(int)PANEL_TYPE::FAST_ITEMLIST] = make_unique<UIFastItemList>();
-	m_uiPanels[(int)PANEL_TYPE::SEED_STORE] = make_unique<UISeedStore>();
+	m_uiPanels[(int)PANEL_TYPE::PLAYER_INFO] = make_shared<UIPlayerInfo>();
+	m_uiPanels[(int)PANEL_TYPE::GAME_TIMER] = make_shared<UIGameTimer>();
+	m_uiPanels[(int)PANEL_TYPE::FAST_ITEMLIST] = make_shared<UIFastItemList>();
+	m_uiPanels[(int)PANEL_TYPE::SEED_STORE] = make_shared<UISeedStore>();
 	m_uiStates.reset();
 	return true;
 }
@@ -36,6 +46,37 @@ void GameManager::Start()
 {
 	m_uiStates[(int)PANEL_TYPE::GAME_TIMER] = true;
 	m_uiStates[(int)PANEL_TYPE::FAST_ITEMLIST] = true;
+}
+
+void GameManager::Acknowleged(UI* changedUI)
+{
+	const auto& pTimer = GetTimer();
+	const auto& pStore = GetStore();
+	if (changedUI == pTimer)
+	{
+		m_iWorldTime = pTimer->GetWorldTime();
+		UpdateFarm();
+	}
+	else if (changedUI == pStore)
+	{
+		bool show = pStore->IsOn();
+		m_uiStates[(int)PANEL_TYPE::SEED_STORE] = show;
+		if (show)
+		{
+			Pos tPos = pStore->GetPos();
+			tPos.y -= pTimer->GetSize().y - 70.f;
+			tPos.y += pStore->GetSize().y;
+			pTimer->SetPos(tPos);
+			pStore->SetClickDelay();
+			m_pPlayer->DisableMovement();
+			SOUND_MANAGER->PlaySound("OpenUI");
+		}
+		else {
+			pTimer->SetNormalPos();
+			m_pPlayer->EnableMovement();
+			SOUND_MANAGER->PlaySound("CloseUI");
+		}
+	}
 }
 
 void GameManager::Input(float dt)
@@ -63,14 +104,6 @@ int GameManager::Update(float dt)
 		if (Activated(i))
 		{
 			m_uiPanels[i]->Update(dt);
-
-			if (i == (int)PANEL_TYPE::GAME_TIMER)
-			{
-				if (((UIGameTimer*)m_uiPanels[i].get())->GetTicked())
-				{
-					UpdateFarm();
-				}
-			}
 		}
 	}
 	return 0;
@@ -112,36 +145,29 @@ void GameManager::Draw(HDC hdc, float dt)
 
 void GameManager::AddWateredTile(int index)
 {
-	bool exist = false;
-	for (auto& tile : m_queWateredTile)
+	if(IsWateredTile(index))
 	{
-		if (tile.GetIndex() == index)
-		{
-			exist = true;
-			tile.Reset();
-			break;
-		}
-	}
-	if(!exist)
-	{
-		m_queWateredTile.emplace_back(index);
+		const auto find_by_index = [index](const WateredTile &pTile) { return pTile.GetIndex() == index; };
+		auto iter = find_if(m_WateredTiles.begin(), m_WateredTiles.end(), find_by_index);
+		m_WateredTiles.erase(iter);
 	}
 
+	m_WateredTiles.emplace_back(index);
 	m_setWateredTileIndices.insert(index);
 }
 
 vector<int> GameManager::GetDroughtTiles()
 {
 	vector<int> vecDroughtTiles;
-	while (!m_queWateredTile.empty())
+	while (!m_WateredTiles.empty())
 	{
-		const auto & tile = m_queWateredTile.front();
+		const auto & tile = m_WateredTiles.front();
 		if (tile.IsDrought())
 		{
 			int index = tile.GetIndex();
 			vecDroughtTiles.push_back(index);
 			m_setWateredTileIndices.erase(index);
-			m_queWateredTile.pop_front();
+			m_WateredTiles.pop_front();
 		}
 		else
 		{
@@ -151,20 +177,19 @@ vector<int> GameManager::GetDroughtTiles()
 	return vecDroughtTiles;
 }
 
+bool GameManager::IsWateredTile(int index) const
+{
+	return m_setWateredTileIndices.find(index) != m_setWateredTileIndices.end();
+}
+
 void GameManager::UpdateFarm()
 {
-	int tileNum = m_queWateredTile.size();
-	for (int i = 0; i < tileNum; ++i)
+	for (auto iter = m_WateredTiles.begin(); iter != m_WateredTiles.end(); ++iter)
 	{
-		if (!m_queWateredTile[i].IsDrought())
-		{
-			m_queWateredTile[i].Update();
-		}
+		iter->Update();
 	}
 
-	list<Plant*>::iterator iter;
-	list<Plant*>::iterator iterEnd = m_plantList.end();
-	for (iter = m_plantList.begin(); iter != iterEnd;)
+	for (auto iter = m_plantList.begin(); iter != m_plantList.end();)
 	{
 		int index = (*iter)->GetTileIndex();
 		if (IsWateredTile(index))
@@ -190,32 +215,9 @@ void GameManager::AddPlantList(Plant* pPlant)
 	m_plantList.push_back(pPlant);
 }
 
-void GameManager::SetSeedStore(bool bSelect)
+void GameManager::GameTimerFastForward()
 {
-	m_uiStates[(int)PANEL_TYPE::SEED_STORE] = bSelect;
-	UIGameTimer* pTimer = static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get());
-	UISeedStore* pStore = static_cast<UISeedStore*>(m_uiPanels[(int)PANEL_TYPE::SEED_STORE].get());
-	if (bSelect)
-	{
-		Pos tPos = pTimer->GetPos();
-		tPos.y -= pTimer->GetSize().y - 70.f;
-		tPos.y += pStore->GetSize().y;
-		pTimer->SetPos(tPos);
-		pStore->SetClickDelay();
-		m_pPlayer->DisableMovement();
-		SOUND_MANAGER->PlaySound("OpenUI");
-	}
-	else {
-		pTimer->SetNormalPos();
-		m_pPlayer->EnableMovement();
-		SOUND_MANAGER->PlaySound("CloseUI");
-	}
-}
-
-void GameManager::GameTimerTick()
-{
-	static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get())->GameTimerTick();
-	UpdateFarm();
+	GetTimer()->GameTimerFastForward();
 }
 
 void GameManager::SetPlayer(Player* pPlayer)
@@ -227,26 +229,26 @@ void GameManager::SetPlayer(Player* pPlayer)
 
 unsigned long long GameManager::GetWorldTime() const
 {
-	return static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get())->GetWorldTime();
+	return m_iWorldTime;
 }
 
 float GameManager::GetDayDarkNess() const
 {
 	if (!m_uiPanels[(int)PANEL_TYPE::GAME_TIMER]) return 0.0f;
-	return static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get())->GetDayDarkNess();
+
+	return GetTimer()->GetDayDarkNess();
 }
 
 void GameManager::SleepUntilMorning()
 {
 	m_pPlayer->Sleep();
-	UIGameTimer* pTimer = static_cast<UIGameTimer*>(m_uiPanels[(int)PANEL_TYPE::GAME_TIMER].get());
+	UIGameTimer* pTimer = GetTimer();
 	while (!pTimer->IsMorning())
 	{
-		GameTimerTick();
+		GameTimerFastForward();
 	}
-	GameTimerTick();
+	GameTimerFastForward();
 }
-
 
 GameManager::GameManager()
 {
@@ -269,6 +271,10 @@ void GameManager::WateredTile::Reset()
 
 GameManager::WateredTile::WateredTile(int index)
 	: m_iIndex(index), m_iWaterTime(GAMEWORLDTIME)
+{
+}
+
+GameManager::WateredTile::~WateredTile()
 {
 }
 

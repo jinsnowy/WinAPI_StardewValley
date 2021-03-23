@@ -265,10 +265,10 @@ void CollisionManager::Collision2(float dt)
     if (frame_count == 60)
     {
         frame_count = 0;
-        quad_build_total_us /= 60.f;
-        collision_total_us /= 60.f;
-        _cprintf("QuaddTree build takes %f ms\t", quad_build_total_us/1000.f);
-        _cprintf("Collision takes %f ms\n", collision_total_us/1000.f);
+        quad_build_total_us /= 60;
+        collision_total_us /= 60;
+        _cprintf("QuaddTree build takes %f ms\t", (float)quad_build_total_us/1000.f);
+        _cprintf("Collision takes %f ms\n", (float)collision_total_us/1000.f);
     }
 
     Clear();

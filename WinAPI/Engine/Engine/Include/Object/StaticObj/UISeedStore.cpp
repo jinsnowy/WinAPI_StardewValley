@@ -119,6 +119,12 @@ void UISeedStore::Draw(HDC hdc, float dt)
 	}
 }
 
+void UISeedStore::SetSeedStore(bool show)
+{
+	m_bShow = show; 
+	GAME_MANAGER->Acknowleged(this);
+}
+
 void UISeedStore::BuyingCallback(Collider* pSrc, Collider* pDst, float dt, int id)
 {
 	if (m_fClickDelay > 0.f)
@@ -153,6 +159,6 @@ void UISeedStore::SetUpItemBuyColliders()
 
 void UISeedStore::Exit(float dt)
 {
-	GAME_MANAGER->SetSeedStore(false);
+	SetSeedStore(false);
 	m_pExitButton->Reset();
 }

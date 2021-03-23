@@ -31,6 +31,10 @@ bool Mouse::Init()
     m_tPos.x = (float) pt.x;
     m_tPos.y = (float) pt.y;
 
+    SetTexture("MouseTexture", L"mouse.bmp");
+    SetAsTextureSize();
+    SetColorKey(255, 255, 255);
+
     ColliderPoint* pColl = AddCollider<ColliderPoint>("Mouse");
     pColl->SetUICollider(true);
     SAFE_RELEASE(pColl);

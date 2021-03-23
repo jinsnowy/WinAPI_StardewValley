@@ -79,7 +79,7 @@ void SceneManager::Input(float dt)
 	ChangeShowMode();
 	if (KEYPRESS("TimeElapse"))
 	{
-		GAME_MANAGER->GameTimerTick();
+		GAME_MANAGER->GameTimerFastForward();
 	}
 	m_pScene->Input(dt);
 	if (m_bInGameScene)

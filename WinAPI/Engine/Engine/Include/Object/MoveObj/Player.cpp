@@ -759,53 +759,54 @@ void Player::Load(FILE* pFile)
 
 void Player::ChangePlayerTool(float dt)
 {
+	int offset = (m_iCurItemSel / 12) * 12;
 	if (KEYDOWN("Item1"))
 	{
-		m_iCurItemSel = 0;
+		m_iCurItemSel = offset + 0;
 	}
 	else if (KEYDOWN("Item2"))
 	{
-		m_iCurItemSel = 1;
+		m_iCurItemSel = offset + 1;
 	}
 	else if (KEYDOWN("Item3"))
 	{
-		m_iCurItemSel = 2;
+		m_iCurItemSel = offset + 2;
 	}
 	else if (KEYDOWN("Item4"))
 	{
-		m_iCurItemSel = 3;
+		m_iCurItemSel = offset + 3;
 	}
 	else if (KEYDOWN("Item5"))
 	{
-		m_iCurItemSel = 4;
+		m_iCurItemSel = offset + 4;
 	}
 	else if (KEYDOWN("Item6"))
 	{
-		m_iCurItemSel = 5;
+		m_iCurItemSel = offset + 5;
 	}
 	else if (KEYDOWN("Item7"))
 	{
-		m_iCurItemSel = 6;
+		m_iCurItemSel = offset + 6;
 	}
 	else if (KEYDOWN("Item8"))
 	{
-		m_iCurItemSel = 7;
+		m_iCurItemSel = offset + 7;
 	}
 	else if (KEYDOWN("Item9"))
 	{
-		m_iCurItemSel = 8;
+		m_iCurItemSel = offset + 8;
 	}
 	else if (KEYDOWN("Item0"))
 	{
-		m_iCurItemSel = 9;
+		m_iCurItemSel = offset + 9;
 	}
 	else if (KEYDOWN("Item-"))
 	{
-		m_iCurItemSel = 10;
+		m_iCurItemSel = offset + 10;
 	}
 	else if (KEYDOWN("Item="))
 	{
-		m_iCurItemSel = 11;
+		m_iCurItemSel = offset + 11;
 	}
 
 	if (m_vecItem[m_iCurItemSel] && m_vecItem[m_iCurItemSel]->IsToolItem())

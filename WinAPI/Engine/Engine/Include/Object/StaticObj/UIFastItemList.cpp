@@ -6,6 +6,7 @@
 #include "../../Resources/ResourceManager.h"
 #include "../../Collider/ColliderPoint.h"
 #include "../../Collider/CollisionManager.h"
+#include "../../Sound/SoundManager.h"
 
 UIFastItemList::UIFastItemList()
 {
@@ -62,6 +63,7 @@ void UIFastItemList::Input(float dt)
 	{
 		m_iItemListOffset = (m_iItemListOffset + 12) % 36;
 		PLAYER->SetCurItemSel((PLAYER->GetCurItemSel() + 12) % 36);
+		SOUND_MANAGER->PlaySound("InteractUI");
 	}
 	if (KEYDOWN("MouseLButton"))
 	{
@@ -157,7 +159,6 @@ void UIFastItemList::Draw(HDC hdc, float dt)
 		}	
 		tOffset.x += m_iItemListMargin + m_iItemBlockSize;
 	}
-
 }
 
 int UIFastItemList::GetClickIndex(const Pos& screenPos)

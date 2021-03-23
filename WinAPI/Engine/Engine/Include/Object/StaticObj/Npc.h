@@ -17,6 +17,7 @@ public:
 	virtual void Draw(HDC hDC, float dt);
 	virtual Npc* Clone();
 private:
+	shared_ptr<class UI> m_Store = nullptr;
 	void Click(class Collider* pSrc, class Collider* pDst, float dt);
 public:
 	virtual void Save(FILE* pFile);

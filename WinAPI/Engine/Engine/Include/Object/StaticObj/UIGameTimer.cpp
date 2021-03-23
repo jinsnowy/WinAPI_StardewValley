@@ -67,7 +67,8 @@ int UIGameTimer::Update(float dt)
 {
     UI::Update(dt);
 	m_pPlayerMPPanel->Update(dt);
-	m_bTicked = m_clock->Tick(dt);
+	bool ticked = m_clock->Tick(dt);
+	GAME_MANAGER->Acknowleged(this);
 
     return 0;
 }

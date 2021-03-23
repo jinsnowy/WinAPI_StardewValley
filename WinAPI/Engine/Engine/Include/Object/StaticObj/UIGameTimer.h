@@ -59,17 +59,15 @@ private:
 	static constexpr int m_iMaxHours = 26;
 	static constexpr float interval = float(m_iMaxHours - 6) / 7.f;
 private:
-	bool m_bTicked = false;
 	unique_ptr<GameClock> m_clock = make_unique<GameClock>();
 	vector<class Texture*> m_vecNeedleTex;
 	vector<class Texture*> m_vecMoneyTex;
 	vector<class Texture*> m_vecWeekDays;
 	vector<class Texture*> m_vecNoon;
 	void SetNormalPos();
-	void GameTimerTick() { m_bTicked = m_clock->Tick(m_fTimeUnit); }
+	void GameTimerFastForward() { m_clock->Tick(m_fTimeUnit); }
 public:
 	unsigned long long GetWorldTime() const;
-	bool GetTicked() const { return m_bTicked; }
 	float GetDayDarkNess() const { return m_clock->GetDayDarkness(); }
 	bool IsMorning() const { return m_clock->GetHours() == 5 && m_clock->GetMinutes() == 50; }
 };

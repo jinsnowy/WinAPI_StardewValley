@@ -1,6 +1,7 @@
 #include "Npc.h"
 #include "../../Collider/ColliderRect.h"
 #include "GameManager.h"
+#include "../StaticObj/UISeedStore.h"
 
 Npc::Npc()
 {
@@ -65,7 +66,11 @@ void Npc::Click(Collider* pSrc, Collider* pDst, float dt)
 {
     if (pDst->GetTag() == "Click")
     {
-        GAME_MANAGER->SetSeedStore(true);
+        auto pStore = static_cast<UISeedStore*>(m_Store.get());
+        if (!pStore->IsOn())
+        {
+            pStore->SetSeedStore(true);
+        }    
     }
 }
 
@@ -81,9 +86,10 @@ void Npc::Load(FILE* pFile)
 
 void Npc::LateInit()
 {
-
     Collider* pRC = GetCollider("NPCBody");
     pRC->AddCollisionFunction(CS_ENTER, this, &Npc::Click);
     pRC->AddCollisionFunction(CS_STAY, this, &Npc::Click);
     SAFE_RELEASE(pRC);
+
+    m_Store = GAME_MANAGER->m_uiPanels[(int)GameManager::PANEL_TYPE::SEED_STORE];
 }
