@@ -5,7 +5,7 @@
 #include "../../Core/Input.h"
 #include "../../Resources/ResourceManager.h"
 #include "../../Resources/Texture.h"
-
+#include "UIPanel.h"
 UIPlayerInfo::UIPlayerInfo()
 {
 	Init();
@@ -15,6 +15,7 @@ UIPlayerInfo::~UIPlayerInfo()
 {
 	Safe_Release_VecList(m_vecSmallNumbers);
 	SAFE_RELEASE(m_pClickItem);
+	SAFE_RELEASE(m_pItemInfo);
 }
 
 bool UIPlayerInfo::Init()
@@ -27,6 +28,10 @@ bool UIPlayerInfo::Init()
 			(float(GETRESOLUTION.y) - tSize.y)/2.f);
 	COLORREF chromaKey = RGB(255, 255, 255);
 	m_vecSmallNumbers = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/SmallNumbers/", chromaKey);
+	m_pItemInfo = Object::CreateObject<UIPanel>("InfoPanel");
+	m_pItemInfo->SetTexture("InfoPanel", L"Sv/Scene/UI/ItemInfoPanel.bmp");
+	m_pItemInfo->SetAsTextureSize();
+	m_pItemInfo->SetColorKey(255, 255, 255);
 	return true;
 }
 
@@ -131,6 +136,24 @@ void UIPlayerInfo::Draw(HDC hdc, float dt)
 			}	
 		}
 		tOffset.x += m_iItemListMargin + m_iItemBlockSize;
+	}
+
+	// 아이템 안내 패널
+	int index = GetClickIndex(MOUSECLIENTPOS);
+	Item* pItem = PLAYER->GetItem(index);
+	if (pItem)
+	{
+		Size tSize = m_pItemInfo->GetSize();
+		int px = min(MOUSECLIENTPOS.x + 35, GETRESOLUTION.x - tSize.x);
+		int py = min(MOUSECLIENTPOS.y, GETRESOLUTION.y - tSize.y);
+		m_pItemInfo->SetPos(px, py);
+		m_pItemInfo->Draw(hdc, dt);
+
+		const string& itemTag = pItem->GetTag();
+		RESOURCE_MANAGER->DrawFontsAtFixedSize(hdc, itemTag, px + 20, py + 25, 20, 24, true, LEFT);
+		RESOURCE_MANAGER->DrawFontsAtFixedSize(hdc, "Selling Price :", px + 20, py + 125, 20, 24, true, LEFT);
+		RESOURCE_MANAGER->DrawFontsAtFixedSize(hdc, to_string(pItem->GetItemSellPrice()), px + 20, py + 155, 20, 24, true, LEFT);
+		SAFE_RELEASE(pItem);
 	}
 }
 

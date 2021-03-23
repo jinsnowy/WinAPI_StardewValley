@@ -20,6 +20,7 @@ private:
 	bool m_bDrag = false;
 	int m_iClickItemIndex = -1;
 	class Item* m_pClickItem = nullptr;
+	class UIPanel* m_pItemInfo = nullptr;
 	vector<class Texture*> m_vecSmallNumbers;
 	static constexpr float m_iItemBlockSize = 56.f;
 	static constexpr float m_iItemListMargin = 8.f;

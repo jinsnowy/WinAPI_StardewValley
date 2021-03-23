@@ -115,7 +115,7 @@ void UISeedStore::Draw(HDC hdc, float dt)
 		m_vecSellingItems[i]->DrawImageAtFixedSize(hdc, Pos(st_x + m_iMargin, st_y + m_iMargin), 50);
 		string price = to_string(m_vecSellingItems[i]->GetPrice());
 		RESOURCE_MANAGER->DrawFontsAtFixedSize(hdc, 
-					price, Pos(num_st_x, st_y + m_iMargin + 5.f), 30, 40, RIGHT, 4);
+					price, Pos(num_st_x, st_y + m_iMargin + 5.f), 30, 40, false, RIGHT, 4);
 
 		string itemName = m_vecSellingItems[i]->GetTag();
 		RESOURCE_MANAGER->DrawFontsAt(hdc,

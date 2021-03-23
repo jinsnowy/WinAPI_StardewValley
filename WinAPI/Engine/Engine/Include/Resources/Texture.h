@@ -49,19 +49,19 @@ public:
                 GetDC(), 0, 0, SRCCOPY);
         }
     }
-    inline void DrawImageAtFixedSize(HDC hdc, const Pos& at, int size)
+    inline void DrawImageAtFixedSize(HDC hdc, const Pos& at, int size, bool keep = false)
     {
-        DrawImageAtFixedSize(hdc, int(at.x), int(at.y), size);
+        DrawImageAtFixedSize(hdc, int(at.x), int(at.y), size, size, keep);
     }
-    inline void DrawImageAtFixedSize(HDC hdc, int px, int py, int size)
+    inline void DrawImageAtFixedSize(HDC hdc, int px, int py, int size, bool keep = false)
     {
-        DrawImageAtFixedSize(hdc, px, py, size, size);
+        DrawImageAtFixedSize(hdc, px, py, size, size, keep);
     }
-    inline void DrawImageAtFixedSize(HDC hdc, const Pos& at, int size_x, int size_y)
+    inline void DrawImageAtFixedSize(HDC hdc, const Pos& at, int size_x, int size_y, bool keep = false)
     {
-        DrawImageAtFixedSize(hdc, int(at.x), int(at.y), size_x, size_y);
+        DrawImageAtFixedSize(hdc, int(at.x), int(at.y), size_x, size_y, keep);
     }
-    void DrawImageAtFixedSize(HDC hdc, int px, int py, int size_x, int size_y);
+    void DrawImageAtFixedSize(HDC hdc, int px, int py, int size_x, int size_y, bool keep = false);
     HDC GetDC() const { return m_hMemDC; }
     static Texture* CreateEmptyTexture(HDC hDC, int w, int h, COLORREF color = RGB(0,0,0));
     static Texture* CreateCopyTexture(HDC hDC, int w, int h);

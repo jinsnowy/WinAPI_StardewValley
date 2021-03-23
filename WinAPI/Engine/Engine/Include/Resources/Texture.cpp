@@ -118,9 +118,23 @@ void Texture::DrawImage(HDC hdc, int px, int py, int sx, int sy, int u, int v)
     }
 }
 
-void Texture::DrawImageAtFixedSize(HDC hdc, int px, int py, int size_x, int size_y)
+void Texture::DrawImageAtFixedSize(HDC hdc, int px, int py, int size_x, int size_y, bool keep)
 {
     Size tSize = GetSize();
+    if (keep)
+    {
+        if (tSize.x < size_x)
+        {
+            px += (size_x - tSize.x) / 2;
+            size_x = tSize.x;
+        }
+        if (tSize.y < size_y)
+        {
+            py += (size_y - tSize.y) / 2;
+            size_y = tSize.y;
+        }
+    }
+
     if (GetColorKeyEnable())
     {
         Texture* pEmpty = RESOURCE_MANAGER->GetEmptyBuffer();

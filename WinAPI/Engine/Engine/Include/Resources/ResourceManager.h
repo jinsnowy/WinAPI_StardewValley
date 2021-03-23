@@ -80,25 +80,20 @@ public:
 			}
 		}
 	}
-	static inline void DrawFontsAtFixedSize(HDC hdc, const string& str, const Pos& pos, int size_x, int size_y, DIRECTION align = RIGHT, int padding = 0)
+	static inline void DrawFontsAtFixedSize(HDC hdc, const string& str, const Pos& pos, int size_x, int size_y, bool keep = false, DIRECTION align = RIGHT, int padding = 0)
 	{
-		return DrawFontsAtFixedSize(hdc, str, int(pos.x), int(pos.y), size_x, size_y, align, padding);
+		return DrawFontsAtFixedSize(hdc, str, int(pos.x), int(pos.y), size_x, size_y, keep, align, padding);
 	}
-	static inline void DrawFontsAtFixedSize(HDC hdc, const string& str, int px, int py, int size_x, int size_y, DIRECTION align = RIGHT, int padding = 0)
+	static inline void DrawFontsAtFixedSize(HDC hdc, const string& str, int px, int py, int size_x, int size_y, bool keep  = false, DIRECTION align = RIGHT, int padding = 0)
 	{
-		int length = (int)str.size();
-
 		int totalWidth = 0;
-		int maxWidth = 0;
-		int maxHeight = 0;
+		int length = (int)str.size();
 		for (int i = 0; i < length; ++i)
 		{
 			if (IsExistFont(str[i]))
 			{
 				Texture* pFont = m_mapGlyph[str[i]];
-				totalWidth += (int)pFont->GetWidth();
-				maxHeight = max(maxHeight, (int)pFont->GetHeight());
-				maxWidth = max(maxWidth, (int)pFont->GetWidth());
+				totalWidth += size_x;
 			}
 		}
 
@@ -107,12 +102,12 @@ public:
 			switch (align)
 			{
 			case RIGHT:
-				px += (padding * maxWidth - totalWidth);
+				px += (padding * size_x - totalWidth);
 				break;
 			case CENTER:
-				px += ((padding * maxWidth - totalWidth)) / 2;
+				px += ((padding * size_x - totalWidth)) / 2;
 				if ((padding - length) % 2)
-					px += maxWidth / 2;
+					px += size_x / 2;
 				break;
 			}
 		}
@@ -126,7 +121,7 @@ public:
 			}
 			if (IsExistFont(str[i]))
 			{
-				m_mapGlyph[str[i]]->DrawImageAtFixedSize(hdc, px, py, size_x, size_y);
+				m_mapGlyph[str[i]]->DrawImageAtFixedSize(hdc, px, py, size_x, size_y, keep);
 				px += size_x;
 			}
 		}
