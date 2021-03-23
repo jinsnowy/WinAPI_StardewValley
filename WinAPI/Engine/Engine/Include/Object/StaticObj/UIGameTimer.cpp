@@ -144,8 +144,26 @@ void UIGameTimer::Draw(HDC hdc, float dt)
 	RESOURCE_MANAGER->DrawFontsAt(hdc, ss.str(), tPos.x, tPos.y, RIGHT, 5);
 
 	// µ·
+	float delta = dt;
 	vector<int> currentMoney;
 	int money = PLAYER->GetMoney();
+	if (m_PlayerMoney != money)
+	{
+		while(delta >= m_fMoneyPrintPeriod && m_PlayerMoney != money)
+		{
+			delta -= m_fMoneyPrintPeriod;
+			if (m_PlayerMoney > money)
+			{
+				--m_PlayerMoney;
+			}
+			else 
+			{
+				++m_PlayerMoney;
+			}
+		}
+		money = m_PlayerMoney;
+	}
+
 	int digit = 0;
 	do {
 		digit = money % 10;

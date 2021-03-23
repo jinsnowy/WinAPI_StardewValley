@@ -58,6 +58,8 @@ private:
 	static constexpr float m_fTimeUnit = TIME_UNIT; // 게임 시간 10 분에 현실 시간 초 단위
 	static constexpr int m_iMaxHours = 26;
 	static constexpr float interval = float(m_iMaxHours - 6) / 7.f;
+	static constexpr float m_fMoneyPrintPeriod = 0.0001f;
+	int m_PlayerMoney = 0;
 private:
 	unique_ptr<GameClock> m_clock = make_unique<GameClock>();
 	vector<class Texture*> m_vecNeedleTex;
