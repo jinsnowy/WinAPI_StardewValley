@@ -36,9 +36,10 @@ bool PrototypeManager::Init()
     Texture* pTex = RESOURCE_MANAGER->LoadTexture("Dirt_Wet", L"SV/TileGround/Outdoor/Dirt_Wet.bmp");
     SAFE_RELEASE(pTex);
 
-    vector<Seed*> m_seedItem = Item::LoadItemFromDirectory<Seed>(L"SV/Item/Seed/", RGB(255, 255, 255));
-    for (Seed* pSeed : m_seedItem)
+    vector<Item*> m_seedItem = Item::LoadItemFromDirectory<Seed>(L"SV/Item/Seed/", RGB(255, 255, 255));
+    for (Item* pItem : m_seedItem)
     {
+        Seed* pSeed = static_cast<Seed*>(pItem);
         const string& seedName = pSeed->GetTag();
         if (seedName == "Cauliflower_Seed")
         {

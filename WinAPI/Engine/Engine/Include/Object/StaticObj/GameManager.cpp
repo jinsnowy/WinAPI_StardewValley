@@ -32,6 +32,7 @@ bool GameManager::Init()
 	SOUND_MANAGER->LoadSound("OpenUI", false, SD_EFFECT, "OpenUI.mp3");
 	SOUND_MANAGER->LoadSound("CloseUI", false, SD_EFFECT, "CloseUI.mp3");
 	SOUND_MANAGER->LoadSound("InteractUI", false, SD_EFFECT, "InteractUI.mp3");
+	SOUND_MANAGER->LoadSound("ScrollSound", false, SD_EFFECT, "ScrollSound.mp3");
 
 	m_uiPanels.resize((int)PANEL_TYPE::PANEL_END);
 	m_uiPanels[(int)PANEL_TYPE::PLAYER_INFO] = make_shared<UIPlayerInfo>();

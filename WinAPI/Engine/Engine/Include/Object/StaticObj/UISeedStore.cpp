@@ -21,18 +21,23 @@ UISeedStore::~UISeedStore()
 {
 	SAFE_RELEASE(m_pExitButton);
 	SAFE_RELEASE(m_pScrollBar);
-	Safe_Release_VecList(m_vecSellingSeeds);
+	Safe_Release_VecList(m_vecSellingItems);
 }
 
 bool UISeedStore::Init()
 {
-	m_vecSellingSeeds = Item::LoadItemFromDirectory<Seed>(L"SV/Item/Seed/", RGB(255, 255, 255));
+	m_vecSellingItems = Item::LoadItemFromDirectory<Seed>(L"SV/Item/Seed/", RGB(255, 255, 255));
+	
+	Item* pItem = Item::CreateCloneItem<Item>("Ring", L"SV/Item/Ring.bmp");
+	pItem->SetPrice(5000);
+	pItem->SetItemSellPrice(1000);
+	m_vecSellingItems.push_back(pItem);
 
 	SetTexture("SeedStore", L"SV/Scene/UI/SeedStoreUIMain.bmp");
 	SetAsTextureSize();
 	SetPos(100.f, 100.f);
 
-	sort(m_vecSellingSeeds.begin(), m_vecSellingSeeds.end(), Item::SortByName);
+	sort(m_vecSellingItems.begin(), m_vecSellingItems.end(), Item::SortByName);
 
 	m_pExitButton = Object::CreateObject<UIButton>("StoreExitButton");
 	m_pExitButton->SetTexture("StoreExitButton", L"SV/Scene/UI/ExitButton.bmp");
@@ -49,7 +54,7 @@ bool UISeedStore::Init()
 	m_pScrollBar->SetTexture("ScrollBar", L"SV/Scene/UI/ScrollBar.bmp");
 	m_pScrollBar->SetAsTextureSize();
 	m_pScrollBar->SetPos(GetPos().x + GetSize().x + 60.f, GetPos().y + m_pExitButton->GetSize().y + 25.f);
-	int itemNum = (int) m_vecSellingSeeds.size();
+	int itemNum = (int)m_vecSellingItems.size();
 	m_pScrollBar->SetNumBlock(itemNum - 3);
 
 	UIButton* pObj = m_pScrollBar->GetScroller();
@@ -107,12 +112,12 @@ void UISeedStore::Draw(HDC hdc, float dt)
 	float num_st_x = GetPos().x + GetSize().x - 200.f;
 	for (int i = curBlock; i < curBlock + 4; ++i)
 	{
-		m_vecSellingSeeds[i]->DrawImageAtFixedSize(hdc, Pos(st_x + m_iMargin, st_y + m_iMargin), 50);
-		string price = to_string(m_vecSellingSeeds[i]->GetPrice());
+		m_vecSellingItems[i]->DrawImageAtFixedSize(hdc, Pos(st_x + m_iMargin, st_y + m_iMargin), 50);
+		string price = to_string(m_vecSellingItems[i]->GetPrice());
 		RESOURCE_MANAGER->DrawFontsAtFixedSize(hdc, 
 					price, Pos(num_st_x, st_y + m_iMargin + 5.f), 30, 40, RIGHT, 4);
 
-		string itemName = m_vecSellingSeeds[i]->GetTag();
+		string itemName = m_vecSellingItems[i]->GetTag();
 		RESOURCE_MANAGER->DrawFontsAt(hdc,
 			itemName, Pos(st_x + m_iMargin + 100, st_y + m_iMargin + 5.f), LEFT);
 		st_y += 95;
@@ -134,9 +139,8 @@ void UISeedStore::BuyingCallback(Collider* pSrc, Collider* pDst, float dt, int i
 	}
 	if (pDst->GetTag() == "Mouse" && KEYUP("MouseLButton"))
 	{
-		SOUND_MANAGER->PlaySound("InteractUI");
 		int curBlock = m_pScrollBar->GetCurBlock() + id;
-		Item* curItem = m_vecSellingSeeds[curBlock];
+		Item* curItem = m_vecSellingItems[curBlock];
 		PLAYER->BuyItem(curItem);
 	}
 }

@@ -33,6 +33,7 @@ private:
 	~Player();
 private:
 	bool m_bMoveEnabled = true;
+	bool m_bRing = false;
 	static constexpr int m_iMaxItemNum = 36;
 	static constexpr float m_fPlayerSpeed = 400.f;
 	static constexpr float m_iMaxHP = 1000.f;
@@ -44,6 +45,7 @@ private:
 	int m_iCurItemSel = 0;
 	int m_iMoney = 5000;
 public:
+	bool HasRing() const { return m_bRing; }
 	void DisableMovement() { m_bMoveEnabled = false; }
 	void EnableMovement() { m_bMoveEnabled = true; }
 	float GetToolPower() const;

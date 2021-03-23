@@ -45,9 +45,9 @@ public:
 		return pClone;
 	}
 	template<typename T>
-	static vector<T*> LoadItemFromDirectory(const wchar_t* folderPath, COLORREF chromaKey, const string& strPathKey = TEXTURE_PATH)
+	static vector<Item*> LoadItemFromDirectory(const wchar_t* folderPath, COLORREF chromaKey, const string& strPathKey = TEXTURE_PATH)
 	{
-		vector<T*> vecItem;
+		vector<Item*> vecItem;
 		const wchar_t* pPath = PATH_MANAGER->FindPath(strPathKey);
 		wstring strPath;
 		if (pPath)

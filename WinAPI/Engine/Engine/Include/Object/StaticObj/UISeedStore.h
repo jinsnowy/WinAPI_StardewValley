@@ -21,7 +21,7 @@ private:
 	bool m_bShow = false;
 	class UIButton* m_pExitButton = nullptr;
 	class UIScrollBar* m_pScrollBar = nullptr;
-	vector<class Seed*> m_vecSellingSeeds;
+	vector<class Item*> m_vecSellingItems;
 	static constexpr float m_iMargin = 5.f;
 	// 패널 한 칸에 대한 정보
 	static constexpr float m_fPanelWidth = 938.f;

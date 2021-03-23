@@ -3,6 +3,7 @@
 #include "UIButton.h"
 #include "../../Collider/ColliderRect.h"
 #include "../../Collider/CollisionManager.h"
+#include "../../Sound/SoundManager.h"
 UIScrollBar::UIScrollBar()
 {
 }
@@ -32,10 +33,12 @@ void UIScrollBar::Input(float dt)
     {
         m_iCurBlock -= mouseDelta;
         m_iCurBlock = max(min(m_iCurBlock, m_iNumBlock - 1), 0);
-
+    
         Pos tPos = GetPos();
         int hBlock = (GetSize().y - m_pScroller->GetSize().y) / (m_iNumBlock - 1);
         m_pScroller->SetPos(tPos.x, tPos.y + hBlock * m_iCurBlock);
+
+        SOUND_MANAGER->PlaySound("ScrollSound");
     }
 }
 

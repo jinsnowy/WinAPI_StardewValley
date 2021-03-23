@@ -332,6 +332,10 @@ bool Player::SellItem(const string& itemTag)
 		if (!m_vecItem[i]) continue;
 		if (m_vecItem[i]->GetTag() == itemTag)
 		{
+			if (itemTag == "Ring")
+			{
+				m_bRing = false;
+			}
 			return SellItem(i);
 		}
 	}
@@ -344,8 +348,15 @@ void Player::BuyItem(Item* pItem)
 	{
 		return;
 	}
+
+	if (pItem->GetTag() == "Ring")
+	{
+		m_bRing = true;
+	}
 	m_iMoney -= pItem->GetPrice();
 	AddItem(pItem);
+
+	SOUND_MANAGER->PlaySound("BuyItem");
 }
 
 Rect Player::BuildSwingAttack(int dx, int dy)
@@ -498,6 +509,7 @@ void Player::ClickEventHandling()
 						// ³´/°Ë Ã¼Å©
 						Rect attackRange = BuildSwingAttack(index.x, index.y);
 						TRIGGER_RECTEVENT(GetCenterPos(), attackRange, "SwingTool");
+						SOUND_MANAGER->PlaySound("SwingTool");
 					}
 					else {
 						// µµ³¢/°î±ªÀÌ/È£¹Ì Ã¼Å©
@@ -612,6 +624,8 @@ bool Player::Init()
 	m_pPlayerTool->SetPlayer(this);
 
 	SOUND_MANAGER->LoadSound("InHouse_Walking", false, SD_EFFECT, "InHouse_Walking.mp3");
+	SOUND_MANAGER->LoadSound("SwingTool", false, SD_EFFECT, "SwingTool.mp3");
+	SOUND_MANAGER->LoadSound("BuyItem", false, SD_EFFECT, "BuyItem.mp3");
 
 	for (int i = 0; i < 10; ++i)
 	{
