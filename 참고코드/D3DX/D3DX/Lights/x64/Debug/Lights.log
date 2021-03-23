@@ -1,3 +1,0 @@
-﻿  Lights.cpp
-d:\soulseek_work\d3dx\d3dx\lights\lights.cpp(261): warning C4002: 함수 같은 매크로 호출 'CreateWindowW'에 대해 인수가 너무 많습니다.
-  Lights.vcxproj -> D:\SoulSeek_Work\D3DX\D3DX\x64\Debug\Lights.exe

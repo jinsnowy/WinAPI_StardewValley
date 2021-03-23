@@ -1,5 +1,0 @@
-﻿  Animation.cpp
-d:\soulseek_work\d3dx\d3dx\animation\animation.cpp(217): warning C4101: 'z' :참조되지 않은 지역 변수입니다.
-d:\soulseek_work\d3dx\d3dx\animation\animation.cpp(217): warning C4101: 'y' :참조되지 않은 지역 변수입니다.
-d:\soulseek_work\d3dx\d3dx\animation\animation.cpp(217): warning C4101: 'x' :참조되지 않은 지역 변수입니다.
-  Animation.vcxproj -> D:\SoulSeek_Work\D3DX\D3DX\x64\Debug\Animation.exe

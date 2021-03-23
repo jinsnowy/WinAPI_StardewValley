@@ -1,8 +1,0 @@
-﻿  Frustum.cpp
-f:\강의자료\d3dx\d3dx\d3dx\frustum\frustum.cpp(382): warning C4244: '=': 'DWORD'에서 'WORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-f:\강의자료\d3dx\d3dx\d3dx\frustum\frustum.cpp(383): warning C4244: '=': 'DWORD'에서 'WORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-f:\강의자료\d3dx\d3dx\d3dx\frustum\frustum.cpp(384): warning C4244: '=': 'DWORD'에서 'WORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-f:\강의자료\d3dx\d3dx\d3dx\frustum\frustum.cpp(394): warning C4244: '=': 'DWORD'에서 'WORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-f:\강의자료\d3dx\d3dx\d3dx\frustum\frustum.cpp(395): warning C4244: '=': 'DWORD'에서 'WORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-f:\강의자료\d3dx\d3dx\d3dx\frustum\frustum.cpp(396): warning C4244: '=': 'DWORD'에서 'WORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Frustum.vcxproj -> F:\강의자료\D3DX\D3DX\D3DX\x64\Debug\Frustum.exe

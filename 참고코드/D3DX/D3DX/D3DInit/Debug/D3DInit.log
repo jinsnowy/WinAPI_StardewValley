@@ -1,3 +1,0 @@
-﻿  D3DInit.cpp
-c:\users\c-01\desktop\chapter1\d3dinit\d3dinit.cpp(78): warning C4002: 함수 같은 매크로 호출 'CreateWindowW'에 대해 인수가 너무 많습니다.
-  D3DInit.vcxproj -> C:\Users\C-01\Desktop\Chapter1\Debug\D3DInit.exe

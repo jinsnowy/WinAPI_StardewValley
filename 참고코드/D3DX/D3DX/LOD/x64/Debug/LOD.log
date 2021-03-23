@@ -1,3 +1,0 @@
-﻿  ZTerrain.cpp
-f:\강의자료\d3dx\d3dx\d3dx\lod\zterrain.cpp(90): warning C4334: '<<': 32비트 시프트의 결과가 암시적으로 64비트로 변환됩니다. 64비트 시프트를 사용하시겠습니까?
-  LOD.vcxproj -> F:\강의자료\D3DX\D3DX\D3DX\x64\Debug\LOD.exe
