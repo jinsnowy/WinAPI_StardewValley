@@ -30,18 +30,11 @@ void InteractiveTile::GetDamageFromPlayerTool()
 
 void InteractiveTile::CheckDie()
 {
-    if (!GetLife())
+    if (m_iHP <= 0.f || DieCondition())
     {
-        return;
+        Die();
+        AfterDie();
     }
-    else {
-        if (m_iHP <= 0.f || DieCondition())
-        {
-            Die();
-            AfterDie();
-        }
-    }
-    return;
 }
 
 void InteractiveTile::SetDropItem(Item* pItem)

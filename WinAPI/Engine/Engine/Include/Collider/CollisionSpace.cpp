@@ -8,9 +8,13 @@
 int CollisionSpace::m_iCollideNum = 0;
 CollisionSpace::QuadPtr CollisionSpace::m_QuadHead = nullptr;
 unordered_map<size_t, CollisionSpace::QuadParentPtr> CollisionSpace::m_mapQuadParent;
+vector<vector<bool>> CollisionSpace::m_CheckMat;
 
 CollisionSpace::CollisionSpace()
 {
+	m_tScreenSpace = { 0.f, 0.f, float(GETRESOLUTION.x), float(GETRESOLUTION.y) };
+	m_CheckMat.resize(m_iExpectedCollNum);
+	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(m_iExpectedCollNum, false));
 }
 
 CollisionSpace::~CollisionSpace()
@@ -27,15 +31,11 @@ void CollisionSpace::QuadSpace::Clear()
 		{
 			m_QuadPartitions[i]->Clear();
 		}
-		m_QuadPartitions[i] = nullptr;
+		if (m_iLevel + 1 > m_iMinLevel)
+		{
+			m_QuadPartitions[i] = nullptr;
+		}
 	}
-}
-
-CollisionSpace* CollisionSpace::MakeCollisionSpace()
-{
-	CollisionSpace* pSpace = new CollisionSpace;
-	pSpace->m_tScreenSpace = {0.f, 0.f, float(GETRESOLUTION.x), float(GETRESOLUTION.y)};
-	return pSpace;
 }
 
 void CollisionSpace::Observe(Collider* pColl)
@@ -49,8 +49,22 @@ void CollisionSpace::Observe(Collider* pColl)
 		m_mapQuadParent.insert(make_pair(0, m_QuadHead.get()));
 	}
 
+	pColl->SetId(m_iCollideNum);
 	++m_iCollideNum;
+
+	m_Colliders.push_back(pColl);
 	m_QuadHead->Insert(pColl, QuadSpace::GetScreenRect(pColl));
+
+	if (m_iCollideNum > (int) m_CheckMat.size())
+	{
+		ExpandCheckMat();
+	}
+}
+
+void CollisionSpace::Mark(Collider* pSrc, Collider* pDst)
+{
+	int srcId = pSrc->GetId(), dstId = pDst->GetId();
+	m_CheckMat[srcId][dstId] = m_CheckMat[dstId][srcId] = true;
 }
 
 void CollisionSpace::QuadSpace::Insert(Collider* const& pColl, const Rect& bounds)
@@ -101,16 +115,15 @@ void CollisionSpace::GetEqualSpaceColliders(Collider* pSrc, vector<Collider*>& d
 {
 	if (m_QuadHead)
 	{
-		m_QuadHead->Search(pSrc->GetObj(), QuadSpace::GetScreenRect(pSrc), dstColliders);
+		m_QuadHead->Search(pSrc, QuadSpace::GetScreenRect(pSrc), dstColliders);
 	}
 }
 
 
 void CollisionSpace::QuadSpace::Draw(HDC& hdc, const float& dt)
 {
-	// Pos tPoint = m_tPivot - CAMERA->GetTopLeft();
-		//DrawPointWithColor(hdc, tPoint, util::Blue);
 	DrawVoidRectWithBorderColor(hdc, m_tArea, util::Green);
+
 	for (int i = 0; i < 4; ++i)
 	{
 		if (m_QuadPartitions[i])
@@ -137,8 +150,18 @@ void CollisionSpace::Clear()
 	{
 		m_QuadHead->Clear();
 	}
-	m_QuadHead = nullptr;
 	m_mapQuadParent.clear();
+
+	// 충돌 체크 정보 초기화
+	m_Colliders.clear();
+	m_CheckMat.resize(m_iExpectedCollNum);
+	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(m_iExpectedCollNum, false));
+}
+
+void CollisionSpace::ExpandCheckMat()
+{
+	auto curSize = m_CheckMat.size();
+	m_CheckMat.resize(2 * curSize, vector<bool>(2 * curSize, false));
 }
 
 CollisionSpace::QuadSpace::~QuadSpace()
@@ -191,16 +214,20 @@ void CollisionSpace::QuadSpace::SplitArea()
 	}
 }
 
-void CollisionSpace::QuadSpace::Search(Object* const& pSrc, const Rect& bounds, vector<Collider*>& dstColliders)
+void CollisionSpace::QuadSpace::Search(Collider* const& pSrc, const Rect& bounds, vector<Collider*>& dstColliders)
 {
-	const auto InsertNotEqObj = [&](Collider* pColl)
+	int srcId = pSrc->GetId();
+	const auto InsertNotEqObjAndNotChecked = [&, srcId](Collider* pDst)
 	{
-		if (pSrc != pColl->GetObj())
+		int dstId = pDst->GetId();
+		bool checked = m_CheckMat[srcId][dstId] || m_CheckMat[dstId][srcId];
+		if (pSrc->GetObj() != pDst->GetObj() && !checked)
 		{
-			dstColliders.push_back(pColl);
+			dstColliders.push_back(pDst);
 		}
 	};
-	for_each(m_CollList.begin(), m_CollList.end(), InsertNotEqObj);
+
+	for_each(m_CollList.begin(), m_CollList.end(), InsertNotEqObjAndNotChecked);
 
 	if (m_QuadPartitions[0])
 	{

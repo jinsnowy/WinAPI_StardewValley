@@ -11,6 +11,7 @@ protected:
 	Collider(const Collider& coll);
 	virtual ~Collider() = 0;
 protected:
+	int				m_CollId = ID_MAX;
 	bool			m_bUIColl;
 	COLLIDER_TYPE	m_eCollType;
 	class Object*	m_pObject;
@@ -18,6 +19,8 @@ protected:
 	list <function<void(Collider*, Collider*, float)>> m_FuncList[CS_END];
 	Pos				m_tHitPoint;
 public:
+	void SetId(int id) { m_CollId = id; }
+	int GetId() const { return m_CollId; }
 	virtual Rect GetBounds() const = 0;
 	bool IsUICollider() const;
 	void SetUICollider(bool bUI) { m_bUIColl = bUI; }

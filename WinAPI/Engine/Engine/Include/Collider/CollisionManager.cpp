@@ -25,7 +25,6 @@ CollisionManager::CollisionManager()
 
 CollisionManager::~CollisionManager()
 {
-    SAFE_DELETE(m_pCollisionSpace);
     SAFE_RELEASE(m_pCollTex);
 }
 
@@ -33,10 +32,7 @@ bool CollisionManager::Init()
 {
     m_pCollTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), GETRESOLUTION.x, GETRESOLUTION.y);
     m_pCollTex->SetColorKey(util::Black);
-    m_pCollisionSpace = CollisionSpace::MakeCollisionSpace();
-
-    m_checkMat.resize(m_iExpectedCollNum);
-    fill(m_checkMat.begin(), m_checkMat.end(), vector<bool>(m_iExpectedCollNum, false));
+    m_CollisionSpace = make_unique<CollisionSpace>();
     return true;
 }
 
@@ -55,8 +51,7 @@ void CollisionManager::AddCollideObject(Object* pObj)
         const auto& pColl = (*iter);
         if (pColl->GetEnable())
         {
-            m_vecColliders.push_back(pColl);
-            m_pCollisionSpace->Observe(pColl);
+            m_CollisionSpace->Observe(pColl);
         }
     }
 }
@@ -71,8 +66,7 @@ void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const st
 
     pPoint->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pPoint);
-    m_vecColliders.push_back(pColl);
-    m_pCollisionSpace->Observe(pColl);
+    m_CollisionSpace->Observe(pColl);
     SAFE_RELEASE(pColl);
 }
 
@@ -84,18 +78,8 @@ void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
     ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
     pPoint->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pPoint);
-    m_vecColliders.push_back(pColl);
-    m_pCollisionSpace->Observe(pColl);
+    m_CollisionSpace->Observe(pColl);
     SAFE_RELEASE(pColl);
-}
-
-void CollisionManager::ReadyCollision(float dt)
-{
-    int collNum = (int) m_vecColliders.size();
-    if (m_vecColliders.size() > m_iExpectedCollNum)
-    {
-        m_checkMat.resize(collNum, vector<bool>(collNum, false));
-    }
 }
 
 void CollisionManager::Clear()
@@ -115,19 +99,11 @@ void CollisionManager::Clear()
     if (SHOWCHECK(SHOW_COLL))
     {
         m_pCollTex->ClearBuffer(0, 0, GETRESOLUTION.x, GETRESOLUTION.y);
-        m_pCollisionSpace->Draw(m_pCollTex->GetDC(), 0.f);
+        m_CollisionSpace->Draw(m_pCollTex->GetDC(), 0.f);
     }
 
     // 쿼드 트리 초기화
-    m_pCollisionSpace->Clear();
-
-    // 충돌 정보 초기화
-    m_vecColliders.clear();
-    m_vecColliders.reserve(m_iExpectedCollNum);
-
-    // 충돌 체크 정보 초기화
-    m_checkMat.resize(m_iExpectedCollNum);
-    fill(m_checkMat.begin(), m_checkMat.end(), vector<bool>(m_iExpectedCollNum, false));
+    m_CollisionSpace->Clear();
 }
 
 void CollisionManager::NaiveAdd(Object* const& pObj)
@@ -145,8 +121,7 @@ void CollisionManager::AddObject(Object* pObj)
         {
             if (coll->GetEnable())
             {
-                m_pCollisionSpace->Observe(coll);
-                m_vecColliders.push_back(coll);
+                m_CollisionSpace->Observe(coll);
             }
         }
     }
@@ -161,8 +136,6 @@ void CollisionManager::Collision(float dt)
         Clear();
         return;
     }
-
-    ReadyCollision(dt);
 
     // 오브젝트 간 충돌 처리를 한다.
     list<Object*>::iterator iter;
@@ -185,7 +158,8 @@ void CollisionManager::Collision(float dt)
 
 void CollisionManager::Collision2(float dt)
 {
-    int srcCollNum = (int)m_vecColliders.size();
+    const auto& collList = *(m_CollisionSpace->GetColliderList());
+    int srcCollNum = (int)collList.size();
 
     if (srcCollNum < 2)
     {
@@ -195,14 +169,12 @@ void CollisionManager::Collision2(float dt)
 
     auto tic = chrono::steady_clock::now();
 
-    ReadyCollision(dt);
-
     for (int i = 0; i < srcCollNum; ++i)
     {
-        const auto& pSrc = m_vecColliders[i];
+        const auto& pSrc = collList[i];
         // 충돌체 검색
         vector<Collider*> pDstList;
-        m_pCollisionSpace->GetEqualSpaceColliders(pSrc, pDstList);
+        m_CollisionSpace->GetEqualSpaceColliders(pSrc, pDstList);
         vector<Collider*>::const_iterator iterDst;
         vector<Collider*>::const_iterator iterDstEnd = pDstList.end();
 
@@ -211,18 +183,11 @@ void CollisionManager::Collision2(float dt)
         {
             const auto& pDst = pDstList[j];
 
-            // 이미 체크한 충돌체 쌍
-            if (m_checkMat[i][j] || m_checkMat[j][i])
-            {
-                continue;
-            }
-
-            m_checkMat[i][j] = m_checkMat[j][i] = true;
+            m_CollisionSpace->Mark(pSrc, pDst);
 
             // 충돌체가 서로 충돌했는가
             if (pSrc->CheckCollision(pDst))
             {
-
                 // 히트 포인트 셋팅
                 pDst->SetHitPoint(pSrc->GetHitPoint());
 
@@ -260,6 +225,7 @@ void CollisionManager::Collision2(float dt)
     }
     auto toc = chrono::steady_clock::now();
 
+#ifdef  _DEBUG
     collision_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
     ++frame_count;
     if (frame_count == 60)
@@ -267,10 +233,10 @@ void CollisionManager::Collision2(float dt)
         frame_count = 0;
         quad_build_total_us /= 60;
         collision_total_us /= 60;
-        _cprintf("QuaddTree build takes %f ms\t", (float)quad_build_total_us/1000.f);
-        _cprintf("Collision takes %f ms\n", (float)collision_total_us/1000.f);
+        _cprintf("QuaddTree build takes %f ms\t", (float)quad_build_total_us / 1000.f);
+        _cprintf("Collision takes %f ms\n", (float)collision_total_us / 1000.f);
     }
-
+#endif //  _DEBUG
     Clear();
 }
 

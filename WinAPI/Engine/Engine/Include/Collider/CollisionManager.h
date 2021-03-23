@@ -5,14 +5,10 @@ class CollisionManager
 {
 DECLARE_SINGLE(CollisionManager)
 private:
-	static constexpr int m_iExpectedCollNum = 200;
-private:
 	class Texture* m_pCollTex = nullptr;
 	list <class Object*> m_tempCollisionObjList;
 	list <class Object*> m_CollisionObjList;
-	class CollisionSpace* m_pCollisionSpace;
-	vector<class Collider*> m_vecColliders;
-	vector<vector<bool>> m_checkMat;
+	unique_ptr<class CollisionSpace> m_CollisionSpace;
 	void NaiveAdd(class Object* const& pObj);
 	void DrawCullingAdd(class Object* pObj);
 public:

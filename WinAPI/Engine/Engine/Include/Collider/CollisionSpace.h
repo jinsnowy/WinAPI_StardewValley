@@ -4,8 +4,7 @@ class Collider;
 class Object;
 class CollisionSpace
 {
-	friend class CollisionManager;
-private:
+public:
 	CollisionSpace();
 	~CollisionSpace();
 private:
@@ -43,7 +42,7 @@ private:
 		Partition GetPartition(const Rect& bounds);
 		Rect MakeArea(Partition ePart) const;
 		void SplitArea();
-		void Search(class Object* const& pSrc, const Rect& bounds, vector<Collider*>& dstColliders);
+		void Search(class Collider* const& pSrc, const Rect& bounds, vector<Collider*>& dstColliders);
 	public:
 		void Clear();
 		bool Empty() const { return m_CollList.empty(); }
@@ -57,18 +56,22 @@ private:
 	using QuadSpace = CollisionSpace::QuadSpace;
 	static int m_iCollideNum;
 	static constexpr size_t m_iMaxObjectNum = 4;
+	static constexpr int m_iMinLevel = 1;
 	static constexpr float m_fMinSize = 20.f;
+	static constexpr int m_iExpectedCollNum = 200;
 	static unordered_map<size_t, QuadParentPtr> m_mapQuadParent;
+	static vector<vector<bool>> m_CheckMat;
 	static QuadPtr m_QuadHead;
 	Rect m_tScreenSpace = {};
+	vector<Collider*> m_Colliders;
 private:
-	void Clear();
+	void ExpandCheckMat();
 	bool ExistSpace(size_t id) { return m_mapQuadParent.find(id) != m_mapQuadParent.end(); }
 public:
-	static CollisionSpace* MakeCollisionSpace();
+	void Clear();
 	void Observe(Collider* pColl);
+	void Mark(Collider* pSrc, Collider* pDst);
 	void GetEqualSpaceColliders(Collider* pSrc, vector<Collider*> &dstColliders);
-public:
+	const vector<Collider*>* GetColliderList() const { return &m_Colliders; }
 	void Draw(HDC hdc, float dt);
-
 };
