@@ -59,14 +59,12 @@ private:
 	static constexpr int m_iMinLevel = 1;
 	static constexpr float m_fMinSize = 20.f;
 	static constexpr int m_iExpectedCollNum = 200;
-	static unordered_map<size_t, QuadParentPtr> m_mapQuadParent;
 	static vector<vector<bool>> m_CheckMat;
 	static QuadPtr m_QuadHead;
 	Rect m_tScreenSpace = {};
 	vector<Collider*> m_Colliders;
 private:
 	void ExpandCheckMat();
-	bool ExistSpace(size_t id) { return m_mapQuadParent.find(id) != m_mapQuadParent.end(); }
 public:
 	void Clear();
 	void Observe(Collider* pColl);

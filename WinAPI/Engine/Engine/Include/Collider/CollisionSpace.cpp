@@ -7,7 +7,6 @@
 
 int CollisionSpace::m_iCollideNum = 0;
 CollisionSpace::QuadPtr CollisionSpace::m_QuadHead = nullptr;
-unordered_map<size_t, CollisionSpace::QuadParentPtr> CollisionSpace::m_mapQuadParent;
 vector<vector<bool>> CollisionSpace::m_CheckMat;
 
 CollisionSpace::CollisionSpace()
@@ -46,7 +45,6 @@ void CollisionSpace::Observe(Collider* pColl)
 	if (!m_QuadHead)
 	{
 		m_QuadHead = QuadSpace::MakeQuadPtr(0, 0, m_tScreenSpace);
-		m_mapQuadParent.insert(make_pair(0, m_QuadHead.get()));
 	}
 
 	pColl->SetId(m_iCollideNum);
@@ -150,7 +148,6 @@ void CollisionSpace::Clear()
 	{
 		m_QuadHead->Clear();
 	}
-	m_mapQuadParent.clear();
 
 	// 충돌 체크 정보 초기화
 	m_Colliders.clear();
@@ -210,7 +207,6 @@ void CollisionSpace::QuadSpace::SplitArea()
 	{
 		size_t idx = 4 * m_iIdx + i;
 		m_QuadPartitions[i] = MakeQuadPtr(m_iLevel + 1, idx, MakeArea(static_cast<Partition>(i)));
-		m_mapQuadParent.insert(make_pair(idx, m_QuadPartitions[i].get()));
 	}
 }
 
