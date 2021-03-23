@@ -5,6 +5,10 @@
 #include "../../Scene/Scene.h"
 #include "../../Core/PathManager.h"
 #include "../../Effect/BoundEffect.h"
+#include "../../Effect/SequentialEffect.h"
+#include "../../Effect/ChaseEffect.h"
+#include "../../Effect/ChaseLongEffect.h"
+#include "../StaticObj/GameManager.h"
 
 unordered_map<string, Item*> Item::m_mapItem;
 normal_distribution<float> Item::m_AngleDist(m_fDropAngle, m_fDropAngleVar);
@@ -19,27 +23,25 @@ Item* Item::FindItem(const string& strItemKey)
     return found->second;
 }
 
-void Item::ChasePlayer(float dt)
-{
-    const Pos &tPos = GetPos();
-    const Pos &targetPos = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetCenter();
-    if (Math::Distance(targetPos, tPos) <= m_fChaseRange)
-    {
-        Pos dir = (targetPos - tPos).GetNormalized();
-        dir *= (m_fChaseSpeed * dt);
-        SetPos(tPos.x + dir.x, tPos.y + dir.y);
-    }
-}
-
-void Item::GenerateBoundEffect()
+void Item::GenerateItemEffect()
 {
     float angle = m_AngleDist(util::_rng);
     float velo = m_VeloDist(util::_rng);
     
     angle = (rand() % 2 == 1) ? angle : PI - angle;
 
-    EffectPtr pEffect = make_shared<BoundEffect>(this, 2.5f, 4, angle, velo, GetPos().y + 0.5f);
-    SetEffect(pEffect);
+    EffectPtr pBound = make_shared<BoundEffect>(this, 2.5f, 4, angle, velo, GetPos().y + 0.5f);
+    EffectPtr pChase;
+    if (PLAYER->HasRing())
+    {
+        pChase = make_shared<ChaseLongEffect>(this, PLAYER);
+    }
+    else 
+    {
+        pChase = make_shared<ChaseEffect>(this, PLAYER);
+    }
+    EffectPtr pSeq = make_shared<SequentialEffect>(2, pBound, pChase);
+    SetEffect(pSeq);
 }
 
 Item::Item()
@@ -85,10 +87,6 @@ int Item::Update(float dt)
 {
     Object::Update(dt);
 
-    if (m_pScene)
-    {
-        ChasePlayer(dt);
-    }
     return 0;
 }
 

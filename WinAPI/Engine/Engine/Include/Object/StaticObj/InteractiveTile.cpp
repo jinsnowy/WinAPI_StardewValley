@@ -3,6 +3,7 @@
 #include "../../Scene/Scene.h"
 #include "../../Scene/GameScene.h"
 #include "../../Object/MoveObj/Player.h"
+#include "../StaticObj/GameManager.h"
 InteractiveTile::InteractiveTile()
 {
 }
@@ -24,7 +25,7 @@ void InteractiveTile::TileHit(Collider* pSrc, Collider* pDst, float dt)
 
 void InteractiveTile::GetDamageFromPlayerTool()
 {
-    float power = static_cast<GameScene*>(m_pScene)->AccessPlayer()->GetToolPower();
+    float power = PLAYER->GetToolPower();
     GetDamage(power);
 }
 
@@ -57,7 +58,7 @@ void InteractiveTile::ItemDrop(int num, bool effect)
         pItem->SetPos(tPos);
         if (effect)
         {
-            pItem->GenerateBoundEffect();
+            pItem->GenerateItemEffect();
         }
         m_pLayer->AddObject(pItem);
         SAFE_RELEASE(pItem);

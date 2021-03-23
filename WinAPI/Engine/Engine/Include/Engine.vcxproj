@@ -172,6 +172,8 @@
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\PathManager.h" />
     <ClInclude Include="Effect\BoundEffect.h" />
+    <ClInclude Include="Effect\ChaseEffect.h" />
+    <ClInclude Include="Effect\ChaseLongEffect.h" />
     <ClInclude Include="Effect\Effect.h" />
     <ClInclude Include="Effect\EffectInterface.h" />
     <ClInclude Include="Effect\SequentialEffect.h" />
@@ -261,6 +263,8 @@
     <ClCompile Include="Core\Input.cpp" />
     <ClCompile Include="Core\PathManager.cpp" />
     <ClCompile Include="Effect\BoundEffect.cpp" />
+    <ClCompile Include="Effect\ChaseEffect.cpp" />
+    <ClCompile Include="Effect\ChaseLongEffect.cpp" />
     <ClCompile Include="Effect\Effect.cpp" />
     <ClCompile Include="Effect\EffectInterface.cpp" />
     <ClCompile Include="Effect\SequentialEffect.cpp" />

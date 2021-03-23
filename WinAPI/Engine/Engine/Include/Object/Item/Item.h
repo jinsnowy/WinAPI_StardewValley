@@ -84,12 +84,8 @@ protected:
 	int m_iSellPrice = 0;
 	int m_iItemNum = 1;
 	ITEM_TYPE m_eItemType = ITEM_NONE;
-	static constexpr float m_fChaseSpeed = 350.f;
-	static constexpr float m_fChaseRange = 100.f;
-private:
-	void ChasePlayer(float dt);
 public:
-	void GenerateBoundEffect();
+	void GenerateItemEffect();
 	bool IsSeedItem() const { return m_eItemType == ITEM_SEED; }
 	bool IsToolItem() const { return m_eItemType == ITEM_TOOL; }
 	void SetItemNum(int num) { m_iItemNum = num; }

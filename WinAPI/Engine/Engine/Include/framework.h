@@ -63,6 +63,7 @@
 #include <iomanip>
 #include <assert.h>
 #include <string.h>
+#include <stdarg.h> 
 
 // C++ 헤더 파일
 #include <iostream>

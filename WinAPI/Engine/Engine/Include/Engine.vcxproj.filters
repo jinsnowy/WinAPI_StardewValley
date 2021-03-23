@@ -360,6 +360,12 @@
     <ClInclude Include="Effect\EffectInterface.h">
       <Filter>Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Effect\ChaseEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\ChaseLongEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -597,6 +603,12 @@
       <Filter>Effect</Filter>
     </ClCompile>
     <ClCompile Include="Effect\EffectInterface.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\ChaseEffect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\ChaseLongEffect.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>

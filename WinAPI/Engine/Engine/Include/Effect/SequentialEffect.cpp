@@ -1,7 +1,16 @@
 #include "SequentialEffect.h"
 
-SequentialEffect::SequentialEffect()
+SequentialEffect::SequentialEffect(int num, const EffectPtr&...)
 {
+    va_list ap;
+    va_start(ap, num);
+
+    for (int i = 0; i < num; i++)
+    {
+        AddEffect(va_arg(ap, EffectPtr));
+    }
+
+    va_end(ap);
 }
 
 SequentialEffect::~SequentialEffect()
