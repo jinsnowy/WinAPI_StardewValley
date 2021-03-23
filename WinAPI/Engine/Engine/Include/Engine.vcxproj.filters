@@ -354,6 +354,12 @@
     <ClInclude Include="Collider\CollisionSpace.h">
       <Filter>Collider</Filter>
     </ClInclude>
+    <ClInclude Include="Effect\SequentialEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\EffectInterface.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -586,6 +592,12 @@
     </ClCompile>
     <ClCompile Include="Collider\CollisionSpace.cpp">
       <Filter>Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\SequentialEffect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\EffectInterface.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

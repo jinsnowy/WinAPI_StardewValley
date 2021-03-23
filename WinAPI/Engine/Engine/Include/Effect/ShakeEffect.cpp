@@ -1,4 +1,5 @@
 #include "ShakeEffect.h"
+#include "../Object/Object.h"
 
 normal_distribution<float> ShakeEffect::m_noiseDist(0.f, 0.5f);
 

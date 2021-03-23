@@ -1,14 +1,11 @@
 #pragma once
-#include "../framework.h"
-#include "../Object/Object.h"
+#include "EffectInterface.h"
 
-class Effect
+class Effect : public EffectInterface
 {
-	friend class default_delete<Effect>;
 protected:
 	Pos m_tOrigin;
 	class Object* m_pSubject = nullptr;
-	bool m_bEnd = false;
 	float m_fDuration = 0.f;
 	float m_fMaxDuration = 0.f;
 private:
@@ -20,8 +17,5 @@ protected:
 	virtual void Process(float dt) = 0;
 	virtual bool Predicate() const { return false; }
 public:
-	bool IsEnd() const { return m_bEnd; }
-	void Step(float dt);
+	virtual void Step(float dt) final;
 };
-
-typedef shared_ptr<Effect> EffectPtr;

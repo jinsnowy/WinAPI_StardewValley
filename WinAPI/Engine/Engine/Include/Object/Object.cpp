@@ -74,7 +74,7 @@ Object::~Object()
     Safe_Release_VecList(m_ColliderList);
 }
 
-void Object::SetEffect(const shared_ptr<class Effect>& pEffect)
+void Object::SetEffect(const EffectPtr& pEffect)
 {
     m_pEffect = std::move(pEffect);
 }

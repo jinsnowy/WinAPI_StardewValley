@@ -1,4 +1,5 @@
 #include "BoundEffect.h"
+#include "../Object/Object.h"
 
 BoundEffect::BoundEffect(Object* pObj, float duration,
 						int maxBounce,

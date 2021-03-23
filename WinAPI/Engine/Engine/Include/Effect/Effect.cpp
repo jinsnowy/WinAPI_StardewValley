@@ -1,16 +1,6 @@
 #include "Effect.h"
+#include "../Object/Object.h"
 
-namespace std
-{
-	template<>
-	struct default_delete<class Effect>
-	{
-		void operator()(Effect* ptr)
-		{
-			delete ptr;
-		}
-	};
-}
 Effect::Effect(Object* pObj, float duration)
 	: m_tOrigin(pObj->GetPos()), m_pSubject(pObj), m_fMaxDuration(duration)
 {

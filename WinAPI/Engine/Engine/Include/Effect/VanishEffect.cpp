@@ -1,5 +1,5 @@
 #include "VanishEffect.h"
-
+#include "../Object/Object.h"
 
 VanishEffect::VanishEffect(Object* pObj, float duration, const Pos& tMoveMent)
     :
