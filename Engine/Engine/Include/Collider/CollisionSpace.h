@@ -58,7 +58,7 @@ private:
 	static constexpr size_t m_iMaxObjectNum = 4;
 	static constexpr int m_iMinLevel = 1;
 	static constexpr float m_fMinSize = 20.f;
-	static constexpr int m_iExpectedCollNum = 200;
+	static constexpr int m_iExpectedCollNum = 20;
 	static vector<vector<bool>> m_CheckMat;
 	static QuadPtr m_QuadHead;
 	Rect m_tScreenSpace = {};

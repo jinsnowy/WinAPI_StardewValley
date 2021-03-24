@@ -92,7 +92,6 @@ void Plant::PlantHit(Collider* pSrc, Collider* pDst, float dt)
             ++m_iCurLevel;
             m_iGrowTime = GAMEWORLDTIME;
 
-            pSrc->SetEnable(false);
             HarvestFruit();
             GrowAsNextPlant();
         }

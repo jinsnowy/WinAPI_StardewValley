@@ -1,6 +1,9 @@
 #pragma once
 #include "../Object/Ref.h"
 #include "../framework.h"
+#include "ResourceManager.h"
+#include "../Application/Window.h"
+
 class Texture :
     public Ref
 {
@@ -23,12 +26,70 @@ public:
     {
         DrawHDCWithColor(GetDC(), px, py, w, h, RGB(0, 0, 0));
     }
-    void DrawImageFrom(int px, int py, int sx, int sy, Texture* pTex, int u, int v);
-    void DrawImageFrom(int px, int py, int sx, int sy, HDC orgin_hDC, int u, int v);
+    inline void DrawImageFrom(int px, int py, int sx, int sy, Texture* pTex, int u, int v)
+    {
+        if (pTex->GetColorKeyEnable())
+        {
+            TransparentBlt(m_hMemDC, px, py, sx, sy,
+                pTex->GetDC(), u, v,
+                sx, sy,
+                pTex->GetColorKey());
+        }
+        else
+        {
+            BitBlt(m_hMemDC, px, py, sx, sy, pTex->GetDC(), u, v, SRCCOPY);
+        }
+    }
+    inline void DrawImageFrom(int px, int py, int sx, int sy, HDC orgin_hDC, int u, int v)
+    {
+        BitBlt(m_hMemDC, px, py, sx, sy, orgin_hDC, u, v, SRCCOPY);
+    }
+    inline void TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, int v, unsigned char alpha = 125)
+    {
+        // 알파 블렌딩 버그 (클라이언트 영역 벗어나면 드로우 안됌)
+        if (py < 0)
+        {
+            py = 0;
+            sy += py;
+        }
+        else if (py + sy >= GETRESOLUTION.y)
+        {
+            sy -= (py + sy - GETRESOLUTION.y + 1);
+        }
+        if (px < 0)
+        {
+            px = 0;
+            sx += px;
+        }
+        else if (px + sx >= GETRESOLUTION.x)
+        {
+            sx -= (px + sx - GETRESOLUTION.x + 1);
+        }
+        Texture* pBack = RESOURCE_MANAGER->GetBackBuffer();
+        Texture* pTemp = RESOURCE_MANAGER->GetTempBuffer();
+        pTemp->ClearBuffer(px, py, sx, sy);
+        pTemp->DrawImageFrom(px, py, sx, sy, pBack, px, py);
+        pTemp->DrawImageFrom(px, py, sx, sy, this, u, v);
 
-    void TransparentEffect(HDC hdc, int px, int py, int sx, int sy, int u, int v, unsigned char alpha = 125);
-    void DrawImage(HDC hdc, int px, int py, int sx, int sy, int u, int v);
-    
+        RESOURCE_MANAGER->SetAlphaChannel(alpha);
+        AlphaBlend(hdc, px, py, sx, sy, pTemp->GetDC(), px, py, sx, sy, RESOURCE_MANAGER->GetBlendFunc());
+        SAFE_RELEASE(pTemp);
+        SAFE_RELEASE(pBack);
+    }
+    inline void DrawImage(HDC hdc, int px, int py, int sx, int sy, int u, int v)
+    {
+        if (GetColorKeyEnable())
+        {
+            TransparentBlt(hdc, px, py, sx, sy,
+                m_hMemDC, u, v,
+                sx, sy,
+                m_ColorKey);
+        }
+        else
+        {
+            BitBlt(hdc, px, py, sx, sy, m_hMemDC, u, v, SRCCOPY);
+        }
+    }
     inline void DrawImageAt(HDC hdc, const Pos& at)
     {
         DrawImageAt(hdc, int(at.x), int(at.y));
@@ -61,7 +122,39 @@ public:
     {
         DrawImageAtFixedSize(hdc, int(at.x), int(at.y), size_x, size_y, keep);
     }
-    void DrawImageAtFixedSize(HDC hdc, int px, int py, int size_x, int size_y, bool keep = false);
+    inline void DrawImageAtFixedSize(HDC hdc, int px, int py, int size_x, int size_y, bool keep = false)
+    {
+        auto tSize = (Vec2I) GetSize();
+        if (keep)
+        {
+            if (tSize.x < size_x)
+            {
+                px += (size_x - tSize.x) / 2;
+                size_x = tSize.x;
+            }
+            if (tSize.y < size_y)
+            {
+                py += (size_y - tSize.y) / 2;
+                size_y = tSize.y;
+            }
+        }
+
+        if (GetColorKeyEnable())
+        {
+            Texture* pEmpty = RESOURCE_MANAGER->GetEmptyBuffer();
+            pEmpty->ClearBuffer(0, 0, size_x, size_y);
+            StretchBlt(pEmpty->GetDC(), 0, 0, size_x, size_y, GetDC(), 0, 0, int(tSize.x), int(tSize.y), SRCCOPY);
+            TransparentBlt(hdc, px, py, size_x, size_y,
+                pEmpty->GetDC(), 0, 0,
+                size_x, size_y,
+                GetColorKey());
+            SAFE_RELEASE(pEmpty);
+        }
+        else
+        {
+            StretchBlt(hdc, px, py, size_x, size_y, GetDC(), 0, 0, int(tSize.x), int(tSize.y), SRCCOPY);
+        }
+    }
     HDC GetDC() const { return m_hMemDC; }
     static Texture* CreateEmptyTexture(HDC hDC, int w, int h, COLORREF color = RGB(0,0,0));
     static Texture* CreateCopyTexture(HDC hDC, int w, int h);

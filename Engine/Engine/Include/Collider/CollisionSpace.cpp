@@ -53,7 +53,7 @@ void CollisionSpace::Observe(Collider* pColl)
 	m_Colliders.push_back(pColl);
 	m_QuadHead->Insert(pColl, QuadSpace::GetScreenRect(pColl));
 
-	if (m_iCollideNum > (int) m_CheckMat.size())
+	if (m_iCollideNum >= (int) m_CheckMat.size())
 	{
 		ExpandCheckMat();
 	}
@@ -158,7 +158,8 @@ void CollisionSpace::Clear()
 void CollisionSpace::ExpandCheckMat()
 {
 	auto curSize = m_CheckMat.size();
-	m_CheckMat.resize(2 * curSize, vector<bool>(2 * curSize, false));
+	m_CheckMat.resize(2 * curSize);
+	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(2 * curSize, false));
 }
 
 CollisionSpace::QuadSpace::~QuadSpace()

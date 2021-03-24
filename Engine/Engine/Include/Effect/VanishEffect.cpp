@@ -4,7 +4,7 @@
 VanishEffect::VanishEffect(Object* pObj, float duration, const Pos& tMoveMent)
     :
     Effect(pObj, duration),
-    m_fDeltaOfAlpha(255*(1.0/duration))
+    m_fDeltaOfAlpha(255 * (1.0f/duration))
 {
     m_tDeltaPos = tMoveMent * ( 1.0 / duration);
     m_pSubject->EnableTransparentEffect();

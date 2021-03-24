@@ -4,7 +4,6 @@
 #include "../Application/Window.h"
 #include "../Core/PathManager.h"
 
-
 DEFINITION_SINGLE(ResourceManager)
 unordered_map<char, class Texture*> ResourceManager::m_mapGlyph;
 
@@ -110,6 +109,98 @@ Texture* ResourceManager::GetTempBuffer() const
 void ResourceManager::ClearBuffer(Texture* pTex, int px, int py, int w, int h)
 {
 	pTex->ClearBuffer(px, py, w, h);
+}
+
+void ResourceManager::DrawFontsAt(HDC hdc, const string& str, int px, int py, DIRECTION align, int padding)
+{
+	int length = (int)str.size();
+
+	int totalWidth = 0;
+	int maxWidth = 0;
+	int maxHeight = 0;
+	for (int i = 0; i < length; ++i)
+	{
+		if (IsExistFont(str[i]))
+		{
+			Texture* pFont = m_mapGlyph[str[i]];
+			totalWidth += (int)pFont->GetWidth();
+			maxHeight = max(maxHeight, (int)pFont->GetHeight());
+			maxWidth = max(maxWidth, (int)pFont->GetWidth());
+		}
+	}
+
+	if (padding > 0) {
+		assert(padding >= length);
+		switch (align)
+		{
+		case RIGHT:
+			px += (padding * maxWidth - totalWidth);
+			break;
+		case CENTER:
+			px += ((padding * maxWidth - totalWidth)) / 2;
+			if ((padding - length) % 2)
+				px += maxWidth / 2;
+			break;
+		}
+	}
+
+	for (int i = 0; i < length; ++i)
+	{
+		if (str[i] == ' ' || str[i] == '_')
+		{
+			px += maxWidth;
+			continue;
+		}
+		if (IsExistFont(str[i]))
+		{
+			Texture* pFont = m_mapGlyph[str[i]];
+			int marginY = maxHeight - (int)pFont->GetHeight();
+			pFont->DrawImageAt(hdc, px, py + marginY);
+			px += pFont->GetWidth();
+		}
+	}
+}
+void ResourceManager::DrawFontsAtFixedSize(HDC hdc, const string& str, int px, int py, int size_x, int size_y, bool keep, DIRECTION align, int padding)
+{
+	int totalWidth = 0;
+	int length = (int)str.size();
+	for (int i = 0; i < length; ++i)
+	{
+		if (IsExistFont(str[i]))
+		{
+			Texture* pFont = m_mapGlyph[str[i]];
+			totalWidth += size_x;
+		}
+	}
+
+	if (padding > 0) {
+		assert(padding >= length);
+		switch (align)
+		{
+		case RIGHT:
+			px += (padding * size_x - totalWidth);
+			break;
+		case CENTER:
+			px += ((padding * size_x - totalWidth)) / 2;
+			if ((padding - length) % 2)
+				px += size_x / 2;
+			break;
+		}
+	}
+
+	for (int i = 0; i < length; ++i)
+	{
+		if (str[i] == ' ' || str[i] == '_')
+		{
+			px += size_x;
+			continue;
+		}
+		if (IsExistFont(str[i]))
+		{
+			m_mapGlyph[str[i]]->DrawImageAtFixedSize(hdc, px, py, size_x, size_y, keep);
+			px += size_x;
+		}
+	}
 }
 
 bool ResourceManager::Init(HINSTANCE hInst, HDC hDC)

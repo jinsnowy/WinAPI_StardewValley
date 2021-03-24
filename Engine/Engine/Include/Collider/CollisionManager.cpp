@@ -16,8 +16,9 @@
 DEFINITION_SINGLE(CollisionManager)
 
 size_t quad_build_total_us = 0;
-size_t collision_total_us = 0;
+size_t collidecheck_total_us = 0;
 int frame_count = 0;
+extern int frame_num;
 
 CollisionManager::CollisionManager()
 {
@@ -84,8 +85,6 @@ void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
 
 void CollisionManager::Clear()
 {
-    quad_build_total_us = 0.f;
-
     m_CollisionObjList.clear();
 
     for (auto iter = m_tempCollisionObjList.begin();
@@ -224,17 +223,18 @@ void CollisionManager::Collision2(float dt)
         }
     }
     auto toc = chrono::steady_clock::now();
-
+    collidecheck_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
 #ifdef  _DEBUG
-    collision_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
     ++frame_count;
-    if (frame_count == 60)
+    if (frame_count == frame_num)
     {
         frame_count = 0;
-        quad_build_total_us /= 60;
-        collision_total_us /= 60;
-        _cprintf("QuaddTree build takes %f ms\t", (float)quad_build_total_us / 1000.f);
-        _cprintf("Collision takes %f ms\n", (float)collision_total_us / 1000.f);
+        quad_build_total_us /= frame_num;
+        collidecheck_total_us /= frame_num;
+        _cprintf("QuadTree  build takes %f ms\n", (float)quad_build_total_us / 1000.f);
+        _cprintf("Collision check takes %f ms\n", (float)collidecheck_total_us / 1000.f);
+        quad_build_total_us = 0;
+        collidecheck_total_us = 0;
     }
 #endif //  _DEBUG
     Clear();

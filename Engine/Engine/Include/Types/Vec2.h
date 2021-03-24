@@ -84,6 +84,10 @@ public:
 		}
 		return *this;
 	}
+	operator Vec2_<T>() const
+	{
+		return Vec2_<T>((T)x, (T)y);
+	}
 public:
 	T x;
 	T y;

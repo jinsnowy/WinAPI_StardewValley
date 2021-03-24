@@ -13,6 +13,14 @@
 #include "../Sound/SoundManager.h"
 #include "../Object/Mouse.h"
 
+size_t input_total_us = 0;
+size_t update_total_us = 0;
+size_t lateupdate_total_us = 0;
+size_t collision_total_us = 0;
+size_t draw_total_us = 0;
+int app_frame_count = 0;
+int frame_num = 100;
+
 App::App()
 {
 #ifdef _DEBUG
@@ -122,24 +130,63 @@ void App::Process()
 {
 	const float dt = TIMER->Tick();
 
+	auto tic = chrono::steady_clock::now();
 	Input(dt);
+	auto toc = chrono::steady_clock::now();
+	input_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
 
+	tic = chrono::steady_clock::now();
 	if(SCENECHANGE(Update(dt)))
 	{
 		SCENE_MANAGER->ChangeScene();
 		TIMER->Reset();
 		return;
 	}
-		
+	toc = chrono::steady_clock::now();
+	update_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
+
+	tic = chrono::steady_clock::now();
 	if(SCENECHANGE(LateUpdate(dt)))
 	{
 		SCENE_MANAGER->ChangeScene();
 		TIMER->Reset();
 		return;
 	}
-		
+	toc = chrono::steady_clock::now();
+	lateupdate_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
+
+	tic = chrono::steady_clock::now();
 	Collision(dt);
+	toc = chrono::steady_clock::now();
+	collision_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
+
+	tic = chrono::steady_clock::now();
 	Draw(dt);
+	toc = chrono::steady_clock::now();
+	draw_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
+
+#ifdef  _DEBUG
+	++app_frame_count;
+	if (app_frame_count == frame_num)
+	{
+		app_frame_count = 0;
+		input_total_us /= frame_num;
+		update_total_us /= frame_num;
+		lateupdate_total_us /= frame_num;
+		collision_total_us /= frame_num;
+		draw_total_us /= frame_num;
+		_cprintf("Input      takes %f ms\n", (float)input_total_us / 1000.f);
+		_cprintf("Update     takes %f ms\n", (float)update_total_us / 1000.f);
+		_cprintf("LateUpdate takes %f ms\n", (float)lateupdate_total_us / 1000.f);
+		_cprintf("Collision  takes %f ms\n", (float)collision_total_us / 1000.f);
+		_cprintf("Draw       takes %f ms\n", (float)draw_total_us / 1000.f);
+		input_total_us = 0;
+		update_total_us = 0;
+		lateupdate_total_us = 0;
+		collision_total_us = 0;
+		draw_total_us = 0;
+	}
+#endif //  _DEBUG
 }
 
 void App::Input(float dt)

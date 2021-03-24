@@ -616,7 +616,7 @@ bool Player::Init()
 	SAFE_RELEASE(pRC);
 
 	ColliderRect* pFoot = AddCollider <ColliderRect>("PlayerFoot");
-	pFoot->SetRect(0.f, -60.f, 60.f, 0.f);
+	pFoot->SetRect(5.f, -55.f, 55.f, -5.f);
 	pFoot->AddCollisionFunction(CS_ENTER, this, &Player::HitFoot);
 	pFoot->AddCollisionFunction(CS_STAY, this, &Player::HitFoot);
 	SAFE_RELEASE(pFoot);

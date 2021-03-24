@@ -7,7 +7,7 @@ class FarmScene : public GameScene
 private:
     friend class SceneManager;
 private:
-    const char* pGameDataFileName = "Farm.map";
+    const char* pGameDataFileName = "Farm_Heavy.map";
     const Rect m_tMiddlewaySceneTrigger = {2232.f,880.f,2340.f,1060.f};
 private:
     FarmScene();
