@@ -9,7 +9,7 @@ protected:
 private:
 	void AddEffect(const EffectPtr& next);
 public:
-	SequentialEffect(int num, const EffectPtr&...);
+	SequentialEffect(initializer_list<EffectPtr> effect_list);
 	SequentialEffect(const SequentialEffect& effect) = delete;
 	virtual ~SequentialEffect();
 public:

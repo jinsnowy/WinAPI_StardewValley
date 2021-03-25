@@ -27,7 +27,7 @@ void Item::GenerateItemEffect()
 {
     float angle = m_AngleDist(util::_rng);
     float velo = m_VeloDist(util::_rng);
-    
+
     angle = (rand() % 2 == 1) ? angle : PI - angle;
 
     EffectPtr pBound = make_shared<BoundEffect>(this, 2.5f, 4, angle, velo, GetPos().y + 0.5f);
@@ -36,11 +36,11 @@ void Item::GenerateItemEffect()
     {
         pChase = make_shared<ChaseLongEffect>(this, PLAYER);
     }
-    else 
+    else
     {
         pChase = make_shared<ChaseEffect>(this, PLAYER);
     }
-    EffectPtr pSeq = make_shared<SequentialEffect>(2, pBound, pChase);
+    EffectPtr pSeq = make_shared<SequentialEffect>(initializer_list<EffectPtr> { pBound, pChase });
     SetEffect(pSeq);
 }
 

@@ -12,7 +12,7 @@ private:
 	bool IsOver() const{ return m_fDuration >= m_fMaxDuration; }
 protected:
 	explicit Effect(class Object* pObj, float duration);
-	Effect(const Effect& effet) = delete;
+	Effect(const Effect& effcet) = delete;
 	virtual ~Effect() = 0;
 	virtual void Process(float dt) = 0;
 	virtual bool Predicate() const { return false; }

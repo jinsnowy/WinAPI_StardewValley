@@ -1,18 +1,5 @@
 #include "SequentialEffect.h"
 
-SequentialEffect::SequentialEffect(int num, const EffectPtr&...)
-{
-    va_list ap;
-    va_start(ap, num);
-
-    for (int i = 0; i < num; i++)
-    {
-        AddEffect(va_arg(ap, EffectPtr));
-    }
-
-    va_end(ap);
-}
-
 SequentialEffect::~SequentialEffect()
 {
 }
@@ -25,6 +12,15 @@ void SequentialEffect::AddEffect(const EffectPtr& next)
         return;
     }
     m_EffectQueue.push(next);
+}
+
+SequentialEffect::SequentialEffect(initializer_list<EffectPtr> effect_list)
+{
+    const auto iterEnd = effect_list.end();
+    for (auto iter = effect_list.begin(); iter != iterEnd; ++iter)
+    {
+        AddEffect(*iter);
+    }
 }
 
 void SequentialEffect::Step(float dt)
