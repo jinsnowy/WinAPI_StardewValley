@@ -13,6 +13,8 @@
 #include "CollisionSpace.h"
 #include "../Application/Window.h"
 #include "../utils.h"
+#include "../Object/MoveObj/Player.h"
+#include "../Object/StaticObj/GameManager.h"
 
 DEFINITION_SINGLE(CollisionManager)
 
@@ -23,6 +25,8 @@ extern int frame_num;
 
 CollisionManager::CollisionManager()
 {
+    m_pCollTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), GETRESOLUTION.x, GETRESOLUTION.y);
+    m_pCollTex->SetColorKey(util::Black);
 }
 
 CollisionManager::~CollisionManager()
@@ -32,9 +36,12 @@ CollisionManager::~CollisionManager()
 
 bool CollisionManager::Init()
 {
-    m_pCollTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), GETRESOLUTION.x, GETRESOLUTION.y);
-    m_pCollTex->SetColorKey(util::Black);
-    m_CollisionSpace = make_unique<CollisionSpace>();
+    if (!m_CollisionSpace)
+    {
+        m_CollisionSpace = make_unique<CollisionSpace>();
+    }
+
+    m_CollisionSpace->Init();
     return true;
 }
 
@@ -167,7 +174,18 @@ void CollisionManager::Collision2(float dt)
         Clear();
         return;
     }
-
+#ifdef _DEBUG
+        const auto& pPlayerColl = m_CollisionSpace->FindCollider("PlayerBody");
+        if (pPlayerColl)
+        {
+            vector<Collider*> pPlayerList;
+            m_CollisionSpace->GetEqualSpaceColliders(pPlayerColl, pPlayerList);
+            if (SHOWCHECK(SHOW_COLL))
+            {
+                DrawColliders(pPlayerList, nullptr);
+            }
+        }
+#endif
     auto tic = chrono::steady_clock::now();
     for (int i = 0; i < srcCollNum; ++i)
     {
@@ -177,22 +195,12 @@ void CollisionManager::Collision2(float dt)
         m_CollisionSpace->GetEqualSpaceColliders(pSrc, pDstList);
         vector<Collider*>::const_iterator iterDst;
         vector<Collider*>::const_iterator iterDstEnd = pDstList.end();
-#ifdef _DEBUG
-        if (pSrc->GetTag() == "PlayerBody")
-        {
-            DrawColliders(pDstList, nullptr);
-        }
-#endif
+
         int dstCollNum = (int)pDstList.size();
         for (int j = 0; j < dstCollNum; ++j)
         {
             const auto& pDst = pDstList[j];
-#ifdef _DEBUG
-            if (pDst->GetTag() == "PlayerBody")
-            {
-                DrawColliders({}, pSrc);
-            }
-#endif
+
             m_CollisionSpace->Mark(pSrc, pDst);
 
             // 충돌체가 서로 충돌했는가
@@ -330,12 +338,12 @@ void CollisionManager::DrawColliders(const vector<Collider*> &colls, Collider* p
         for (Collider* coll : colls)
         {
             Rect screenRect = coll->GetBounds().SubtractOffset(CAMERA->GetTopLeft());
-            DrawColorRectWithOutBorder(m_pCollTex->GetDC(), screenRect, RGB(128, 0, 128));
+            DrawColorRectWithOutBorder(m_pCollTex->GetDC(), screenRect, util::Magenta);
         }
         if (pColl)
         {
             Rect screenRect = pColl->GetBounds().SubtractOffset(CAMERA->GetTopLeft());
-            DrawColorRectWithOutBorder(m_pCollTex->GetDC(), screenRect, RGB(128, 0, 128));
+            DrawColorRectWithOutBorder(m_pCollTex->GetDC(), screenRect, util::Magenta);
         }
     }
 }

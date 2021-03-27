@@ -25,7 +25,7 @@ App::App()
 {
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(2891);
+	// _CrtSetBreakAlloc(3298);
 	AllocConsole();
 #endif
 }

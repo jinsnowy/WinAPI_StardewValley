@@ -38,38 +38,41 @@ private:
 	private:
 		static QuadPtr MakeQuadPtr(unsigned int level, size_t idx, const Rect& rect);
 		static bool OutSideOfScreen(Collider* pColl);
-		static Rect GetScreenRect(Collider* pColl);
 		Partition GetPartition(const Rect& bounds);
 		Rect MakeArea(Partition ePart) const;
 		void SplitArea();
-		void Search(class Collider* const& pSrc, const Rect& bounds, vector<Collider*>& dstColliders);
+		void Search(class Collider* const& pSrc, vector<Collider*>& dstColliders);
 	public:
 		void Clear();
 		bool Empty() const { return m_CollList.empty(); }
 		bool IsOverLoaded() const;
 		void AddCollider(Collider* const& pColl);
-		void Insert(Collider* const& pColl, const Rect& bounds);
+		void Insert(Collider* const& pColl);
 		void Draw(HDC& hdc, const float& dt);
 	};
 private:
+	friend class CollisionManager;
 	using Partition = CollisionSpace::QuadSpace::Partition;
 	using QuadSpace = CollisionSpace::QuadSpace;
+	bool m_bCameraInit = false;
 	static int m_iCollideNum;
 	static constexpr size_t m_iMaxObjectNum = 4;
-	static constexpr int m_iMinLevel = 1;
-	static constexpr float m_fMinSize = 20.f;
+	static constexpr float m_fMinSize = 32.f;
 	static constexpr int m_iExpectedCollNum = 20;
 	static vector<vector<bool>> m_CheckMat;
 	static QuadPtr m_QuadHead;
-	Rect m_tScreenSpace = {};
+	static Rect m_tWorldSpace;
+	static Rect m_tCameraSpace;
 	vector<Collider*> m_Colliders;
 private:
-	void ExpandCheckMat();
-public:
+	void Init();
 	void Clear();
-	void Observe(Collider* pColl);
 	void Mark(Collider* pSrc, Collider* pDst);
-	void GetEqualSpaceColliders(Collider* pSrc, vector<Collider*> &dstColliders);
-	const vector<Collider*>* GetColliderList() const { return &m_Colliders; }
+	void GetEqualSpaceColliders(Collider* pSrc, vector<Collider*>& dstColliders);
+	void ExpandCheckMat();
 	void Draw(HDC hdc, float dt);
+public:
+	void Observe(Collider* pColl);
+	const vector<Collider*>* GetColliderList() const { return &m_Colliders; }
+	Collider* FindCollider(const string& strTag);
 };

@@ -47,11 +47,11 @@ bool Tree::Init()
 
 	Size imgSize = GetImageSize();
 	ColliderRect* pRC = AddCollider<ColliderRect>("TreeBody");
-	pRC->SetRect(-imgSize.x / 3 + 5, -imgSize.y + TILESIZE, 2 * imgSize.x / 3 - 5, - 5);
+	pRC->SetRect(-imgSize.x / 3.f + 5.f, -imgSize.y + TILESIZE, 2 * imgSize.x / 3.f - 5.f, - 5.f);
 	SAFE_RELEASE(pRC);
 
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileBlock");
-	pBlock->SetRect(0, 0.f, imgSize.x / 3, TILESIZE);
+	pBlock->SetRect(5.f, 5.f, imgSize.x / 3.f - 5.f, TILESIZE - 5.f);
 	SAFE_RELEASE(pBlock);
 	return true;
 }
@@ -140,12 +140,14 @@ void Tree::LateInit()
 {
 	Size imgSize = GetImageSize();
 
-	Collider* pRC = GetCollider("TreeBody");
+	ColliderRect* pRC = static_cast<ColliderRect*>(GetCollider("TreeBody"));
+	pRC->SetRect(-imgSize.x / 3.f + 5.f, -imgSize.y + TILESIZE, 2 * imgSize.x / 3.f - 5.f, -5.f);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::ShadeIn);
 	pRC->AddCollisionFunction(CS_STAY, this, &Tree::ShadeIn);
 	SAFE_RELEASE(pRC);
 
-	pRC = GetCollider("TileBlock");
+	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
+	pRC->SetRect(5.f, 5.f, imgSize.x / 3.f - 5.f, TILESIZE - 5.f);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::TileHit);
 	pRC->AddCollisionFunction(CS_STAY, this, &Tree::TileHit);
 	SAFE_RELEASE(pRC);

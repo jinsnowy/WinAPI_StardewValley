@@ -10,7 +10,6 @@ private:
 	list <class Object*> m_CollisionObjList;
 	unique_ptr<class CollisionSpace> m_CollisionSpace;
 	void NaiveAdd(class Object* const& pObj);
-	void DrawCullingAdd(class Object* pObj);
 public:
 	bool Init();
 	void ClickPoint();

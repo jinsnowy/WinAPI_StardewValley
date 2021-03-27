@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include <cassert>
 #include "../Object/Object.h"
+#include "../Collider/CollisionManager.h"
 
 DEFINITION_SINGLE(Camera)
 
@@ -28,6 +29,7 @@ bool Camera::Init(const Pos& tPos, const RESOLUTION& tRS, const RESOLUTION& tWor
 	m_tClientRS = tRS;
 	m_tWorldRS = tWorldRS;
 
+	COLLISION_MANAGER->Init();
 	return true;
 }
 

@@ -31,8 +31,11 @@ public:
 	}
 	bool IsCollideRect(const Rect_& other) const
 	{
-		return right > other.left && left < other.right
-			&& bottom > other.top && top < other.bottom;
+		if (right < other.left) return false;
+		if (left > other.right) return false;
+		if (bottom < other.top) return false;
+		if (top > other.bottom) return false;
+		return true;
 	}
 	bool IsInsideRect(const Rect_& other) const
 	{
