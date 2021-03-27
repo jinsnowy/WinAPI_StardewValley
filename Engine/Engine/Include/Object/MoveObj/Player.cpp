@@ -69,7 +69,7 @@ void Player::InitAnimation()
 		}
 		AddAnimationClip("WalkRight",
 			AT_FRAME, AO_LOOP,
-			0.0f, 0.8f,
+			0.0f, WALKSPEED,
 			6, 1,
 			0, 0,
 			6, 1,
@@ -87,7 +87,7 @@ void Player::InitAnimation()
 		}
 		AddAnimationClip("WalkLeft",
 			AT_FRAME, AO_LOOP,
-			0.0f, 0.8f,
+			0.0f, WALKSPEED,
 			6, 1,
 			0, 0,
 			6, 1,
@@ -105,7 +105,7 @@ void Player::InitAnimation()
 		}
 		AddAnimationClip("WalkDown",
 			AT_FRAME, AO_LOOP,
-			0.0f, 0.8f,
+			0.0f, WALKSPEED,
 			9, 1,
 			0, 0,
 			9, 1,
@@ -123,7 +123,7 @@ void Player::InitAnimation()
 		}
 		AddAnimationClip("WalkUp",
 			AT_FRAME, AO_LOOP,
-			0.0f, 0.8f,
+			0.0f, WALKSPEED,
 			9, 1,
 			0, 0,
 			9, 1,

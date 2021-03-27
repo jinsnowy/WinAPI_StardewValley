@@ -17,12 +17,12 @@ public:
 	void AddCollideObject(class Object* pObj);
 	void AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag);
 	void AddCollidePoint(const Pos& pos, const string& strTag);
-	void ReadyCollision(float dt);
 	void AddObject(class Object* pObj);
 
 	void Collision(float dt);
 	void Collision2(float dt);
 	void Draw(HDC hdc, float dt);
 	bool CheckCollision(class Object* pSrc, class Object* pDst, float dt);
+	void DrawColliders(const vector<class Collider*> &colls, class Collider* pColl);
 	void Clear();
 };

@@ -17,6 +17,7 @@
 
 // 매크로
 #define TIME_UNIT 7.166f
+#define WALKSPEED 0.8f
 #define SWINGSPEED 0.3f
 #define TOOLSPEED 0.6f
 #define GLYPHX 20

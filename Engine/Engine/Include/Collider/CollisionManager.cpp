@@ -12,6 +12,7 @@
 #include "../Scene/GameScene.h"
 #include "CollisionSpace.h"
 #include "../Application/Window.h"
+#include "../utils.h"
 
 DEFINITION_SINGLE(CollisionManager)
 
@@ -97,7 +98,6 @@ void CollisionManager::Clear()
 
     if (SHOWCHECK(SHOW_COLL))
     {
-        m_pCollTex->ClearBuffer(0, 0, GETRESOLUTION.x, GETRESOLUTION.y);
         m_CollisionSpace->Draw(m_pCollTex->GetDC(), 0.f);
     }
 
@@ -157,6 +157,8 @@ void CollisionManager::Collision(float dt)
 
 void CollisionManager::Collision2(float dt)
 {
+    m_pCollTex->ClearBuffer(0, 0, GETRESOLUTION.x, GETRESOLUTION.y);
+
     const auto& collList = *(m_CollisionSpace->GetColliderList());
     int srcCollNum = (int)collList.size();
 
@@ -167,7 +169,6 @@ void CollisionManager::Collision2(float dt)
     }
 
     auto tic = chrono::steady_clock::now();
-
     for (int i = 0; i < srcCollNum; ++i)
     {
         const auto& pSrc = collList[i];
@@ -176,12 +177,22 @@ void CollisionManager::Collision2(float dt)
         m_CollisionSpace->GetEqualSpaceColliders(pSrc, pDstList);
         vector<Collider*>::const_iterator iterDst;
         vector<Collider*>::const_iterator iterDstEnd = pDstList.end();
-
+#ifdef _DEBUG
+        if (pSrc->GetTag() == "PlayerBody")
+        {
+            DrawColliders(pDstList, nullptr);
+        }
+#endif
         int dstCollNum = (int)pDstList.size();
         for (int j = 0; j < dstCollNum; ++j)
         {
             const auto& pDst = pDstList[j];
-
+#ifdef _DEBUG
+            if (pDst->GetTag() == "PlayerBody")
+            {
+                DrawColliders({}, pSrc);
+            }
+#endif
             m_CollisionSpace->Mark(pSrc, pDst);
 
             // 충돌체가 서로 충돌했는가
@@ -310,4 +321,21 @@ bool CollisionManager::CheckCollision(Object* pSrc, Object* pDst, float dt)
         }
     }
     return bCollision;
+}
+
+void CollisionManager::DrawColliders(const vector<Collider*> &colls, Collider* pColl)
+{
+    if(SHOWCHECK(SHOW_COLL))
+    {
+        for (Collider* coll : colls)
+        {
+            Rect screenRect = coll->GetBounds().SubtractOffset(CAMERA->GetTopLeft());
+            DrawColorRectWithOutBorder(m_pCollTex->GetDC(), screenRect, RGB(128, 0, 128));
+        }
+        if (pColl)
+        {
+            Rect screenRect = pColl->GetBounds().SubtractOffset(CAMERA->GetTopLeft());
+            DrawColorRectWithOutBorder(m_pCollTex->GetDC(), screenRect, RGB(128, 0, 128));
+        }
+    }
 }
