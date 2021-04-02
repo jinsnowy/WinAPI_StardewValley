@@ -71,7 +71,7 @@ void Grass::TileHit(Collider* pSrc, Collider* pDst, float dt)
 void Grass::AfterDie()
 {
 	ItemDrop(1);
-	SOUND_MANAGER->PlaySound("GrassOver");
+	SOUND_MANAGER->PlayMusic("GrassOver");
 }
 
 void Grass::Input(float dt)

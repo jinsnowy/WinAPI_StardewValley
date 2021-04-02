@@ -356,7 +356,7 @@ void Player::BuyItem(Item* pItem)
 	m_iMoney -= pItem->GetPrice();
 	AddItem(pItem);
 
-	SOUND_MANAGER->PlaySound("BuyItem");
+	SOUND_MANAGER->PlayMusic("BuyItem");
 }
 
 Rect Player::BuildSwingAttack(int dx, int dy)
@@ -457,7 +457,7 @@ void Player::AfterMove()
 	}
 	if (gameScene->GetSceneType() == SC_INHOUSE && SOUND_MANAGER->IsEnd(SD_EFFECT))
 	{
-		SOUND_MANAGER->PlaySound("InHouse_Walking");
+		SOUND_MANAGER->PlayMusic("InHouse_Walking");
 	}
 }
 
@@ -509,7 +509,7 @@ void Player::ClickEventHandling()
 						// ³´/°Ë Ã¼Å©
 						Rect attackRange = BuildSwingAttack(index.x, index.y);
 						TRIGGER_RECTEVENT(GetCenterPos(), attackRange, "SwingTool");
-						SOUND_MANAGER->PlaySound("SwingTool");
+						SOUND_MANAGER->PlayMusic("SwingTool");
 					}
 					else {
 						// µµ³¢/°î±ªÀÌ/È£¹Ì Ã¼Å©
@@ -757,7 +757,7 @@ void Player::Hit(Collider* pSrc, Collider* pDst, float dt)
 		if (pItem->GetLife())
 		{
 			AddItem(pItem);
-			SOUND_MANAGER->PlaySound("ItemGet");
+			SOUND_MANAGER->PlayMusic("ItemGet");
 			pItem->Die();
 		}
 	}

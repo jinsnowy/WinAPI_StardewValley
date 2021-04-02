@@ -1,6 +1,6 @@
 #include "SoundManager.h"
+#include "../Other/UserException.h"
 #include "../Core/PathManager.h"
-#define SOUND_EXP(MSG) SoundException(__LINE__, __FILE__, MSG)
 
 DEFINITION_SINGLE(SoundManager)
 
@@ -35,7 +35,7 @@ bool SoundManager::Init()
 void SoundManager::Update(float dt)
 {
 	if (m_pSystem->update() != FMOD_OK)
-		throw SOUND_EXP(L"Sound System Update Failed\n");
+		throw EXCEPT(L"Sound System Update Failed\n");
 }
 
 bool SoundManager::LoadSound(const string& strKey,
@@ -64,7 +64,7 @@ bool SoundManager::LoadSound(const string& strKey,
 	if (m_pSystem->createSound(fullPath.c_str(), LOOP_MODE, 0, &sound->pSound) != FMOD_OK)
 	{
 		SAFE_DELETE(sound);
-		throw SOUND_EXP(L"Sound File Creation Failed\n");
+		throw EXCEPT(L"Sound File Creation Failed\n");
 	}
 	
 	m_mapSound.insert(make_pair(strKey, sound));
@@ -90,12 +90,12 @@ bool SoundManager::IsEnd(const string& strKey)
 	return !isPlaying;
 }
 
-void SoundManager::PlaySound(const string& strKey)
+void SoundManager::PlayMusic(const string& strKey)
 {
 	PSOUNDINFO sound = FindSound(strKey);
 
 	if (sound == nullptr)
-		throw SOUND_EXP(L"Sound Key Not Found\n");
+		throw EXCEPT(L"Sound Key Not Found\n");
 
 	Update(0.f);
 	if (m_pSystem->playSound(sound->pSound, 0, false, &m_pChannel[sound->eChannel]) != FMOD_OK)
@@ -103,7 +103,7 @@ void SoundManager::PlaySound(const string& strKey)
 		wchar_t msg[100] = L"";
 		wstring wstrKey(strKey.begin(), strKey.end());
 		wsprintf(msg, L"[%s] Sound Play Failed", wstrKey.c_str());
-		throw SOUND_EXP(msg);
+		throw EXCEPT(msg);
 	}
 }
 
@@ -112,7 +112,7 @@ void SoundManager::PauseSound(const string& strKey)
 	PSOUNDINFO sound = FindSound(strKey);
 
 	if (sound == nullptr)
-		throw SOUND_EXP(L"Sound Key Not Found\n");
+		throw EXCEPT(L"Sound Key Not Found\n");
 
 	m_pChannel[sound->eChannel]->stop();
 }
@@ -135,19 +135,4 @@ PSOUNDINFO SoundManager::FindSound(const string& strKey)
 	if (found == m_mapSound.end())
 		return nullptr;
 	return found->second;
-}
-
-SoundManager::SoundException::SoundException(int codeLine, const char* fileName, const wchar_t* message)
-	: UserException(codeLine, fileName), msg(message)
-{
-}
-
-const wchar_t* SoundManager::SoundException::GetType() const noexcept
-{
-	return L"SoundManager Excpetion";
-}
-
-wstring SoundManager::SoundException::GetErrorMessage() const noexcept
-{
-	return SoundManager::SoundException::UserException::GetErrorMessage() + L"\n" + msg;
 }

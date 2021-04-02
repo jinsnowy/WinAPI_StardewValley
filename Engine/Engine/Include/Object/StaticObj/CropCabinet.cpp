@@ -119,7 +119,7 @@ void CropCabinet::OnSite(Collider* pSrc, Collider* pDst, float dt)
     {
         if (m_State == State::CLOSE)
         {
-            SOUND_MANAGER->PlaySound("CabinetOpen");
+            SOUND_MANAGER->PlayMusic("CabinetOpen");
             SetTexture("CropCabinetOpen");
             SetAsTextureSize();
             SetPivot(0.f, (GetSize().y - TILESIZE) / GetSize().y);
@@ -134,7 +134,7 @@ void CropCabinet::OffSite(Collider* pSrc, Collider* pDst, float dt)
     {
         if (m_State == State::OPEN)
         {
-            SOUND_MANAGER->PlaySound("CabinetClose");
+            SOUND_MANAGER->PlayMusic("CabinetClose");
             SetTexture("CropCabinetClose");
             SetAsTextureSize();
             SetPivot(0.f, (GetSize().y - TILESIZE) / GetSize().y);
@@ -146,7 +146,7 @@ void CropCabinet::OffSite(Collider* pSrc, Collider* pDst, float dt)
 
 void CropCabinet::SoldEffect(Item* pItem)
 {
-    SOUND_MANAGER->PlaySound("CabinetDump");
+    SOUND_MANAGER->PlayMusic("CabinetDump");
 
     TempObject* pObj = Object::CreateObject<TempObject>("SoldItem");
 

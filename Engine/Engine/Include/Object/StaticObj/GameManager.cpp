@@ -70,12 +70,12 @@ void GameManager::Acknowleged(UI* changedUI)
 			pTimer->SetPos(tPos);
 			pStore->SetClickDelay();
 			m_pPlayer->DisableMovement();
-			SOUND_MANAGER->PlaySound("OpenUI");
+			SOUND_MANAGER->PlayMusic("OpenUI");
 		}
 		else {
 			pTimer->SetNormalPos();
 			m_pPlayer->EnableMovement();
-			SOUND_MANAGER->PlaySound("CloseUI");
+			SOUND_MANAGER->PlayMusic("CloseUI");
 		}
 	}
 }
@@ -87,7 +87,7 @@ void GameManager::Input(float dt)
 		m_uiStates.flip((int)PANEL_TYPE::PLAYER_INFO);
 		m_uiStates.flip((int)PANEL_TYPE::FAST_ITEMLIST);
 		Activated((int)PANEL_TYPE::PLAYER_INFO) ? 
-			SOUND_MANAGER->PlaySound("OpenUI") : SOUND_MANAGER->PlaySound("CloseUI");
+			SOUND_MANAGER->PlayMusic("OpenUI") : SOUND_MANAGER->PlayMusic("CloseUI");
 	}
 	for (int i = 0; i < (int)PANEL_TYPE::PANEL_END; ++i)
 	{

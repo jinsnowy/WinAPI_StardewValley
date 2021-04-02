@@ -38,7 +38,7 @@ void UIScrollBar::Input(float dt)
         int hBlock = (GetSize().y - m_pScroller->GetSize().y) / (m_iNumBlock - 1);
         m_pScroller->SetPos(tPos.x, tPos.y + hBlock * m_iCurBlock);
 
-        SOUND_MANAGER->PlaySound("ScrollSound");
+        SOUND_MANAGER->PlayMusic("ScrollSound");
     }
 }
 

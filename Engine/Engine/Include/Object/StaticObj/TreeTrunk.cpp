@@ -58,7 +58,7 @@ void TreeTrunk::TileHit(Collider* pSrc, Collider* pDst, float dt)
 		GetDamageFromPlayerTool();
 		CheckDie();
 
-		SOUND_MANAGER->PlaySound("TreeHit");
+		SOUND_MANAGER->PlayMusic("TreeHit");
 	}
 }
 

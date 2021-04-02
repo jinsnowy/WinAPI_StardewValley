@@ -69,7 +69,7 @@ void UIFastItemList::Input(float dt)
 	{
 		m_iItemListOffset = (m_iItemListOffset + 12) % 36;
 		PLAYER->SetCurItemSel((PLAYER->GetCurItemSel() + 12) % 36);
-		SOUND_MANAGER->PlaySound("InteractUI");
+		SOUND_MANAGER->PlayMusic("InteractUI");
 	}
 	if (KEYDOWN("MouseLButton"))
 	{

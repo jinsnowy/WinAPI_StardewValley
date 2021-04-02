@@ -69,7 +69,7 @@ void Rock::TileHit(Collider* pSrc, Collider* pDst, float dt)
 void Rock::AfterDie()
 {
 	ItemDrop(1);
-	SOUND_MANAGER->PlaySound("RockOver");
+	SOUND_MANAGER->PlayMusic("RockOver");
 }
 
 void Rock::Input(float dt)

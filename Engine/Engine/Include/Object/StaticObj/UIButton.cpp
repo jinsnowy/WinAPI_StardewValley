@@ -98,7 +98,7 @@ void UIButton::MouseOn(Collider* pSrc, Collider* pDst, float dt)
 
 		if (m_bUseSound)
 		{
-			SOUND_MANAGER->PlaySound(m_strSoundTag);
+			SOUND_MANAGER->PlayMusic(m_strSoundTag);
 		}
 	}
 }
