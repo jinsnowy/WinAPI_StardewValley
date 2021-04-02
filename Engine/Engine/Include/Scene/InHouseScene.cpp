@@ -32,7 +32,7 @@ bool InHouseScene::Init()
 
 	GameScene::SetUpScene(pGameDataFileName);
 
-	SOUND_MANAGER->PlaySound("LongBGM");
+	SOUND_MANAGER->PlayMusic("LongBGM");
 
 	m_pSleepPanel = Object::CreateObject<UIPanel>("SleepUIPanel");
 	m_pSleepPanel->SetTexture("SleepUIPanel", L"SV/Scene/UI/SleepBanner.bmp");

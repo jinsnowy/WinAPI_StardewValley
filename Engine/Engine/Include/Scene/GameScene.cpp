@@ -123,7 +123,7 @@ void GameScene::DigTile(const Pos& worldPos)
     {
         Tile* tile = m_pGroundStage->GetTile(index);
         tile->SetTexture("Dirt_Dig");
-        SOUND_MANAGER->PlaySound("DirtDig");
+        SOUND_MANAGER->PlayMusic("DirtDig");
         SAFE_RELEASE(tile);
     }
 }
@@ -148,7 +148,7 @@ void GameScene::WaterTile(const Pos& worldPos)
             SAFE_RELEASE(tile);
         }
         GAME_MANAGER->AddWateredTile(index);
-        SOUND_MANAGER->PlaySound("WaterTile");
+        SOUND_MANAGER->PlayMusic("WaterTile");
     }
 }
 

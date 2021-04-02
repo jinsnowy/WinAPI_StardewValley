@@ -140,13 +140,13 @@ bool StartScene::Init()
     SAFE_RELEASE(pGameTitle);
     SAFE_RELEASE(pTex);
 
-    SOUND_MANAGER->PlaySound("StartScene_BGM");
+    SOUND_MANAGER->PlayMusic("StartScene_BGM");
 	return true;
 }
 
 void StartScene::StartButtonCallback(float fTime)
 {
-    SOUND_MANAGER->PlaySound("StartScene_Click");
+    SOUND_MANAGER->PlayMusic("StartScene_Click");
     SOUND_MANAGER->PauseSound(SD_BACKGROUND);
 
     SceneState nxt = {};
@@ -158,7 +158,7 @@ void StartScene::StartButtonCallback(float fTime)
 
 void StartScene::EndButtonCallback(float fTime)
 {
-    SOUND_MANAGER->PlaySound("StartScene_Click");
+    SOUND_MANAGER->PlayMusic("StartScene_Click");
     SOUND_MANAGER->PauseSound(SD_BACKGROUND);
     WINDOW->DestroyGame();
 }
@@ -169,7 +169,7 @@ void StartScene::EditButtonCallback(float fTime)
     nxt.nextDir = RIGHT;
     nxt.nextBeacon = BC_NONE;
     nxt.nextScene = SC_MAPEDIT;
-    SOUND_MANAGER->PlaySound("StartScene_Click");
+    SOUND_MANAGER->PlayMusic("StartScene_Click");
     SOUND_MANAGER->PauseSound(SD_BACKGROUND);
     SCENE_MANAGER->SignalizeSceneChange(nxt);
 }
