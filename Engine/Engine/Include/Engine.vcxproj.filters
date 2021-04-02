@@ -366,6 +366,15 @@
     <ClInclude Include="Effect\ChaseLongEffect.h">
       <Filter>Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Profiler.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound\fmod.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\CavernEntranceScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -610,6 +619,12 @@
     </ClCompile>
     <ClCompile Include="Effect\ChaseLongEffect.cpp">
       <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Profiler.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\CavernEntranceScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

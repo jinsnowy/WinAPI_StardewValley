@@ -9,6 +9,9 @@
 #define NOMINMAX
 // Windows 헤더 파일
 #include <windows.h>
+#include <CommDlg.h>
+#include <commctrl.h>
+#include <shlobj_core.h>
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -53,6 +56,7 @@
 #define INPUT Input::Instance()
 #define SOUND_MANAGER SoundManager::Instance()
 #define GAME_MANAGER GameManager::Instance()
+
 
 // C 런타임 헤더 파일입니다.
 #include <stdlib.h>

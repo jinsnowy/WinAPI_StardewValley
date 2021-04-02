@@ -223,10 +223,12 @@
     <ClInclude Include="Object\TempObject.h" />
     <ClInclude Include="Other\UserException.h" />
     <ClInclude Include="Other\WindowsMessageMap.h" />
+    <ClInclude Include="Profiler.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Resources\PrototypeManager.h" />
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="Resources\Texture.h" />
+    <ClInclude Include="Scene\CavernEntranceScene.h" />
     <ClInclude Include="Scene\FarmScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\InHouseScene.h" />
@@ -238,6 +240,7 @@
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\StartScene.h" />
     <ClInclude Include="Scene\TownStoreScene.h" />
+    <ClInclude Include="Sound\fmod.h" />
     <ClInclude Include="Sound\fmod.hpp" />
     <ClInclude Include="Sound\SoundManager.h" />
     <ClInclude Include="targetver.h" />
@@ -312,9 +315,11 @@
     <ClCompile Include="Object\TempObject.cpp" />
     <ClCompile Include="Other\UserException.cpp" />
     <ClCompile Include="Other\WindowsMessageMap.cpp" />
+    <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Resources\PrototypeManager.cpp" />
     <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="Resources\Texture.cpp" />
+    <ClCompile Include="Scene\CavernEntranceScene.cpp" />
     <ClCompile Include="Scene\FarmScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\InHouseScene.cpp" />

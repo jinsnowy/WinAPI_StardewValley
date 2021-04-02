@@ -90,8 +90,7 @@ void util::DrawVoidRectWithBorderColor(HDC hdc, const Rect& rect, COLORREF color
 
 void util::DrawVoidRectWithBorderColor(HDC hdc, RECT rc, COLORREF color)
 {
-	HPEN myPen = CreatePen(PS_SOLID, 3, color);
-	HPEN OldPen = (HPEN)SelectObject(hdc, myPen);
+	HPEN OldPen = (HPEN)SelectObject(hdc, CreatePen(PS_SOLID, 3, color));
 	HBRUSH OldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
 
 	Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
@@ -101,20 +100,24 @@ void util::DrawVoidRectWithBorderColor(HDC hdc, RECT rc, COLORREF color)
 
 void util::DrawColorRectWithOutBorder(HDC hdc, RECT rc, COLORREF color)
 {
+	HPEN OldPen = (HPEN)SelectObject(hdc, CreatePen(PS_NULL, 1, color));
 	HBRUSH OldBrush = (HBRUSH)SelectObject(hdc, CreateSolidBrush(color));
 
 	Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
 
 	DeleteObject(SelectObject(hdc, OldBrush));
+	DeleteObject(SelectObject(hdc, OldPen));
 }
 
 void util::DrawColorRectWithOutBorder(HDC hdc, const Rect& rect, COLORREF color)
 {
+	HPEN OldPen = (HPEN)SelectObject(hdc, CreatePen(PS_NULL, 1, color));
 	HBRUSH OldBrush = (HBRUSH)SelectObject(hdc, CreateSolidBrush(color));
 
 	Rectangle(hdc, rect.left, rect.top, rect.right, rect.bottom);
 
 	DeleteObject(SelectObject(hdc, OldBrush));
+	DeleteObject(SelectObject(hdc, OldPen));
 }
 
 void util::DrawHDCWithColor(HDC hdc, int w, int h, COLORREF color)
