@@ -15,13 +15,9 @@
 #include "../utils.h"
 #include "../Object/MoveObj/Player.h"
 #include "../Object/StaticObj/GameManager.h"
+#include "../Profiler.h"
 
 DEFINITION_SINGLE(CollisionManager)
-
-size_t quad_build_total_us = 0;
-size_t collidecheck_total_us = 0;
-int frame_count = 0;
-extern int frame_num;
 
 CollisionManager::CollisionManager()
 {
@@ -95,18 +91,14 @@ void CollisionManager::Clear()
 {
     m_CollisionObjList.clear();
 
-    for (auto iter = m_tempCollisionObjList.begin();
-        iter != m_tempCollisionObjList.end();
-        ++iter)
+    // 한 프레임에 추가된 즉발 충돌체
+    const auto iterEnd = m_tempCollisionObjList.end();
+    for (auto iter = m_tempCollisionObjList.begin(); 
+        iter != iterEnd; ++iter)
     {
         SAFE_RELEASE((*iter));
     }
     m_tempCollisionObjList.clear();
-
-    if (SHOWCHECK(SHOW_COLL))
-    {
-        m_CollisionSpace->Draw(m_pCollTex->GetDC(), 0.f);
-    }
 
     // 쿼드 트리 초기화
     m_CollisionSpace->Clear();
@@ -119,7 +111,8 @@ void CollisionManager::NaiveAdd(Object* const& pObj)
 
 void CollisionManager::AddObject(Object* pObj)
 {
-    auto tic = chrono::steady_clock::now();
+    PROBE_PERFORMANCE("AddObject", "Collision");
+
     if (pObj->CheckCollider())
     {
         // NaiveAdd(pObj);
@@ -131,11 +124,9 @@ void CollisionManager::AddObject(Object* pObj)
             }
         }
     }
-    auto toc = chrono::steady_clock::now();
-    quad_build_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
 }
 
-void CollisionManager::Collision(float dt)
+void CollisionManager::CollisionListVersion(float dt)
 {
     if (m_CollisionObjList.size() < 2)
     {
@@ -148,6 +139,7 @@ void CollisionManager::Collision(float dt)
     list<Object*>::iterator iterEnd = m_CollisionObjList.end();
     --iterEnd;
    
+    // 오브젝트 기준으로 한 번 비교
     for (iter = m_CollisionObjList.begin(); iter != iterEnd; ++iter)
     {
         list<Object*>::iterator jter = iter;
@@ -155,6 +147,7 @@ void CollisionManager::Collision(float dt)
         list<Object*>::iterator jterEnd = m_CollisionObjList.end();
         for (; jter != jterEnd; ++jter)
         {
+            // 두 오브젝트간 콜라이어들끼리 비교
             CheckCollision(*iter, *jter, dt);
         }
     }
@@ -162,45 +155,49 @@ void CollisionManager::Collision(float dt)
     Clear();
 }
 
-void CollisionManager::Collision2(float dt)
+void CollisionManager::CollisionQuadTreeVersion(float dt)
 {
     m_pCollTex->ClearBuffer(0, 0, GETRESOLUTION.x, GETRESOLUTION.y);
 
     const auto& collList = *(m_CollisionSpace->GetColliderList());
     int srcCollNum = (int)collList.size();
-
     if (srcCollNum < 2)
     {
         Clear();
         return;
     }
-#ifdef _DEBUG
+
+    // 콜라이더 보여주기 On 상태인 경우
+    if (SHOWCHECK(SHOW_COLL))
+    {
+        m_CollisionSpace->Draw(m_pCollTex->GetDC(), dt);
         const auto& pPlayerColl = m_CollisionSpace->FindCollider("PlayerBody");
         if (pPlayerColl)
         {
             vector<Collider*> pPlayerList;
             m_CollisionSpace->GetEqualSpaceColliders(pPlayerColl, pPlayerList);
-            if (SHOWCHECK(SHOW_COLL))
-            {
-                DrawColliders(pPlayerList, nullptr);
-            }
+            DrawColliders(pPlayerList, nullptr);
         }
-#endif
-    auto tic = chrono::steady_clock::now();
+    }
+
+    // 충돌 체크 성능 체크
+    PROBE_PERFORMANCE("CollisionCheck", "Collision");
+
+    // 충돌체와 충돌체 검사 시작 부분
     for (int i = 0; i < srcCollNum; ++i)
     {
         const auto& pSrc = collList[i];
         // 충돌체 검색
         vector<Collider*> pDstList;
         m_CollisionSpace->GetEqualSpaceColliders(pSrc, pDstList);
-        vector<Collider*>::const_iterator iterDst;
-        vector<Collider*>::const_iterator iterDstEnd = pDstList.end();
 
+        // 충돌가능한 모든 상대방 충돌체 
         int dstCollNum = (int)pDstList.size();
         for (int j = 0; j < dstCollNum; ++j)
         {
             const auto& pDst = pDstList[j];
 
+            // 비교했다는 표시를 남김
             m_CollisionSpace->Mark(pSrc, pDst);
 
             // 충돌체가 서로 충돌했는가
@@ -209,8 +206,7 @@ void CollisionManager::Collision2(float dt)
                 // 히트 포인트 셋팅
                 pDst->SetHitPoint(pSrc->GetHitPoint());
 
-                // 충돌목록에서 이전에 충돌된 적이 없다면
-                // 처음 막 충돌되었다는 의미
+                // 이전에 충돌하지 않았음
                 if (!pSrc->CheckCollisionList(pDst))
                 {
                     // 서로 상대방을 충돌 목록으로 추가한다.
@@ -220,43 +216,28 @@ void CollisionManager::Collision2(float dt)
                     pSrc->CallFunction(CS_ENTER, pDst, dt);
                     pDst->CallFunction(CS_ENTER, pSrc, dt);
                 }
-                // 기존 충돌된 적이 있다면 계속 충돌 상태인 것이다.
+                // 한번 충돌한 적이 있음
                 else
                 {
                     pSrc->CallFunction(CS_STAY, pDst, dt);
                     pDst->CallFunction(CS_STAY, pSrc, dt);
                 }
             }
-            // 현재 충돌하지 않았다면,
-            // 현재 충돌이 안된 상태에서 이전에 충돌이 되고 있엇
-            // 다면 이제 막 충돌상태에서 떨어졌다는 의미이다.
+            // 충돌하지 않았지만 이전 이력이 있는 경우
             else if (pSrc->CheckCollisionList(pDst))
             {
                 // 서로 충돌이 안되므로 충돌목록에서 지워준다.
                 pSrc->EraseCollisionList(pDst);
                 pDst->EraseCollisionList(pSrc);
-
+                // 충돌에서 떠나는 상태
                 pSrc->CallFunction(CS_LEAVE, pDst, dt);
                 pDst->CallFunction(CS_LEAVE, pSrc, dt);
             }
         }
     }
-    auto toc = chrono::steady_clock::now();
-    collidecheck_total_us += chrono::duration_cast<chrono::microseconds>(toc - tic).count();
-#ifdef  _DEBUG
-    ++frame_count;
-    if (frame_count == frame_num)
-    {
-        frame_count = 0;
-        quad_build_total_us /= frame_num;
-        collidecheck_total_us /= frame_num;
-        _cprintf("QuadTree  build takes %f ms\n", (float)quad_build_total_us / 1000.f);
-        _cprintf("Collision check takes %f ms\n", (float)collidecheck_total_us / 1000.f);
-        quad_build_total_us = 0;
-        collidecheck_total_us = 0;
-    }
-#endif //  _DEBUG
+
     Clear();
+
 }
 
 void CollisionManager::Draw(HDC hdc, float dt)
@@ -269,20 +250,20 @@ bool CollisionManager::CheckCollision(Object* pSrc, Object* pDst, float dt)
     const list<Collider*>* pSrcList = pSrc->GetColliderList();
     const list<Collider*>* pDstList = pDst->GetColliderList();
 
-    list<Collider*>::const_iterator iterSrc;
-    list<Collider*>::const_iterator iterSrcEnd = pSrcList->end();
+    auto iterSrc = pSrcList->begin();
+    const auto& iterSrcEnd = pSrcList->cend();
 
-    list<Collider*>::const_iterator iterDst;
-    list<Collider*>::const_iterator iterDstEnd = pDstList->end();
+    auto iterDst = pDstList->begin();
+    const auto& iterDstEnd = pDstList->cend();
 
     bool bCollision = false;
-    for (iterSrc = pSrcList->begin(); iterSrc != iterSrcEnd; ++iterSrc)
+    for (; iterSrc != iterSrcEnd; ++iterSrc)
     {
         if (!(*iterSrc)->GetEnable())
         {
             continue;
         }
-        for (iterDst = pDstList->begin(); iterDst != iterDstEnd; ++iterDst)
+        for (; iterDst != iterDstEnd; ++iterDst)
         {
             if (!(*iterDst)->GetEnable())
             {

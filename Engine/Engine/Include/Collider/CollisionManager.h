@@ -18,8 +18,8 @@ public:
 	void AddCollidePoint(const Pos& pos, const string& strTag);
 	void AddObject(class Object* pObj);
 
-	void Collision(float dt);
-	void Collision2(float dt);
+	void CollisionListVersion(float dt);
+	void CollisionQuadTreeVersion(float dt);
 	void Draw(HDC hdc, float dt);
 	bool CheckCollision(class Object* pSrc, class Object* pDst, float dt);
 	void DrawColliders(const vector<class Collider*> &colls, class Collider* pColl);
