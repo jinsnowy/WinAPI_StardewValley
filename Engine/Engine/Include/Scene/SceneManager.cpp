@@ -6,6 +6,7 @@
 #include "FarmScene.h"
 #include "PelicantownScene.h"
 #include "TownStoreScene.h"
+#include "CavernEntranceScene.h"
 #include "../Application/Window.h"
 #include "../Core/FrameTimer.h"
 #include "../Core/Camera.h"
@@ -165,6 +166,9 @@ void SceneManager::ChangeScene()
 			break;
 		case SCENE_CREATE::SC_STORE:
 			CreateScene<TownStoreScene>(nxt);
+			break;
+		case SCENE_CREATE::SC_CAVERN_ENTRANCE:
+			CreateScene<CavernEntranceScene>(nxt);
 			break;
 		}
 	}
