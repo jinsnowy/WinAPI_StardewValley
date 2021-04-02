@@ -122,7 +122,6 @@ void CollisionSpace::GetEqualSpaceColliders(Collider* pSrc, vector<Collider*>& d
 	m_QuadHead->Search(pSrc, dstColliders);
 }
 
-
 void CollisionSpace::QuadSpace::Draw(HDC& hdc, const float& dt)
 {
 	Rect screenRect = m_tArea.SubtractOffset(CAMERA->GetTopLeft());
@@ -225,7 +224,7 @@ void CollisionSpace::QuadSpace::SplitArea()
 void CollisionSpace::QuadSpace::Search(Collider* const& pSrc, vector<Collider*>& dstColliders)
 {
 	const int& srcId = pSrc->GetId();
-	const auto InsertNotEqObjAndNotChecked = [&](Collider* pDst)
+	const auto InsertByNotEqObjAndNotChecked = [&](Collider* pDst)
 	{
 		const int& dstId = pDst->GetId();
 		bool checked = m_CheckMat[srcId][dstId] || m_CheckMat[dstId][srcId];
@@ -235,7 +234,7 @@ void CollisionSpace::QuadSpace::Search(Collider* const& pSrc, vector<Collider*>&
 		}
 	};
 
-	for_each(m_CollList.begin(), m_CollList.end(), InsertNotEqObjAndNotChecked);
+	for_each(m_CollList.begin(), m_CollList.end(), InsertByNotEqObjAndNotChecked);
 
 	// 파티션 분리가 되어 있을 때
 	if (m_QuadPartitions[0])
@@ -264,9 +263,9 @@ bool CollisionSpace::QuadSpace::OutSideOfScreen(Collider* pColl)
 	return false;
 }
 
-shared_ptr<CollisionSpace::QuadSpace> CollisionSpace::QuadSpace::MakeQuadPtr(unsigned int level, size_t idx, const Rect& rect)
+CollisionSpace::QuadPtr CollisionSpace::QuadSpace::MakeQuadPtr(unsigned int level, size_t idx, const Rect& rect)
 {
-	return make_shared<QuadSpace>(level, idx, rect);
+	return make_unique<QuadSpace>(level, idx, rect);
 }
 
 CollisionSpace::QuadSpace::QuadSpace(unsigned int level, size_t idx, const Rect& rect)
@@ -278,7 +277,6 @@ CollisionSpace::QuadSpace::QuadSpace(unsigned int level, size_t idx, const Rect&
 {
 
 }
-
 bool CollisionSpace::QuadSpace::IsOverLoaded() const
 {
 	return m_CollList.size() > m_iMaxObjectNum && m_QuadPartitions[0] == nullptr

@@ -10,7 +10,7 @@ public:
 private:
 	class QuadSpace;
 	typedef QuadSpace* QuadParentPtr;
-	typedef shared_ptr<QuadSpace> QuadPtr;
+	typedef unique_ptr<QuadSpace> QuadPtr;
 	class QuadSpace
 	{
 		friend class CollisionSpace;
