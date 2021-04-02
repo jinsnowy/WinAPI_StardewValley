@@ -22,8 +22,61 @@
 #include "../Object/StaticObj/Tree.h"
 #include "../Math.h"
 
+
 wchar_t MapEditScene::m_strText1[MAX_PATH] = {};
 wchar_t MapEditScene::m_strText2[MAX_PATH] = {};
+
+int MapEditScene::FileSaveDialog(HWND hWnd)
+{
+    memset(m_strText1, 0, MAX_PATH);
+    memset(m_strText2, 0, MAX_PATH);
+    OPENFILENAME ofn;
+
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hWnd;
+    ofn.lpstrTitle = L"저장할 파일 이름을 입력하세요";
+    ofn.lpstrFileTitle = m_strText2;
+    ofn.lpstrFile = m_strText1;
+
+    ofn.nMaxFile = MAX_PATH;
+    ofn.nMaxFileTitle = MAX_PATH;
+    ofn.lpstrFilter = L"맵(*.map)\0*.map\0";
+    ofn.lpstrDefExt = L"map";
+
+    if (GetSaveFileName(&ofn))
+    {
+        return ofn.nFilterIndex;
+    }
+
+    return 0;
+}
+
+int MapEditScene::FileOpenDialog(HWND hWnd)
+{
+    memset(m_strText1, 0, MAX_PATH);
+    memset(m_strText2, 0, MAX_PATH);
+    OPENFILENAME ofn;
+
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hWnd;
+    ofn.lpstrTitle = L"읽을 파일을 선택해 주세요";
+    ofn.lpstrFileTitle = m_strText2;
+    ofn.lpstrFile = m_strText1;
+   
+    ofn.nMaxFile = MAX_PATH;
+    ofn.nMaxFileTitle = MAX_PATH;
+    ofn.lpstrFilter = L"맵(*.map)\0*.map\0";
+    ofn.lpstrDefExt = L"map";
+
+    if (GetOpenFileName(&ofn))
+    {
+        return ofn.nFilterIndex;
+    }
+
+    return -1;
+}
 
 MapEditScene::MapEditScene()
 {
@@ -161,7 +214,8 @@ void MapEditScene::Input(float dt)
         WideCharToMultiByte(CP_ACP, 0, m_strText2, -1, strY, 10, 0, 0);
         if (strlen(strX) && strlen(strY))
         {
-            int sizeX = stoi(string(strX)); int sizeY = stoi(string(strY));
+            int sizeX = stoi(strX); 
+            int sizeY = stoi(strY);
             if (sizeX > 0 && sizeY > 0)
             {
                 SetUpDefaultStages(sizeX, sizeY);
@@ -172,29 +226,23 @@ void MapEditScene::Input(float dt)
     if (KEYDOWN("Save"))
     {
         ShowCursor(TRUE);
-        INT_PTR clickResult = DialogBox(WINDOWINSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), WINDOWHANDLE, MapEditScene::DlgProc1);
+        if (FileSaveDialog(WINDOWHANDLE) != -1)
+        {
+            if(lstrlen(m_strText2))
+                SaveDefaultStages(m_vecStage, GetChar(m_strText2));
+        }
         ShowCursor(FALSE);
 
-        if (clickResult == IDOK)
-        {
-            char strFileName[MAX_PATH] = {};
-            WideCharToMultiByte(CP_ACP, 0, m_strText1, -1, strFileName, lstrlen(m_strText1), 0, 0);
-            SaveDefaultStages(m_vecStage, strFileName);
-        }
     }
     if (KEYDOWN("Load"))
     {
         ShowCursor(TRUE);
-        INT_PTR clickResult = DialogBox(WINDOWINSTANCE, MAKEINTRESOURCE(IDD_DIALOG1), WINDOWHANDLE, MapEditScene::DlgProc1);
-        ShowCursor(FALSE);
-
-        if (clickResult == IDOK)
+        if (FileOpenDialog(WINDOWHANDLE) != -1)
         {
-            char strFileName[MAX_PATH] = {};
-            WideCharToMultiByte(CP_ACP, 0, m_strText1, -1, strFileName, lstrlen(m_strText1), 0, 0);
-            LoadDefaultStages(strFileName);
+            LoadDefaultStages(GetChar(m_strText2));
             SetUpCamera();
         }
+        ShowCursor(FALSE);
     }
 }
 
@@ -391,6 +439,8 @@ void MapEditScene::SetUpTileSelectUI()
     m_pSelUI->LoadTiles(SEL_GROUND, L"SV/TileGround/Middleway/");
     m_pSelUI->LoadTiles(SEL_GROUND, L"SV/TileGround/Outdoor/");
     m_pSelUI->LoadTiles(SEL_GROUND, L"SV/TileGround/PelicanTown/");
+    m_pSelUI->LoadTiles(SEL_GROUND, L"SV/TileGround/Cavern/");
+
     m_pSelUI->LoadTiles(SEL_STATIC, L"SV/TileStatic/");
     m_pSelUI->LoadTiles(SEL_STATIC, L"SV/TileStatic/Inner/");
     m_pSelUI->LoadTiles(SEL_STATIC, L"SV/TileStatic/Town/");
@@ -402,6 +452,7 @@ void MapEditScene::SetUpTileSelectUI()
     m_pSelUI->LoadTiles(SEL_TILEOBJECT, L"SV/TileObject/Outdoor/");
     m_pSelUI->LoadTiles(SEL_TILEOBJECT, L"SV/TileObject/Plant/");
     m_pSelUI->LoadTiles(SEL_TILEOBJECT, L"SV/TileObject/Wall/");
+    m_pSelUI->LoadTiles(SEL_TILEOBJECT, L"SV/TileObject/Cavern/");
 
     // object prototype
     m_pSelUI->LoadPrototypes(PR_OUTDOOR);
@@ -416,7 +467,7 @@ void MapEditScene::BackButtonCallback(float dt)
     state.nextBeacon = BC_NONE;
     state.nextDir = RIGHT;
     state.nextScene = SC_START;
-    SOUND_MANAGER->PlaySound("StartScene_Click");
+    SOUND_MANAGER->PlayMusic("StartScene_Click");
     SCENE_MANAGER->SignalizeSceneChange(state);
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "../framework.h"
 #include "Scene.h"
 
 class MapEditScene :
@@ -39,6 +40,8 @@ private:
     void LoadDefaultStages(const char* fileName);
     void StageClear(STAGE_TAG eStageTag, const string& layerTag);
     void CameraScroll(float dt);
+    int FileOpenDialog(HWND hWnd);
+    int FileSaveDialog(HWND hWnd);
 private:
     vector<class Stage*> m_vecStage;
     class Layer* m_pObjLayer = nullptr;
