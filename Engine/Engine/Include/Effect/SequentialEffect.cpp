@@ -4,22 +4,22 @@ SequentialEffect::~SequentialEffect()
 {
 }
 
-void SequentialEffect::AddEffect(const EffectPtr& next)
+void SequentialEffect::AddEffect(EffectPtr& next)
 {
     if (m_CurEffect == nullptr)
     {
-        m_CurEffect = next;
+        m_CurEffect = std::move(next);
         return;
     }
-    m_EffectQueue.push(next);
+    m_EffectQueue.push(std::move(next));
 }
 
-SequentialEffect::SequentialEffect(initializer_list<EffectPtr> effect_list)
+SequentialEffect::SequentialEffect(vector<EffectPtr> &effect_list)
 {
     const auto iterEnd = effect_list.end();
     for (auto iter = effect_list.begin(); iter != iterEnd; ++iter)
     {
-        AddEffect(*iter);
+        AddEffect((*iter));
     }
 }
 
@@ -31,7 +31,7 @@ void SequentialEffect::Step(float dt)
     {
         if (m_EffectQueue.size())
         {
-            m_CurEffect = m_EffectQueue.front();
+            m_CurEffect = std::move(m_EffectQueue.front());
             m_EffectQueue.pop();
         }
         else 

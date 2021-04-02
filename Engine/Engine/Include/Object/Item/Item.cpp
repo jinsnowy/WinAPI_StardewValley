@@ -30,18 +30,19 @@ void Item::GenerateItemEffect()
 
     angle = (rand() % 2 == 1) ? angle : PI - angle;
 
-    EffectPtr pBound = make_shared<BoundEffect>(this, 2.5f, 4, angle, velo, GetPos().y + 0.5f);
-    EffectPtr pChase;
+    vector<EffectPtr> seq;
+    seq.push_back(make_unique<BoundEffect>(this, 2.5f, 4, angle, velo, GetPos().y + 0.5f));
+    EffectPtr pChase = nullptr;
     if (PLAYER->HasRing())
     {
-        pChase = make_shared<ChaseLongEffect>(this, PLAYER);
+        seq.push_back(make_unique<ChaseLongEffect>(this, PLAYER));
     }
     else
     {
-        pChase = make_shared<ChaseEffect>(this, PLAYER);
+        seq.push_back(make_unique<ChaseEffect>(this, PLAYER));
     }
-    EffectPtr pSeq = make_shared<SequentialEffect>(initializer_list<EffectPtr> { pBound, pChase });
-    SetEffect(pSeq);
+    EffectPtr pSeq = make_unique<SequentialEffect>(seq);
+    SetEffect(std::move(pSeq));
 }
 
 Item::Item()

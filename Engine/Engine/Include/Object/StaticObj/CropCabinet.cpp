@@ -157,7 +157,7 @@ void CropCabinet::SoldEffect(Item* pItem)
     pObj->SetLifeDuration(1.0f);
     pObj->SetTexture(pItem->AccessTexture());
     pObj->SetAsTextureSize();
-    pObj->SetEffect(make_shared<VanishEffect>(pObj, 1.0f, Pos(0.0, -30.f)));
+    pObj->SetEffect(make_unique<VanishEffect>(pObj, 1.0f, Pos(0.0, -30.f)));
     m_pScene->FindLayer("Effect")->AddObject(pObj);
     SAFE_RELEASE(pObj);
 
@@ -194,7 +194,7 @@ void CropCabinet::SoldEffect(Item* pItem)
     pObj->SetLifeDuration(1.0f);
     pObj->SetTexture(pTex);
     pObj->SetAsTextureSize();
-    pObj->SetEffect(make_shared<VanishEffect>(pObj, 1.0f, Pos(0.0, -30.f)));
+    pObj->SetEffect(make_unique<VanishEffect>(pObj, 1.0f, Pos(0.0, -30.f)));
     m_pScene->FindLayer("Effect")->AddObject(pObj);
 
     SAFE_RELEASE(pTex);

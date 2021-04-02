@@ -7,10 +7,9 @@ protected:
 	EffectPtr m_CurEffect = nullptr;
 	queue<EffectPtr> m_EffectQueue;
 private:
-	void AddEffect(const EffectPtr& next);
+	void AddEffect(EffectPtr& next);
 public:
-	SequentialEffect(initializer_list<EffectPtr> effect_list);
-	SequentialEffect(const SequentialEffect& effect) = delete;
+	SequentialEffect(vector<EffectPtr> &effect_list);
 	virtual ~SequentialEffect();
 public:
 	virtual void Step(float dt) final;

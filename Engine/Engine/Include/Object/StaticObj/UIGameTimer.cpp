@@ -51,8 +51,8 @@ void UIGameTimer::Input(float dt)
 		// Ã¼·Â¹Ù ¶³¸²
 		if (!m_pPlayerMPPanel->HasEffect())
 		{
-			EffectPtr pEffect = make_shared<ShakeEffect>(m_pPlayerMPPanel, FLT_MAX, 0.01f, 3.f, 0.f, 8.0f, 1.0f);
-			m_pPlayerMPPanel->SetEffect(pEffect);
+			EffectPtr pEffect = make_unique<ShakeEffect>(m_pPlayerMPPanel, FLT_MAX, 0.01f, 3.f, 0.f, 8.0f, 1.0f);
+			m_pPlayerMPPanel->SetEffect(std::move(pEffect));
 		}
 	}
 	else {

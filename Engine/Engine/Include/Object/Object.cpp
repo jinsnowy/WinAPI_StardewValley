@@ -39,16 +39,32 @@ Object::Object() :
 }
 
 Object::Object(const Object& obj)
+    : Ref(obj)
 {
-    *this = obj;
+    // 일반 멤버 함수
+    m_eObjType = obj.m_eObjType;
+    m_bEnableAnimation = obj.m_bEnableAnimation;
+    m_bUIObject = obj.m_bUIObject;
+    m_bEnableTransparent = obj.m_bEnableAnimation;
+    m_iAlpha = obj.m_iAlpha;
+    m_tPos = obj.m_tPos;
+    m_tPivot = obj.m_tPivot;
+    m_tImageOffset = obj.m_tImageOffset;
+    m_tSize = obj.m_tSize;
+
+    // 복사 제외 항목
     m_Ref = 1;
     m_pEffect = nullptr;
+    m_fGravityTime = 0.f;
 
+    // 포인터 타입
+    m_pLayer = obj.m_pLayer;
+    m_pScene = obj.m_pScene;
+    m_pAnimation = obj.m_pAnimation;
     if (obj.m_pAnimation)
         m_pAnimation = obj.m_pAnimation->Clone();
 
-    m_fGravityTime = 0.f;
-
+    m_pTexture = obj.m_pTexture;
     if (m_pTexture)
         m_pTexture->AddRef();
 
@@ -74,7 +90,7 @@ Object::~Object()
     Safe_Release_VecList(m_ColliderList);
 }
 
-void Object::SetEffect(const EffectPtr& pEffect)
+void Object::SetEffect(EffectPtr&& pEffect)
 {
     m_pEffect = std::move(pEffect);
 }
@@ -236,9 +252,7 @@ void Object::SetClipNextState(const string& strName, int iState)
     m_pAnimation->SetClipNextState(strName, iState);
 }
 
-
 // ------------------------
-
 bool Object::Init()
 {
     return false;

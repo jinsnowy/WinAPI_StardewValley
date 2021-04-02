@@ -22,7 +22,7 @@ protected:
 public:
 	bool IsUIObject()const { return m_bUIObject; }
 	bool HasEffect() const { return m_pEffect != nullptr; }
-	void SetEffect(const EffectPtr& pEffect);
+	void SetEffect(EffectPtr&& pEffect);
 	OBJ_TYPE GetObjectType() const { return m_eObjType; }
 	template<typename T>
 	static T* CreateObject(const string& strTag)
@@ -179,10 +179,7 @@ public:
 	float GetTop() const { return m_tPos.y - m_tSize.y * m_tPivot.y; }
 	float GetRight() const { return GetLeft() + m_tSize.x; }
 	float GetBottom() const { return GetTop() + m_tSize.y; }
-	Pos GetCenter() const
-	{
-		return GetTopLeft() + m_tSize * 0.5f;
-	}
+	Pos GetCenter() const{ return GetTopLeft() + m_tSize * 0.5f; }
 	Pos GetPos() const { return m_tPos; }
 	Pos GetPivot() const { return m_tPivot; }
 	Pos GetTopLeft() const { return m_tPos - m_tSize * m_tPivot; }

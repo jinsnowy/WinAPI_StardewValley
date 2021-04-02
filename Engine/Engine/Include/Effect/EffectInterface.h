@@ -13,4 +13,4 @@ public:
 	virtual void Step(float dt) = 0;
 };
 
-typedef shared_ptr<EffectInterface> EffectPtr;
+typedef unique_ptr<EffectInterface> EffectPtr;
