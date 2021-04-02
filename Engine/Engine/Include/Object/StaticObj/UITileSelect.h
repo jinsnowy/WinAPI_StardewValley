@@ -29,9 +29,9 @@ private:
 	int m_iCurPageNum = 0;
 	EDIT_MODE m_eCurSelTile = SEL_GROUND;
 
-	int m_iMarginWidth = 10;
-	int m_iMarginHeight = 10;
-	int m_iMarginItem = 10;
+	int m_iMarginWidth = 5;
+	int m_iMarginHeight = 5;
+	int m_iMarginItem = 5;
 	static constexpr int m_iSelButtonSize = 40;
 	static constexpr int m_iStageTagWidth = 120;
 	static constexpr int m_iStageTagHeight = 80;
