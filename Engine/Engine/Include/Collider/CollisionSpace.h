@@ -60,9 +60,8 @@ private:
 	static constexpr size_t m_iMaxObjectNum = 4;
 	static constexpr float m_fMinSize = 32.f;
 	static constexpr int m_iExpectedCollNum = 20;
-	// 관리되고 있는 쿼드트리 -> 씬마다 관리
-	static unordered_map<int, unique_ptr<CollisionSpace>> m_mapCollisionSpace;
-	static CollisionSpace* m_CurSpace;
+	static unique_ptr<CollisionSpace> m_CurSpace;
+	bool m_bInit = false;
 	int m_CurSize = 0;
 	QuadPtr m_QuadHead = nullptr;
 	Rect m_tWorldSpace = {};
@@ -81,8 +80,8 @@ private:
 public:
 	void InitializeCheckMat();
 	int GetCurSize() const { return m_CurSize; }
-	static CollisionSpace* GetCurQuadTree() { return m_CurSpace; }
-	static void SetQuadTree(SCENE_CREATE sc);
+	static CollisionSpace* GetCurQuadTree() { return m_CurSpace.get(); }
+	static void SetQuadTree();
 	void ErasePreviousCollider(Collider* pColl);
 	void Observe(Collider* pColl);
 	const vector<Collider*>* GetColliderList() const { return &m_ColliderContainer; }

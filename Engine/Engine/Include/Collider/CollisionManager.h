@@ -19,7 +19,7 @@ public:
 	void AddObject(class Object* pObj);
 
 
-	void SetUpCollisionSpace(SCENE_CREATE sc);
+	void SetUpCollisionSpace();
 	void CollisionListVersion(float dt);
 	void CollisionQuadTreeVersion(float dt);
 	void Draw(HDC hdc, float dt);

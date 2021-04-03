@@ -28,9 +28,9 @@ private:
 			m_Logger(logger)
 		{
 		}
-		float toMiliSeconds() const 
+		float toMiliSeconds() const
 		{
-			return float(m_Calculated) / 1000.f; 
+			return float(m_Calculated) / 1000.f;
 		}
 		void Update()
 		{

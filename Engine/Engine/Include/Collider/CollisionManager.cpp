@@ -123,9 +123,9 @@ void CollisionManager::AddObject(Object* pObj)
     }
 }
 
-void CollisionManager::SetUpCollisionSpace(SCENE_CREATE sc)
+void CollisionManager::SetUpCollisionSpace()
 {
-    CollisionSpace::SetQuadTree(sc);
+    CollisionSpace::SetQuadTree();
     m_CollisionSpace = CollisionSpace::GetCurQuadTree();
 }
 

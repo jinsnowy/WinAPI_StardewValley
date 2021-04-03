@@ -58,7 +58,7 @@ bool SceneManager::Init()
 	SAFE_DELETE(m_vecScene[SC_MAPEDIT]);
 
 	m_pScene = CreateScene<StartScene>(SC_START);
-	COLLISION_MANAGER->SetUpCollisionSpace(SC_START);
+	COLLISION_MANAGER->SetUpCollisionSpace();
 
 	m_pPlayer = new Player;
 	m_pPlayer->SetTag("Player");
@@ -181,7 +181,7 @@ void SceneManager::ChangeScene()
 		}
 	}
 
-	COLLISION_MANAGER->SetUpCollisionSpace(nxt);
+	COLLISION_MANAGER->SetUpCollisionSpace();
 
 	if (m_tNextState.bSleep)
 	{

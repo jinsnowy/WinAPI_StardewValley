@@ -6,24 +6,18 @@
 #include "../Resources/ResourceManager.h"
 #include "../Core/Camera.h"
 
-CollisionSpace* CollisionSpace::m_CurSpace = nullptr;
-unordered_map<int, unique_ptr<CollisionSpace>> CollisionSpace::m_mapCollisionSpace;
+unique_ptr<CollisionSpace> CollisionSpace::m_CurSpace = nullptr;
 
 CollisionSpace::CollisionSpace()
 {
 }
 
-void CollisionSpace::SetQuadTree(SCENE_CREATE sc)
+void CollisionSpace::SetQuadTree()
 {
-	int sc_id = int(sc);
-	auto found = m_mapCollisionSpace.find(sc_id);
-	if (found == m_mapCollisionSpace.end())
-	{
-		m_mapCollisionSpace[sc_id] = make_unique<CollisionSpace>();
-		m_mapCollisionSpace[sc_id]->Init();
-	}
-
-	m_CurSpace = m_mapCollisionSpace[sc_id].get();
+	// 기존 쿼드트리가 있는 경우 삭제
+	m_CurSpace = nullptr;
+	m_CurSpace = make_unique<CollisionSpace>();
+	m_CurSpace->Init();
 }
 
 void CollisionSpace::Init()
@@ -86,6 +80,7 @@ void CollisionSpace::InitializeCheckMat()
 {
 	auto curSize = m_CheckMat.size();
 	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(curSize, false));
+	m_bInit = true;
 }
 
 void CollisionSpace::Observe(Collider* pColl)
@@ -93,10 +88,14 @@ void CollisionSpace::Observe(Collider* pColl)
 	if (QuadSpace::OutSideOfScreen(pColl))
 		return;
 
-	if (!pColl->IsMoved())
-		return;
+	// 초기화
+	if (m_bInit)
+	{
+		if (!pColl->IsMoved())
+			return;
 
-	ErasePreviousCollider(pColl);
+		ErasePreviousCollider(pColl);
+	}
 
 	// id 큐에서 꺼냄
 	int nxt_id = m_IdQueue.top();
@@ -137,11 +136,7 @@ void CollisionSpace::ErasePreviousCollider(Collider* pColl)
 	// 기존 쿼드 트리 공간에서 삭제
 	int spaceId = pColl->GetSpaceId();
 
-	// 씬 전환으로 새로 생긴 콜라이더의 경우
 	const auto& quad = FindSpace(spaceId);
-	if (!quad)
-		return;
-
 	auto& collList = quad->m_CollList;
 	const auto& iterEnd = collList.end();
 	for (auto iter = collList.begin(); iter != iterEnd; ++iter)
@@ -205,7 +200,6 @@ void CollisionSpace::QuadSpace::Merge(int parentId, list<Collider*> &parentColli
 		}
 	}
 }
-
 
 void CollisionSpace::QuadSpace::Insert(Collider* const& pColl)
 {
