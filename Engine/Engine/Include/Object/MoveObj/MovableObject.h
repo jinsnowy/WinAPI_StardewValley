@@ -11,7 +11,11 @@ protected:
     float m_Angle;
     float m_Speed;
     bool  m_bMove;
+    bool m_bMoveEnabled = false;
 public:
+    void DisableMovement() { m_bMoveEnabled = false; }
+    void EnableMovement() { m_bMoveEnabled = true; }
+
     void SetAngle(float angle) { m_Angle = angle; }
     void SetSpeed(float speed) { m_Speed = speed; }
     float GetAngle() const { return m_Angle; }

@@ -2,7 +2,7 @@
 #include "../Resources/Texture.h"
 #include "../Resources/ResourceManager.h"
 #include "../Object/Object.h"
-
+#include "../Resources/Texture.h"
 Animation::Animation()
 	:
 	m_pCurClip(nullptr),
@@ -29,6 +29,8 @@ Animation::Animation(const Animation& anim)
 		{
 			pClip->vecTexture[i]->AddRef();
 		}
+
+		m_mapClip.insert(make_pair(iter->first, pClip));
 	}
 
 	m_pCurClip = nullptr;
@@ -286,7 +288,7 @@ void Animation::SaveFromPath(const char* pFileName, const string& strPathKey)
 void Animation::Save(FILE* pFile)
 {
 	// Tag 정보 저장
-	size_t iLength = m_strTag.length();
+	int iLength = (int) m_strTag.length();
 
 	// Tag 길이를 저장한다.
 	fwrite(&iLength, 4, 1, pFile);
@@ -294,7 +296,7 @@ void Animation::Save(FILE* pFile)
 	// Tag 문자열을 저장한다.
 	fwrite(m_strTag.c_str(), 1, iLength, pFile);
 
-	size_t iCount = m_mapClip.size();
+	int iCount = (int) m_mapClip.size();
 	fwrite(&iCount, 4, 1, pFile);
 
 	unordered_map<string, AnimationClip*>::iterator iter;
@@ -302,7 +304,12 @@ void Animation::Save(FILE* pFile)
 
 	for (iter = m_mapClip.begin(); iter != iterEnd; ++iter)
 	{
+		const auto& clipTag = iter->first;
 		const auto& clip = iter->second;
+
+		iLength = (int)clipTag.length();
+		fwrite(&iLength, 4, 1, pFile);
+		fwrite(clipTag.c_str(), 1, iLength, pFile);
 
 		fwrite(&clip->eType, 4, 1, pFile);
 		fwrite(&clip->eOption, 4, 1, pFile);
@@ -355,4 +362,69 @@ void Animation::LoadFromPath(const char* pFileName, const string& strPathKey)
 
 void Animation::Load(FILE* pFile)
 {
+	char strKey[MAX_PATH] = {};
+
+	int iLength = 0;
+	fread(&iLength, 4, 1, pFile);
+	// Tag 문자열을 저장한다.
+	fread(strKey, 1, iLength, pFile);
+	strKey[iLength] = 0;
+	m_strTag = strKey;
+
+	// 애니매이션 갯수
+	int iCount = 0;
+	fread(&iCount, 4, 1, pFile);
+	for (int i = 0; i < iCount; ++i)
+	{
+		AnimationClip* pClip = new AnimationClip;
+
+		iLength = 0;
+		fread(&iLength, 4, 1, pFile);
+		fread(strKey, 1, iLength, pFile);
+		strKey[iLength] = 0;
+		string clipTag = strKey;
+
+		fread(&pClip->eType, 4, 1, pFile);
+		fread(&pClip->eOption, 4, 1, pFile);
+
+		// 텍스쳐 갯수 로드
+		int texNum = 0;
+		fread(&texNum, 4, 1, pFile);
+		for (int i = 0; i < texNum; i++)
+		{
+			Texture* pTex = RESOURCE_MANAGER->LoadTexture(pFile);
+			pClip->vecTexture.push_back(pTex);
+		}
+
+		fread(&pClip->fAnimationTime, 4, 1, pFile);
+		fread(&pClip->fAnimationLimitTime, 4, 1, pFile);
+		fread(&pClip->fAnimationFrameTime, 4, 1, pFile);
+		fread(&pClip->iFrameX, 4, 1, pFile);
+		fread(&pClip->iFrameY, 4, 1, pFile);
+		fread(&pClip->iFrameMaxX, 4, 1, pFile);
+		fread(&pClip->iFrameMaxY, 4, 1, pFile);
+		fread(&pClip->iStartX, 4, 1, pFile);
+		fread(&pClip->iStartY, 4, 1, pFile);
+		fread(&pClip->iLengthX, 4, 1, pFile);
+		fread(&pClip->iLengthY, 4, 1, pFile);
+		fread(&pClip->fOptionTime, 4, 1, pFile);
+		fread(&pClip->fOptionLimitTime, 4, 1, pFile);
+		fread(&pClip->tFrameSize, sizeof(Vec2F), 1, pFile);
+
+		m_mapClip.insert(make_pair(clipTag, pClip));
+	}
+
+	// m_strDefaultClip 정보 로드
+	iLength = 0;
+	fread(&iLength, 4, 1, pFile);
+	fread(strKey, 1, iLength, pFile);
+	strKey[iLength] = 0;
+	m_strDefaultClip = strKey;
+
+	// m_strCurClip 정보 로드
+	iLength = 0;
+	fread(&iLength, 4, 1, pFile);
+	fread(strKey, 1, iLength, pFile);
+	strKey[iLength] = 0;
+	m_strCurClip = strKey;
 }

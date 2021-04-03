@@ -5,7 +5,6 @@ class Item : public Object
 {
 	friend class Object;
 	friend class GameManager;
-	friend class PrototypeManager;
 private:
 	static constexpr float m_fDropAngle = DEG2RAD(75.f);
 	static constexpr float m_fDropAngleVar = DEG2RAD(10.f);

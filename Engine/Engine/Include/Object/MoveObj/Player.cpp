@@ -365,16 +365,16 @@ Rect Player::BuildSwingAttack(int dx, int dy)
 	if (dx > 0)
 	{
 		rect.left = 0;
-		rect.top = -TILESIZE - m_fAttackRange;
+		rect.top = -32.f - m_fAttackRange;
 		rect.right = rect.left + m_fAttackRange;
-		rect.bottom = rect.top + 2 * m_fAttackRange;
+		rect.bottom = rect.top + m_fAttackRange + 32.f;
 	}
 	else if (dx < 0)
 	{
 		rect.left = - m_fAttackRange;
-		rect.top = -TILESIZE - m_fAttackRange;
+		rect.top = -32.f - m_fAttackRange;
 		rect.right = rect.left + m_fAttackRange;
-		rect.bottom = rect.top + 2 * m_fAttackRange;
+		rect.bottom = rect.top + m_fAttackRange + 32.f;
 	}
 	else if (dy < 0)
 	{
@@ -607,6 +607,7 @@ bool Player::Init()
 	InitAnimation();
 
 	StateTransit(IDLE_RIGHT);
+	EnableMovement();
 
 	ColliderRect* pRC = AddCollider<ColliderRect>("PlayerBody");
 	pRC->SetRect(10.f, -100.f, 50.f, -10.f);
@@ -678,7 +679,6 @@ void Player::Input(float dt)
 int Player::Update(float dt)
 {
 	MovableObject::Update(dt);
-
 	m_pPlayerTool->Update(dt);
 	return 0;
 }
@@ -686,7 +686,6 @@ int Player::Update(float dt)
 int Player::LateUpdate(float dt)
 {
 	MovableObject::LateUpdate(dt);
-
 	m_pPlayerTool->LateUpdate(dt);
 	return 0;
 }
@@ -730,7 +729,6 @@ void Player::Draw(HDC hDC, float dt)
 		int length = (int) str.size();
 		TextOut(hDC, int(MOUSECLIENTPOS.x), int(MOUSECLIENTPOS.y) + 20, GetWChar(str.c_str()), length);
 	}
-
 #endif
 	if (SHOWCHECK(SHOW_TILEOPTION))
 	{

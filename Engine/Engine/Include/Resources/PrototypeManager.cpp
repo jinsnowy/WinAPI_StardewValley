@@ -12,6 +12,7 @@
 #include "../Object/StaticObj/Npc.h"
 #include "../Object/Item/Item.h"
 #include "../Object/Item/Seed.h"
+#include "../Object/MoveObj/Monster.h"
 
 DEFINITION_SINGLE(PrototypeManager);
 
@@ -158,6 +159,8 @@ bool PrototypeManager::Init()
     Npc* pObj = Object::CreateObject<Npc>("NPC");
     RegisterProtoType(PR_OUTDOOR, "NPC_Prototype", pObj);
 
+    Monster* pMonster = Object::CreateObject<Monster>("Monster");
+    RegisterProtoType(PR_OUTDOOR, "Monster_Prototype", pMonster);
 	return true;
 }
 

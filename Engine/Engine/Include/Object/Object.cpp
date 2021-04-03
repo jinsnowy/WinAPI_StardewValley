@@ -20,6 +20,7 @@
 #include "StaticObj/Rock.h"
 #include "StaticObj/TreeTrunk.h"
 #include "StaticObj/Npc.h"
+#include "MoveObj/Monster.h"
 #include "../Effect/Effect.h"
 
 Object::Object() :
@@ -117,6 +118,9 @@ Object* Object::CreateObjectByType(OBJ_TYPE eType)
         break;
     case OBJ_NPC:
         pObj = Object::CreateObject<Npc>("NPC");
+        break;
+    case OBJ_MONSTER:
+        pObj = Object::CreateObject<Monster>("Monster");
         break;
     }
     return pObj;
@@ -595,6 +599,7 @@ void Object::Load(FILE* pFile)
 
         m_pAnimation->Init();
         m_pAnimation->Load(pFile);
+        m_pAnimation->SetObj(this);
     }
 }
 
