@@ -38,6 +38,7 @@ void CollisionSpace::QuadSpace::Clear()
 		if (m_QuadPartitions[i])
 		{
 			m_QuadPartitions[i]->Clear();
+			m_QuadPartitions[i] = nullptr;
 		}
 	}
 }
