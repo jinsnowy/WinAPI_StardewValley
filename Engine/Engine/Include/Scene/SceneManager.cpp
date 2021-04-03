@@ -18,6 +18,7 @@
 #include "../Object/Object.h"
 #include "../Object/MoveObj/Player.h"
 #include "../Object/StaticObj/GameManager.h"
+#include "../Scene/CavernInScene.h"
 
 DEFINITION_SINGLE(SceneManager)
 
@@ -134,6 +135,7 @@ void SceneManager::Draw(HDC hdc, float dt)
 void SceneManager::ChangeScene()
 {
 	FadeOut();
+	COLLISION_MANAGER->Clear();
 
 	SCENE_CREATE cur = m_pScene->GetSceneType();
 	switch (cur)
@@ -170,6 +172,9 @@ void SceneManager::ChangeScene()
 		case SCENE_CREATE::SC_CAVERN_ENTRANCE:
 			CreateScene<CavernEntranceScene>(nxt);
 			break;
+		case SCENE_CREATE::SC_CAVERN_IN:
+			CreateScene<CavernInScene>(nxt);
+			break;
 		}
 	}
 
@@ -188,7 +193,6 @@ void SceneManager::ChangeScene()
 
 	FadeIn();
 
-	COLLISION_MANAGER->Clear();
 	m_iSignal = 0;
 	m_tNextState.bSleep = false;
 	m_tNextState.nextBeacon = BC_NONE;

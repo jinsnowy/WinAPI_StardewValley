@@ -16,6 +16,10 @@ FarmScene::~FarmScene()
 
 bool FarmScene::Init()
 {
+	if (!GameScene::Init())
+	{
+		return false;
+	}
 	GameScene::SetUpScene(pGameDataFileName);
 
 	SOUND_MANAGER->LoadSound("DoorOpen", false, SD_EFFECT, "DoorOpen.mp3");

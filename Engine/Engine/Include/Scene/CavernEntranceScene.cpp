@@ -6,18 +6,44 @@
 #include "SceneManager.h"
 #include"../Sound/SoundManager.h"
 #include "../Object/StaticObj/CropCabinet.h"
+#include "../Collider/ColliderRect.h"
+#include "../Object/PointObject.h"
 CavernEntranceScene::CavernEntranceScene()
 {
 }
 
 CavernEntranceScene::~CavernEntranceScene()
 {
+	SAFE_RELEASE(m_pLadder);
+}
+
+void CavernEntranceScene::LadderDown(Collider* pSrc, Collider* pDst, float dt)
+{
+	if (pDst->GetTag() == "Click")
+	{
+		SceneState state = {};
+		state.nextDir = DOWN;
+		state.nextBeacon = BC_THREE;
+		state.nextScene = SC_CAVERN_IN;
+
+		SCENE_MANAGER->SignalizeSceneChange(state);
+	}
 }
 
 bool CavernEntranceScene::Init()
 {
+	if (!GameScene::Init())
+	{
+		return false;
+	}
 	GameScene::SetUpScene(pGameDataFileName);
-
+	m_pLadder = CreateObject<PointObject>("Ladder", FindLayer("Object"));
+	m_pLadder->SetPos(576.f, 374.f);
+	m_pLadder->SetSize(64.f, 64.f);
+	ColliderRect* pColl = m_pLadder->AddCollider<ColliderRect>("LadderTrigger");
+	pColl->AddCollisionFunction(CS_ENTER, this, &CavernEntranceScene::LadderDown);
+	pColl->SetRect(0.f, 0.f, 64.f, 64.f);
+	SAFE_RELEASE(pColl);
 	return true;
 }
 

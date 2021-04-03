@@ -1,17 +1,15 @@
 #pragma once
 #include "GameScene.h"
-class CavernEntranceScene : public GameScene
+class CavernInScene :
+    public GameScene
 {
 private:
     friend class SceneManager;
 private:
-    const char* pGameDataFileName = "CavernEntrance.map";
-    class Object* m_pLadder = nullptr;
+    const char* pGameDataFileName = "CavernIn.map";
 private:
-    CavernEntranceScene();
-    ~CavernEntranceScene();
-public:
-    void LadderDown(class Collider* pSrc, class Collider* pDst, float dt);
+    CavernInScene();
+    ~CavernInScene();
 public:
     virtual bool Init();
     virtual void Input(float dt);

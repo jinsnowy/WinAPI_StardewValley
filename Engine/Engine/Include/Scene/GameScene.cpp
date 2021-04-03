@@ -36,20 +36,17 @@ Pos GameScene::FindBeacon(BEACON_TAG bc)
     else if (bc == BC_THREE)
         option = TO_BEACON_3;
 
-    const auto tiles = m_pStaticStage->GetTiles();
     int found = -1;
-    int size = (int) tiles->size();
-    for (int i =0;i<size;++i)
+    const auto& tiles = m_pStaticStage->GetTiles();
+    for (Tile* const &pTile : *tiles)
     {
-        if ((*tiles)[i]->GetTileOption() == option)
+        if (pTile->GetTileOption() == option)
         {
-            found = i;
-            break;
+            return pTile->GetPos();
         }
     }
-    assert(found != -1 && option != TO_NONE);
-
-    return m_pStaticStage->GetTilePos(found);
+    assert(false);
+    return Pos();
 }
 
 void GameScene::SetUpMainCharacter(Player* pPlayer)
