@@ -41,7 +41,7 @@ int ColliderPoint::Update(float dt)
 int ColliderPoint::LateUpdate(float dt)
 {
 	Collider::LateUpdate(dt);
-	Pos tPos = m_pObject->GetPos();
+	const Pos& tPos = m_pObject->GetPos();
 	m_tWorldPos.x = tPos.x + m_tPos.x;
 	m_tWorldPos.y = tPos.y + m_tPos.y;
 	return 0;

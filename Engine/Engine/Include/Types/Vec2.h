@@ -63,6 +63,14 @@ public:
 	{
 		return *this = *this - rhs;
 	}
+	bool operator ==(const Vec2_& rhs) const
+	{
+		return x == rhs.x && y == rhs.y;
+	}
+	bool operator !=(const Vec2_& rhs) const
+	{
+		return x != rhs.x || y != rhs.y;
+	}
 	float GetLength() const
 	{
 		return sqrtf((float) GetLengthSq());

@@ -42,6 +42,7 @@ void Collider::SetObj(Object* pObject)
 
 void Collider::Input(float dt)
 {
+	m_bMoved = false;
 }
 
 int Collider::Update(float dt)
@@ -52,7 +53,12 @@ int Collider::Update(float dt)
 
 int Collider::LateUpdate(float dt)
 { 
+	const Pos& tPos = m_pObject->GetPos();
 
+	if (tPos != m_tPrev)
+		m_bMoved = true;
+
+	m_tPrev = tPos;
 	return 0;
 }
 

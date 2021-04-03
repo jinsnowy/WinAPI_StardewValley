@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include "../Object/Object.h"
 #include "../Collider/CollisionManager.h"
-
+#include "../Profiler.h"
 Layer::Layer()
     :
     m_bEnable(true),
@@ -154,6 +154,7 @@ void Layer::Collision(float dt)
         }
         else 
         {
+            PROBE_PERFORMANCE("Collision/AddObject");
             COLLISION_MANAGER->AddObject(*it);
             ++it; 
         }

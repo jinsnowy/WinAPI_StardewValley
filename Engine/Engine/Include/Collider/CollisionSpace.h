@@ -27,23 +27,25 @@ private:
 	public:
 		~QuadSpace();
 		QuadSpace(const QuadSpace& space) = delete;
-		QuadSpace(unsigned int level, size_t idx, const Rect& rect);
+		QuadSpace(unsigned int level, int idx, const Rect& rect);
 	private:
 		unsigned int m_iLevel = 0;
-		size_t m_iIdx = -1;
+		int m_iIdx = -1;
 		Rect m_tArea = {};
-		QuadParentPtr m_pParent;
 		array<QuadPtr, 4> m_QuadPartitions = {};
 		list<Collider*> m_CollList;
 	private:
-		static QuadPtr MakeQuadPtr(unsigned int level, size_t idx, const Rect& rect);
+		static QuadPtr MakeQuadPtr(unsigned int level, int idx, const Rect& rect);
 		static bool OutSideOfScreen(Collider* pColl);
+		size_t GetColliderNum() const { return m_CollList.size(); }
 		Partition GetPartition(const Rect& bounds);
 		Rect MakeArea(Partition ePart) const;
 		void SplitArea();
 		void Search(class Collider* const& pSrc, vector<Collider*>& dstColliders);
+		void Merge(int parentId, list<Collider*>& parentColliders);
 	public:
 		void Clear();
+		void GetChildCollidersNum(size_t* const sz);
 		bool Empty() const { return m_CollList.empty(); }
 		bool IsOverLoaded() const;
 		void AddCollider(Collider* const& pColl);
@@ -52,27 +54,37 @@ private:
 	};
 private:
 	friend class CollisionManager;
+	friend class QuadSpace;
 	using Partition = CollisionSpace::QuadSpace::Partition;
 	using QuadSpace = CollisionSpace::QuadSpace;
-	bool m_bCameraInit = false;
-	static int m_iCollideNum;
 	static constexpr size_t m_iMaxObjectNum = 4;
 	static constexpr float m_fMinSize = 32.f;
 	static constexpr int m_iExpectedCollNum = 20;
-	static vector<vector<bool>> m_CheckMat;
-	static QuadPtr m_QuadHead;
-	static Rect m_tWorldSpace;
-	static Rect m_tCameraSpace;
-	vector<Collider*> m_Colliders;
+	// 관리되고 있는 쿼드트리 -> 씬마다 관리
+	static unordered_map<int, unique_ptr<CollisionSpace>> m_mapCollisionSpace;
+	static CollisionSpace* m_CurSpace;
+	int m_CurSize = 0;
+	QuadPtr m_QuadHead = nullptr;
+	Rect m_tWorldSpace = {};
+	Rect m_tCameraSpace = {};
+	vector<vector<bool>> m_CheckMat = {};
+	unordered_map<int, QuadParentPtr> m_mapSpace = {};
+	priority_queue<int, vector<int>, greater<int>> m_IdQueue = {};
+	vector<Collider*> m_ColliderContainer = {};
 private:
 	void Init();
-	void Clear();
 	void Mark(Collider* pSrc, Collider* pDst);
 	void GetEqualSpaceColliders(Collider* pSrc, vector<Collider*>& dstColliders);
-	void ExpandCheckMat();
+	void ExpandId();
+	QuadParentPtr FindSpace(int id);
 	void Draw(HDC hdc, float dt);
 public:
+	void InitializeCheckMat();
+	int GetCurSize() const { return m_CurSize; }
+	static CollisionSpace* GetCurQuadTree() { return m_CurSpace; }
+	static void SetQuadTree(SCENE_CREATE sc);
+	void ErasePreviousCollider(Collider* pColl);
 	void Observe(Collider* pColl);
-	const vector<Collider*>* GetColliderList() const { return &m_Colliders; }
+	const vector<Collider*>* GetColliderList() const { return &m_ColliderContainer; }
 	Collider* FindCollider(const string& strTag);
 };

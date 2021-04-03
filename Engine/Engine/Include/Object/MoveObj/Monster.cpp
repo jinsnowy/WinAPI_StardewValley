@@ -1,5 +1,8 @@
 #include "Monster.h"
 #include "../../Scene/GameScene.h"
+#include "../StaticObj/GameManager.h"
+#include "Player.h"
+
 Monster::Monster()
 {
 	m_eObjType = OBJ_MONSTER;
@@ -55,9 +58,37 @@ bool Monster::Init()
 	SetSpeed(m_fMonsterSpeed);
 	SetTexture("Ghost", L"SV/Object/Monster/Ghost/GhostDown.bmp");
 	SetSize(64.f, 96.f);
+	SetPivot(0.0f, 1.0f);
 	StateTransit(3);
 	DisableMovement();
+	m_HP = m_HPMax;
+
     return true;
+}
+void Monster::Hit(Collider* pSrc, Collider* pDst, float dt)
+{
+	const string& toolTag = pDst->GetTag();
+	if (toolTag == "SwingTool" || toolTag == "AxeTool" || toolTag == "PickTool")
+	{
+		float power = PLAYER->GetToolPower();
+		m_HP -= power;
+		if (m_HP <= 0.f)
+		{
+			Die();
+		}
+	}
+}
+
+void Monster::CheckBlock(const Pos& prev)
+{
+	const GameScene* gameScene = static_cast<GameScene*>(m_pScene);
+	if (gameScene->IsBlockTile(GetCenterPos()))
+	{
+		SetPos(prev);
+		int i = 0;
+		do { i = rand() % 4; } while (i == (int)m_eState);
+		StateTransit(i);
+	}
 }
 
 void Monster::Input(float dt)
@@ -86,18 +117,7 @@ void Monster::Input(float dt)
 
 	if (m_bMove)
 	{
-		// 다음 타일이 갈 수 없다면,
-		const GameScene* gameScene = static_cast<GameScene*>(m_pScene);
-		if (gameScene->IsBlockTile(GetCenterPos()))
-		{
-			SetPos(prev);
-			int i = 0;
-			do
-			{
-				i = rand() % 4;
-			} while (i == (int)m_eState);
-			StateTransit(i);
-		}
+		CheckBlock(prev);
 	}
 }
 

@@ -186,6 +186,7 @@
     <ClInclude Include="Object\Item\Seed.h" />
     <ClInclude Include="Object\Item\Tool.h" />
     <ClInclude Include="Object\Mouse.h" />
+    <ClInclude Include="Object\MoveObj\Monster.h" />
     <ClInclude Include="Object\MoveObj\MovableObject.h" />
     <ClInclude Include="Object\MoveObj\Player.h" />
     <ClInclude Include="Object\MoveObj\PlayerTool.h" />
@@ -229,6 +230,7 @@
     <ClInclude Include="Resources\ResourceManager.h" />
     <ClInclude Include="Resources\Texture.h" />
     <ClInclude Include="Scene\CavernEntranceScene.h" />
+    <ClInclude Include="Scene\CavernInScene.h" />
     <ClInclude Include="Scene\FarmScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\InHouseScene.h" />
@@ -278,6 +280,7 @@
     <ClCompile Include="Object\Item\Seed.cpp" />
     <ClCompile Include="Object\Item\Tool.cpp" />
     <ClCompile Include="Object\Mouse.cpp" />
+    <ClCompile Include="Object\MoveObj\Monster.cpp" />
     <ClCompile Include="Object\MoveObj\MovableObject.cpp" />
     <ClCompile Include="Object\MoveObj\Player.cpp" />
     <ClCompile Include="Object\MoveObj\PlayerTool.cpp" />
@@ -320,6 +323,7 @@
     <ClCompile Include="Resources\ResourceManager.cpp" />
     <ClCompile Include="Resources\Texture.cpp" />
     <ClCompile Include="Scene\CavernEntranceScene.cpp" />
+    <ClCompile Include="Scene\CavernInScene.cpp" />
     <ClCompile Include="Scene\FarmScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\InHouseScene.cpp" />

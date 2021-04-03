@@ -6,22 +6,51 @@
 #include "../Resources/ResourceManager.h"
 #include "../Core/Camera.h"
 
-int CollisionSpace::m_iCollideNum = 0;
-CollisionSpace::QuadPtr CollisionSpace::m_QuadHead = nullptr;
-vector<vector<bool>> CollisionSpace::m_CheckMat = {};
-Rect CollisionSpace::m_tWorldSpace = {};
-Rect CollisionSpace::m_tCameraSpace = {};
+CollisionSpace* CollisionSpace::m_CurSpace = nullptr;
+unordered_map<int, unique_ptr<CollisionSpace>> CollisionSpace::m_mapCollisionSpace;
 
 CollisionSpace::CollisionSpace()
 {
 }
 
+void CollisionSpace::SetQuadTree(SCENE_CREATE sc)
+{
+	int sc_id = int(sc);
+	auto found = m_mapCollisionSpace.find(sc_id);
+	if (found == m_mapCollisionSpace.end())
+	{
+		m_mapCollisionSpace[sc_id] = make_unique<CollisionSpace>();
+		m_mapCollisionSpace[sc_id]->Init();
+	}
+
+	m_CurSpace = m_mapCollisionSpace[sc_id].get();
+}
+
 void CollisionSpace::Init()
 {
-	Clear();
-
+	// 월드 좌표계 설정
 	m_tWorldSpace = { 0.f, 0.f, 4096.f , 4096.f };
+
+	// 카메라 좌표계 설정
+	m_tCameraSpace = CAMERA->GetWorldRect();
+
+	// 헤드 초기화
 	m_QuadHead = QuadSpace::MakeQuadPtr(0, 0, m_tWorldSpace);
+	m_mapSpace.insert(make_pair(0, m_QuadHead.get()));
+
+	// 콜라이더에 할당할 Id 큐 초기화
+	for (int id = 0; id < m_iExpectedCollNum; ++id)
+	{
+		m_IdQueue.push(id);
+	}
+
+	// 충돌 체크 매트릭스 초기화
+	m_CheckMat.resize(m_iExpectedCollNum);
+	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(m_iExpectedCollNum, false));
+
+	// 충돌체 담는 컨테이너
+	m_ColliderContainer.resize(m_iExpectedCollNum);
+	fill(m_ColliderContainer.begin(), m_ColliderContainer.end(), nullptr);
 }
 
 CollisionSpace::~CollisionSpace()
@@ -30,39 +59,58 @@ CollisionSpace::~CollisionSpace()
 
 void CollisionSpace::QuadSpace::Clear()
 {
-	m_iCollideNum = 0;
-	m_CollList.clear();
-
 	for (int i = 0; i < 4; ++i)
 	{
 		if (m_QuadPartitions[i])
 		{
+			m_CurSpace->m_mapSpace.erase(m_QuadPartitions[i]->m_iIdx);
 			m_QuadPartitions[i]->Clear();
 			m_QuadPartitions[i] = nullptr;
 		}
 	}
 }
 
+void CollisionSpace::QuadSpace::GetChildCollidersNum(size_t* const sz)
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		if (m_QuadPartitions[i])
+		{
+			*sz += m_QuadPartitions[i]->GetColliderNum();
+			m_QuadPartitions[i]->GetChildCollidersNum(sz);
+		}
+	}
+}
+
+void CollisionSpace::InitializeCheckMat()
+{
+	auto curSize = m_CheckMat.size();
+	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(curSize, false));
+}
+
 void CollisionSpace::Observe(Collider* pColl)
 {
-	if (!m_bCameraInit)
-	{
-		m_tCameraSpace = CAMERA->GetWorldRect();
-		m_bCameraInit = true;
-	}
-
 	if (QuadSpace::OutSideOfScreen(pColl))
 		return;
 
-	pColl->SetId(m_iCollideNum);
-	++m_iCollideNum;
+	if (!pColl->IsMoved())
+		return;
 
-	m_Colliders.push_back(pColl);
+	ErasePreviousCollider(pColl);
+
+	// id 큐에서 꺼냄
+	int nxt_id = m_IdQueue.top();
+	m_IdQueue.pop();
+
+	// 전체 콜라이더 컨테이너에 할당
+	++m_CurSize;
+	pColl->SetId(nxt_id);
+	m_ColliderContainer[nxt_id] = pColl;
 	m_QuadHead->Insert(pColl);
 
-	if (m_iCollideNum >= (int) m_CheckMat.size())
+	if (m_IdQueue.size() == 0)
 	{
-		ExpandCheckMat();
+		ExpandId();
 	}
 }
 
@@ -71,6 +119,93 @@ void CollisionSpace::Mark(Collider* pSrc, Collider* pDst)
 	int srcId = pSrc->GetId(), dstId = pDst->GetId();
 	m_CheckMat[srcId][dstId] = m_CheckMat[dstId][srcId] = true;
 }
+
+void CollisionSpace::ErasePreviousCollider(Collider* pColl)
+{
+	// 기존에 있던 콜라이더 아님
+	int collId = pColl->GetId();
+	if (collId == -1)
+		return;
+
+	// 전체 콜라이더 컨테이너에서 삭제
+	--m_CurSize;
+	m_ColliderContainer[collId] = nullptr;
+
+	// Id 큐에 추가
+	m_IdQueue.push(collId);
+
+	// 기존 쿼드 트리 공간에서 삭제
+	int spaceId = pColl->GetSpaceId();
+
+	// 씬 전환으로 새로 생긴 콜라이더의 경우
+	const auto& quad = FindSpace(spaceId);
+	if (!quad)
+		return;
+
+	auto& collList = quad->m_CollList;
+	const auto& iterEnd = collList.end();
+	for (auto iter = collList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter) == pColl)
+		{
+			pColl->SetSpaceId(-1);
+			collList.erase(iter);
+			break;
+		}
+	}
+
+	// 필요시 공간 재조정 (O(V), for total space V)
+	if (spaceId != 0)
+	{
+		int parentId = (spaceId - 1) / 4;
+		QuadParentPtr parentQuad = FindSpace(parentId);
+		
+		// 반드시 있어야함
+		assert(parentQuad);
+
+		// 부모 공간에 있는 콜라이더
+		auto& parentColliders = parentQuad->m_CollList;
+		size_t totalSpaceCollNum = parentColliders.size();
+
+		// 부모에 있는 콜라이더와 자식에 있는 콜라이더 수를 구한다 -> O(V), 비싼 계산은 아님
+		parentQuad->GetChildCollidersNum(&totalSpaceCollNum);
+
+		// 다시 합친다.
+		if (totalSpaceCollNum <= m_iMaxObjectNum && parentQuad->m_QuadPartitions[0])
+		{
+			parentQuad->Merge(parentId, parentQuad->m_CollList);
+		}
+	}
+}
+
+void CollisionSpace::QuadSpace::Merge(int parentId, list<Collider*> &parentColliders)
+{
+	// 콜라이더 공간 id 재조정 및 부모 공간에 추가
+	const auto adjust_collider = [&parentColliders, &parentId](Collider* pColl)
+	{
+		pColl->SetSpaceId(parentId);
+		parentColliders.push_back(pColl);
+	};
+
+	auto& mapSpace = m_CurSpace->m_mapSpace;
+	for (int i = 0; i < 4; ++i)
+	{
+		if (m_QuadPartitions[i])
+		{
+			const auto& childColliders = m_QuadPartitions[i]->m_CollList;
+			for_each(childColliders.begin(), childColliders.end(), adjust_collider);
+
+			// 서브 트리 합병
+			m_QuadPartitions[i]->Merge(parentId, parentColliders);
+			m_QuadPartitions[i] = nullptr;
+
+			// 해쉬맵에서 지움
+			int childId = m_iIdx * 4 + i + 1;
+			mapSpace.erase(childId);
+		}
+	}
+}
+
 
 void CollisionSpace::QuadSpace::Insert(Collider* const& pColl)
 {
@@ -140,37 +275,28 @@ void CollisionSpace::QuadSpace::Draw(HDC& hdc, const float& dt)
 void CollisionSpace::Draw(HDC hdc, float dt)
 {
 #ifdef _DEBUG
-	_cprintf("Managed Collider Num :%d\n", m_iCollideNum);
+	size_t totalSize = 0;
+	m_QuadHead->GetChildCollidersNum(&totalSize);
+	_cprintf("Managed Collider Num : %zd\n", totalSize);
 #endif // _DEBUG
-	if (m_QuadHead)
-	{
-		m_QuadHead->Draw(hdc, dt);
-	}
+	m_QuadHead->Draw(hdc, dt);
 }
 
-void CollisionSpace::Clear()
-{
-	m_bCameraInit = false;
-
-	if (m_QuadHead)
-	{
-		for (int i = 0; i < 4; ++i)
-		{
-			m_QuadHead->Clear();
-		}
-	}
-
-	// 충돌 체크 정보 초기화
-	m_Colliders.clear();
-	m_CheckMat.resize(m_iExpectedCollNum);
-	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(m_iExpectedCollNum, false));
-}
-
-void CollisionSpace::ExpandCheckMat()
+void CollisionSpace::ExpandId()
 {
 	auto curSize = m_CheckMat.size();
+
+	// 체크 매트릭스 확장
 	m_CheckMat.resize(2 * curSize);
 	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(2 * curSize, false));
+
+	// 충돌체 컨테이너 확장
+	for (int i = 0; i < (int)curSize; ++i)
+		m_ColliderContainer.push_back(nullptr);
+
+	// 충돌체 ID 큐 확장
+	for (int i = (int)curSize; i <(int) 2 * curSize; ++i)
+		m_IdQueue.push(i);
 }
 
 CollisionSpace::QuadSpace::~QuadSpace()
@@ -217,18 +343,26 @@ void CollisionSpace::QuadSpace::SplitArea()
 {
 	for (int i = 0; i < 4; ++i)
 	{
-		size_t idx = 4 * m_iIdx + i;
+		int idx = 4 * m_iIdx + i + 1;
 		m_QuadPartitions[i] = MakeQuadPtr(m_iLevel + 1, idx, MakeArea(static_cast<Partition>(i)));
+		m_CurSpace->m_mapSpace.insert(make_pair(idx, m_QuadPartitions[i].get()));
+		if (idx == 5)
+		{
+			int a = 10;
+		}
 	}
 }
 
 void CollisionSpace::QuadSpace::Search(Collider* const& pSrc, vector<Collider*>& dstColliders)
 {
 	const int& srcId = pSrc->GetId();
+	const auto& checkMat = m_CurSpace->m_CheckMat;
+
+	// 같은 오브젝트내의 콜라이더가 아니면서 콜라이더 체크를 하지 않은 애들 
 	const auto InsertByNotEqObjAndNotChecked = [&](Collider* pDst)
 	{
 		const int& dstId = pDst->GetId();
-		bool checked = m_CheckMat[srcId][dstId] || m_CheckMat[dstId][srcId];
+		bool checked = checkMat[srcId][dstId] || checkMat[dstId][srcId];
 		if (pSrc->GetObj() != pDst->GetObj() && !checked)
 		{
 			dstColliders.push_back(pDst);
@@ -251,32 +385,52 @@ void CollisionSpace::QuadSpace::Search(Collider* const& pSrc, vector<Collider*>&
 	}
 }
 
+
+CollisionSpace::QuadParentPtr CollisionSpace::FindSpace(int id)
+{
+	if (id == -1)
+		return nullptr;
+
+	auto found = m_mapSpace.find(id);
+	if (found == m_mapSpace.end())
+		return nullptr;
+	return found->second;
+}
+
 bool CollisionSpace::QuadSpace::OutSideOfScreen(Collider* pColl)
 {
 	if (pColl->IsUICollider())
+	{
+		// UI인 경우 Screen 공간 상에서 계산
+		const Rect& rect = pColl->GetBounds();
+		if (rect.right < 0) return true;
+		if (rect.left >= GETRESOLUTION.x) return true;
+		if (rect.bottom < 0) return true;
+		if (rect.top >= GETRESOLUTION.y) return true;
 		return false;
+	}
 
+	// 일반 오브젝트는 World 공간 상에서 계산
 	const Rect& rect = pColl->GetBounds();
-	if (rect.right < m_tCameraSpace.left) return true;
-	if (rect.left >= m_tCameraSpace.right) return true;
-	if (rect.bottom < m_tCameraSpace.top) return true;
-	if (rect.top >= m_tCameraSpace.bottom) return true;
+	const Rect& camSpace = m_CurSpace->m_tCameraSpace;
+	if (rect.right < camSpace.left) return true;
+	if (rect.left >= camSpace.right) return true;
+	if (rect.bottom < camSpace.top) return true;
+	if (rect.top >= camSpace.bottom) return true;
 	return false;
 }
 
-CollisionSpace::QuadPtr CollisionSpace::QuadSpace::MakeQuadPtr(unsigned int level, size_t idx, const Rect& rect)
+CollisionSpace::QuadPtr CollisionSpace::QuadSpace::MakeQuadPtr(unsigned int level, int idx, const Rect& rect)
 {
 	return make_unique<QuadSpace>(level, idx, rect);
 }
 
-CollisionSpace::QuadSpace::QuadSpace(unsigned int level, size_t idx, const Rect& rect)
+CollisionSpace::QuadSpace::QuadSpace(unsigned int level, int idx, const Rect& rect)
 	:
 	m_iLevel(level),
 	m_iIdx(idx),
-	m_tArea(rect),
-	m_pParent(this)
+	m_tArea(rect)
 {
-
 }
 bool CollisionSpace::QuadSpace::IsOverLoaded() const
 {
@@ -286,7 +440,13 @@ bool CollisionSpace::QuadSpace::IsOverLoaded() const
 
 void CollisionSpace::QuadSpace::AddCollider(Collider* const& pColl)
 {
+	pColl->SetSpaceId(m_iIdx);
 	m_CollList.push_back(pColl);
+	if (pColl->GetTag() == "Mouse")
+	{
+		m_CurSpace->m_mapSpace;
+		int a = 10;
+	}
 }
 
 CollisionSpace::QuadSpace::Partition CollisionSpace::QuadSpace
@@ -329,8 +489,8 @@ CollisionSpace::QuadSpace::Partition CollisionSpace::QuadSpace
 
 Collider* CollisionSpace::FindCollider(const string& strTag)
 {
-	const auto& iterEnd = m_Colliders.end();
-	for (auto iter = m_Colliders.begin(); iter != iterEnd; ++ iter)
+	const auto& iterEnd = m_ColliderContainer.end();
+	for (auto iter = m_ColliderContainer.begin(); iter != iterEnd; ++ iter)
 	{
 		if ((*iter)->GetTag() == strTag)
 		{

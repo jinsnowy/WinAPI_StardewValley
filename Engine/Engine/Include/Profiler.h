@@ -6,7 +6,9 @@
 #include <memory>
 #include <map>
 #include <conio.h>
-#define PROBE_PERFORMANCE(child, parent) Profiler _hide(child, parent);
+#include <set>
+#include <algorithm>
+#define PROBE_PERFORMANCE(tag) Profiler _hide(tag);
 #define PRINT_PROFILE_RESULT Profiler::PrintProfileResult();
 using namespace std;
 
@@ -18,7 +20,6 @@ private:
 		friend class Profiler;
 	public:
 		const char* m_Logger = "";
-		int m_frameCount = 0;
 		size_t m_Elapsed = 0;
 		size_t m_Calculated = 0;
 	public:
@@ -27,17 +28,18 @@ private:
 			m_Logger(logger)
 		{
 		}
-		float toMiliSeconds() const { return float(m_Calculated) / 1000.f; }
+		float toMiliSeconds() const 
+		{
+			return float(m_Calculated) / 1000.f; 
+		}
+		void Update()
+		{
+			m_Calculated = m_Elapsed / m_MaxFrame;
+			m_Elapsed = 0;
+		}
 		void Stack(const size_t& elapse)
 		{
-			++m_frameCount;
 			m_Elapsed += elapse;
-			if (m_frameCount == m_MaxFrame)
-			{
-				m_frameCount = 0;
-				m_Calculated = m_Elapsed / m_MaxFrame;
-				m_Elapsed = 0;
-			}
 		}
 	};
 private:
@@ -45,7 +47,7 @@ private:
 	using Clock = std::chrono::steady_clock;
 	using Cache = unique_ptr<Log>;
 	static unordered_map<string, Cache> m_Cache;
-	static multimap<string, string> m_NameMap;
+	static set<string> m_NameMap;
 private:
 	static string m_EmptyStr;
 	static Cache m_nullCache;
@@ -57,19 +59,19 @@ private:
 	{
 		if (m_Cache.find(logger) != m_Cache.end())
 		{
+			m_NameMap.insert(string(logger));
 			return m_Cache[logger];
 		}
 		return m_nullCache;
 	}
 public:
-	explicit Profiler(const char* child, const char* parent = "")
+	explicit Profiler(const char* tag)
 	{
 #ifdef _DEBUG
-		m_tmp_logger = child;
+		m_tmp_logger = tag;
 		if (GetCache(m_tmp_logger) == m_nullCache)
 		{
-			m_NameMap.insert(make_pair(m_tmp_logger, string(parent)));
-			m_Cache.emplace(m_tmp_logger, std::move(make_unique<Log>(child)));
+			m_Cache.emplace(m_tmp_logger, std::move(make_unique<Log>(tag)));
 		}
 #endif
 	}
@@ -80,30 +82,5 @@ public:
 		GetCache(m_tmp_logger)->Stack(elapse);
 #endif
 	}
-	static void PrintProfileResult()
-	{
-#ifdef _DEBUG
-		static int iCount = 0;
-		++iCount;
-		if (iCount == m_MaxFrame)
-		{
-			iCount = 0;
-			_cprintf("================== Profile Result =========================\n");
-			const auto& iterEnd = m_NameMap.end();;
-			for (auto iter = m_NameMap.begin(); iter != iterEnd; ++iter)
-			{
-				float elapse = m_Cache[iter->first]->toMiliSeconds();
-				if (iter->second.size() == 0)
-				{
-					_cprintf("---[%s] %.3fms\n", iter->first.c_str(), elapse);
-				}
-				else 
-				{
-					_cprintf("[%s/%s] takes %.3fms\n", iter->second.c_str(), iter->first.c_str(), elapse);
-				}
-			}
-			_cprintf("\n");
-		}
-#endif
-	}
+	static void PrintProfileResult();
 };

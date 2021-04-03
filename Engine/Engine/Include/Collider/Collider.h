@@ -1,7 +1,6 @@
 #pragma once
 #include "../Object/Ref.h"
 #include "../framework.h"
-#define ID_MAX 0xFFFFFFFF
 
 class Collider : public Ref
 {
@@ -11,16 +10,22 @@ protected:
 	Collider(const Collider& coll);
 	virtual ~Collider() = 0;
 protected:
-	int				m_CollId = ID_MAX;
+	int				m_CollId = -1;
+	int				m_SpaceId = -1;
+	bool			m_bMoved = false;
 	bool			m_bUIColl;
 	COLLIDER_TYPE	m_eCollType;
 	class Object*	m_pObject;
 	list<Collider*> m_CollisionList;
 	list <function<void(Collider*, Collider*, float)>> m_FuncList[CS_END];
 	Pos				m_tHitPoint;
+	Pos				m_tPrev = Pos(-1.f, -1.f);
 public:
+	bool IsMoved() const { return m_bMoved; }
 	void SetId(int id) { m_CollId = id; }
 	int GetId() const { return m_CollId; }
+	void SetSpaceId(int id) { m_SpaceId = id; }
+	size_t GetSpaceId() const { return m_SpaceId; }
 	virtual Rect GetBounds() const = 0;
 	bool IsUICollider() const;
 	void SetUICollider(bool bUI) { m_bUIColl = bUI; }

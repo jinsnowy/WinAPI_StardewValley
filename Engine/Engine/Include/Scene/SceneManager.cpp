@@ -19,6 +19,7 @@
 #include "../Object/MoveObj/Player.h"
 #include "../Object/StaticObj/GameManager.h"
 #include "../Scene/CavernInScene.h"
+#include "../Profiler.h"
 
 DEFINITION_SINGLE(SceneManager)
 
@@ -57,6 +58,7 @@ bool SceneManager::Init()
 	SAFE_DELETE(m_vecScene[SC_MAPEDIT]);
 
 	m_pScene = CreateScene<StartScene>(SC_START);
+	COLLISION_MANAGER->SetUpCollisionSpace(SC_START);
 
 	m_pPlayer = new Player;
 	m_pPlayer->SetTag("Player");
@@ -112,6 +114,7 @@ int SceneManager::LateUpdate(float dt)
 
 void SceneManager::Collision(float dt)
 {
+	PROBE_PERFORMANCE("Collision/Scene");
 	m_pScene->Collision(dt);
 }
 
@@ -178,12 +181,15 @@ void SceneManager::ChangeScene()
 		}
 	}
 
+	COLLISION_MANAGER->SetUpCollisionSpace(nxt);
+
 	if (m_tNextState.bSleep)
 	{
 		GAME_MANAGER->SleepUntilMorning();
 	}
 
 	m_pScene = m_vecScene[nxt];
+
 
 	m_bInGameScene = IsInGameScene();
 	if (m_bInGameScene)

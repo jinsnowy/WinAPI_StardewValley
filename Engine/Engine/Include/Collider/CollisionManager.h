@@ -8,7 +8,7 @@ private:
 	class Texture* m_pCollTex = nullptr;
 	list <class Object*> m_tempCollisionObjList;
 	list <class Object*> m_CollisionObjList;
-	unique_ptr<class CollisionSpace> m_CollisionSpace;
+	class CollisionSpace* m_CollisionSpace = nullptr;
 	void NaiveAdd(class Object* const& pObj);
 public:
 	bool Init();
@@ -18,6 +18,8 @@ public:
 	void AddCollidePoint(const Pos& pos, const string& strTag);
 	void AddObject(class Object* pObj);
 
+
+	void SetUpCollisionSpace(SCENE_CREATE sc);
 	void CollisionListVersion(float dt);
 	void CollisionQuadTreeVersion(float dt);
 	void Draw(HDC hdc, float dt);

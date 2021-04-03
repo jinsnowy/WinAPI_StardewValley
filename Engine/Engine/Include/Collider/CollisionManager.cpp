@@ -32,12 +32,6 @@ CollisionManager::~CollisionManager()
 
 bool CollisionManager::Init()
 {
-    if (!m_CollisionSpace)
-    {
-        m_CollisionSpace = make_unique<CollisionSpace>();
-    }
-
-    m_CollisionSpace->Init();
     return true;
 }
 
@@ -96,12 +90,18 @@ void CollisionManager::Clear()
     for (auto iter = m_tempCollisionObjList.begin(); 
         iter != iterEnd; ++iter)
     {
+        // 쿼드 트리에서 명시적으로 삭제
+        const auto& collLiders = (*iter)->GetColliderList();
+        const auto& collIterEnd = collLiders->end();
+        for (auto collIter = collLiders->begin(); collIter != collIterEnd; ++collIter)
+        {
+            m_CollisionSpace->ErasePreviousCollider((*collIter));
+        }
         SAFE_RELEASE((*iter));
     }
     m_tempCollisionObjList.clear();
 
-    // 쿼드 트리 초기화
-    m_CollisionSpace->Clear();
+    m_CollisionSpace->InitializeCheckMat();
 }
 
 void CollisionManager::NaiveAdd(Object* const& pObj)
@@ -111,11 +111,8 @@ void CollisionManager::NaiveAdd(Object* const& pObj)
 
 void CollisionManager::AddObject(Object* pObj)
 {
-    PROBE_PERFORMANCE("AddObject", "Collision");
-
     if (pObj->CheckCollider())
     {
-        // NaiveAdd(pObj);
         for (Collider* coll : *(pObj->GetColliderList()))
         {
             if (coll->GetEnable())
@@ -124,6 +121,12 @@ void CollisionManager::AddObject(Object* pObj)
             }
         }
     }
+}
+
+void CollisionManager::SetUpCollisionSpace(SCENE_CREATE sc)
+{
+    CollisionSpace::SetQuadTree(sc);
+    m_CollisionSpace = CollisionSpace::GetCurQuadTree();
 }
 
 void CollisionManager::CollisionListVersion(float dt)
@@ -159,8 +162,7 @@ void CollisionManager::CollisionQuadTreeVersion(float dt)
 {
     m_pCollTex->ClearBuffer(0, 0, GETRESOLUTION.x, GETRESOLUTION.y);
 
-    const auto& collList = *(m_CollisionSpace->GetColliderList());
-    int srcCollNum = (int)collList.size();
+    int srcCollNum = m_CollisionSpace->GetCurSize();
     if (srcCollNum < 2)
     {
         Clear();
@@ -181,21 +183,30 @@ void CollisionManager::CollisionQuadTreeVersion(float dt)
     }
 
     // 충돌 체크 성능 체크
-    PROBE_PERFORMANCE("CollisionCheck", "Collision");
+    PROBE_PERFORMANCE("Collision/CollisionCheck");
 
+    const auto& pSrcList = *(m_CollisionSpace->GetColliderList());
+
+    int checkNum = 0;
     // 충돌체와 충돌체 검사 시작 부분
-    for (int i = 0; i < srcCollNum; ++i)
+    for (Collider* const& pSrc : pSrcList)
     {
-        const auto& pSrc = collList[i];
+        // 해당 원소 비어 있는 경우
+        if (pSrc == nullptr)
+            continue;
+
+        // 물체가 움직이지 않았다면 체크하지 않는다.
+        if (!pSrc->IsMoved())
+            continue;
+
         // 충돌체 검색
         vector<Collider*> pDstList;
         m_CollisionSpace->GetEqualSpaceColliders(pSrc, pDstList);
 
         // 충돌가능한 모든 상대방 충돌체 
-        int dstCollNum = (int)pDstList.size();
-        for (int j = 0; j < dstCollNum; ++j)
+        for (Collider* const& pDst : pDstList)
         {
-            const auto& pDst = pDstList[j];
+            ++checkNum;
 
             // 비교했다는 표시를 남김
             m_CollisionSpace->Mark(pSrc, pDst);
@@ -237,7 +248,15 @@ void CollisionManager::CollisionQuadTreeVersion(float dt)
     }
 
     Clear();
-
+#ifdef _DEBUG
+    static float duration = 0.f;
+    duration += dt;
+    if (duration >= 1.0f)
+    {
+        duration -= 1.0f;
+        _cprintf("collision check num : %d\n", checkNum);
+    }
+#endif
 }
 
 void CollisionManager::Draw(HDC hdc, float dt)

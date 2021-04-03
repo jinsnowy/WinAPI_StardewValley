@@ -264,6 +264,26 @@ bool Object::Init()
 
 void Object::Input(float dt)
 {
+    list<Collider*>::iterator iter;
+    list<Collider*>::iterator iterEnd = m_ColliderList.end();
+    for (iter = m_ColliderList.begin(); iter != iterEnd;)
+    {
+        if (!(*iter)->GetEnable())
+        {
+            ++iter;
+            continue;
+        }
+
+        (*iter)->Input(dt);
+
+        if (!(*iter)->GetLife())
+        {
+            SAFE_RELEASE((*iter));
+            iter = m_ColliderList.erase(iter);
+            iterEnd = m_ColliderList.end();
+        }
+        else ++iter;
+    }
 }
 
 int Object::Update(float dt)

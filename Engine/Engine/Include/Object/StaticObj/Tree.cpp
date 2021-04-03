@@ -53,6 +53,8 @@ bool Tree::Init()
 	ColliderRect* pBlock = AddCollider<ColliderRect>("TileBlock");
 	pBlock->SetRect(5.f, 5.f, imgSize.x / 3.f - 5.f, TILESIZE - 5.f);
 	SAFE_RELEASE(pBlock);
+
+	DisableTransparentEffect();
 	return true;
 }
 
@@ -80,6 +82,18 @@ void Tree::ShadeIn(Collider* pSrc, Collider* pDst, float dt)
 	}
 }
 
+void Tree::ShadeOut(Collider* pSrc, Collider* pDst, float dt)
+{
+	if (pDst->GetTag() == "PlayerBody")
+	{
+		ColliderRect* pRC_tree = static_cast<ColliderRect*>(pSrc);
+		ColliderRect* pRC_player = static_cast<ColliderRect*>(pDst);
+		if (pRC_tree->GetWorldInfo().bottom > pRC_player->GetWorldInfo().bottom)
+		{
+			DisableTransparentEffect();
+		}
+	}
+}
 void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pSrc->GetTag() == "TileBlock" && pDst->GetTag() == "AxeTool")
@@ -91,7 +105,6 @@ void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
 
 		SOUND_MANAGER->PlayMusic("TreeHit");
 	}
-
 }
 
 void Tree::AfterDie()
@@ -106,7 +119,6 @@ void Tree::AfterDie()
 void Tree::Input(float dt)
 {
 	InteractiveTile::Input(dt);
-	DisableTransparentEffect();
 }
 
 int Tree::Update(float dt)
@@ -144,6 +156,7 @@ void Tree::LateInit()
 	pRC->SetRect(-imgSize.x / 3.f + 5.f, -imgSize.y + TILESIZE, 2 * imgSize.x / 3.f - 5.f, -5.f);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::ShadeIn);
 	pRC->AddCollisionFunction(CS_STAY, this, &Tree::ShadeIn);
+	pRC->AddCollisionFunction(CS_LEAVE, this, &Tree::ShadeOut);
 	SAFE_RELEASE(pRC);
 
 	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));

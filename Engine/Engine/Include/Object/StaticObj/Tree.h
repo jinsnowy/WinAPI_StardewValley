@@ -16,6 +16,7 @@ protected:
 	virtual void AfterDie();
 private:
 	void ShadeIn(Collider* pSrc, Collider* pDst, float dt);
+	void ShadeOut(Collider* pSrc, Collider* pDst, float dt);
 public:
 	virtual bool Init();
 	virtual void Input(float dt);

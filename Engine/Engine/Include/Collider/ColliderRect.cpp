@@ -50,8 +50,8 @@ int ColliderRect::Update(float dt)
 int ColliderRect::LateUpdate(float dt)
 {
 	Collider::LateUpdate(dt);
-	
-	Pos tPos = m_pObject->GetPos();
+
+	const Pos& tPos = m_pObject->GetPos();
 	m_tWorldInfo.left = tPos.x + m_tInfo.left;
 	m_tWorldInfo.top = tPos.y + m_tInfo.top;
 	m_tWorldInfo.right = tPos.x + m_tInfo.right;

@@ -16,13 +16,17 @@ private:
         MOVE_UP,
         MOVE_DOWN
     };
+    float m_HP = 0.f;
     static constexpr float m_fMonsterSpeed = 150.f;
+    static constexpr float m_HPMax = 200.f;
     MonsterState m_eState = MonsterState::MOVE_DOWN;
 public:
     inline Pos GetCenterPos() const
     {
         return Pos(GetPos().x + GetSize().x / 2, GetPos().y);
     }
+    void Hit(Collider* pSrc, Collider* pDst, float dt);
+    void CheckBlock(const Pos& prev);
     virtual void StateTransit(int iNext);
 public:
     virtual bool Init();

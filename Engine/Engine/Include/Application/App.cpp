@@ -150,7 +150,7 @@ void App::Process()
 
 void App::Input(float dt)
 {
-	PROBE_PERFORMANCE("Input", "");
+	PROBE_PERFORMANCE("Input");
 	INPUT->Update(dt);
 	SCENE_MANAGER->Input(dt);
 	CAMERA->Input(dt);
@@ -158,7 +158,7 @@ void App::Input(float dt)
 
 int App::Update(float dt)
 {
-	PROBE_PERFORMANCE("Update", "");
+	PROBE_PERFORMANCE("Update");
 	int res;
 	res = SCENE_MANAGER->Update(dt);
 	CAMERA->Update(dt);
@@ -168,21 +168,21 @@ int App::Update(float dt)
 
 int App::LateUpdate(float dt)
 {
-	PROBE_PERFORMANCE("LateUpdate", "");
+	PROBE_PERFORMANCE("LateUpdate");
 	int res = SCENE_MANAGER->LateUpdate(dt);
 	return res;
 }
 
 void App::Collision(float dt)
 {
-	PROBE_PERFORMANCE("Collision", "");
+	PROBE_PERFORMANCE("Collision");
 	SCENE_MANAGER->Collision(dt);
 	COLLISION_MANAGER->CollisionQuadTreeVersion(dt);
 }
 
 void App::Draw(float dt)
 {
-	PROBE_PERFORMANCE("Draw", "");
+	PROBE_PERFORMANCE("Draw");
 	// 더블 버퍼링
 	Texture* pBackBuffer = RESOURCE_MANAGER->GetBackBuffer();
 

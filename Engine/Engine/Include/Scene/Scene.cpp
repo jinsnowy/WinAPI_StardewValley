@@ -213,7 +213,7 @@ void Scene::Collision(float dt)
 			++it;
 			continue;
 		}
-
+		
 		(*it)->Collision(dt);
 
 		if (!(*it)->GetLife())
