@@ -18,7 +18,7 @@ public:
 	void AddCollidePoint(const Pos& pos, const string& strTag);
 	void AddObject(class Object* pObj);
 
-
+	void QuadTreeUpdate();
 	void SetUpCollisionSpace();
 	void CollisionListVersion(float dt);
 	void CollisionQuadTreeVersion(float dt);

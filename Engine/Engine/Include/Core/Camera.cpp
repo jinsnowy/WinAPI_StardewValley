@@ -8,6 +8,7 @@ DEFINITION_SINGLE(Camera)
 Camera::Camera()
 	:
 	m_tPos(0.f,0.f),
+	m_tPrev(-1.f, -1.f),
 	m_tClientRS(0, 0),
 	m_tWorldRS(0, 0),
 	m_tPivot(0, 0),
@@ -57,42 +58,12 @@ void Camera::Input(float dt)
 		{
 			m_tPos.y = m_tWorldRS.y - (m_tClientRS.y - offset.y);
 		}
-		
-		/*Pos tPos   =  m_pTarget->GetPos();
-		Pos tPivot = m_pTarget->GetPivot();
-		Size tSize = m_pTarget->GetSize();
 
-		Pos targetTopLeft = tPos - tPivot * tSize;
-		Pos targetBottomRight = targetTopLeft + tSize;
-
-		float fLeftArea = m_tClientRS.x * m_tPivot.x;
-		float fRightArea = m_tClientRS.x - fLeftArea;
-		float fTopArea = m_tClientRS.y * m_tPivot.y;
-		float fBottomArea = m_tClientRS.y - fTopArea;
-	
-		if (targetTopLeft.x <= fLeftArea)
+		if (m_tPrev != m_tPos)
 		{
-			m_tPos.x = 0.f;
+			COLLISION_MANAGER->QuadTreeUpdate();
 		}
-		else if (targetBottomRight.x >= m_tWorldRS.x - fRightArea)
-		{
-			m_tPos.x = m_tWorldRS.x - m_tClientRS.x;
-		}
-		else {
-			m_tPos.x = tPos.x - m_tClientRS.x * m_tPivot.x;
-		}
-
-		if (targetTopLeft.y <= fTopArea)
-		{
-			m_tPos.y = 0.f;
-		}
-		else if (targetBottomRight.y >= m_tWorldRS.y - fBottomArea)
-		{
-			m_tPos.y = m_tWorldRS.y - m_tClientRS.y;
-		}
-		else {
-			m_tPos.y = tPos.y - m_tClientRS.y * m_tPivot.y;
-		}*/
+		m_tPrev = m_tPos;
 	}
 }
 
@@ -116,6 +87,12 @@ void Camera::Scroll(float x, float y)
 		m_tPos.y = 0.f;
 	else if (m_tPos.y > m_tWorldRS.y - m_tClientRS.y)
 		m_tPos.y =float(m_tWorldRS.y - m_tClientRS.y);
+}
+
+Rect Camera::GetWorldRect() const
+{
+	Pos tPos = GetTopLeft();
+	return { tPos.x, tPos.y, tPos.x + m_tClientRS.x , tPos.y + m_tClientRS.y };
 }
 
 void Camera::ReleaseTarget()

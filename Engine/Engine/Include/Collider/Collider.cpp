@@ -47,7 +47,6 @@ void Collider::Input(float dt)
 
 int Collider::Update(float dt)
 {
-
 	return 0;
 }
 

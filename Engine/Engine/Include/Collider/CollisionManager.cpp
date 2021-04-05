@@ -58,11 +58,9 @@ void CollisionManager::AddCollideObject(Object* pObj)
 void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
-    pPoint->SetPos(pos.x, pos.y);
-
     ColliderRect* pColl = pPoint->AddCollider<ColliderRect>(strTag);
     pColl->SetRect(rect.left, rect.top, rect.right, rect.bottom);
-
+    pPoint->SetPos(pos.x, pos.y);
     pPoint->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pPoint);
     m_CollisionSpace->Observe(pColl);
@@ -72,9 +70,8 @@ void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const st
 void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
-    pPoint->SetPos(pos.x, pos.y);
-
     ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
+    pPoint->SetPos(pos.x, pos.y);
     pPoint->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pPoint);
     m_CollisionSpace->Observe(pColl);
@@ -100,8 +97,6 @@ void CollisionManager::Clear()
         SAFE_RELEASE((*iter));
     }
     m_tempCollisionObjList.clear();
-
-    m_CollisionSpace->InitializeCheckMat();
 }
 
 void CollisionManager::NaiveAdd(Object* const& pObj)
@@ -121,6 +116,11 @@ void CollisionManager::AddObject(Object* pObj)
             }
         }
     }
+}
+
+void CollisionManager::QuadTreeUpdate()
+{
+    m_CollisionSpace->Update();
 }
 
 void CollisionManager::SetUpCollisionSpace()
@@ -168,6 +168,8 @@ void CollisionManager::CollisionQuadTreeVersion(float dt)
         Clear();
         return;
     }
+
+    m_CollisionSpace->Ready();
 
     // 콜라이더 보여주기 On 상태인 경우
     if (SHOWCHECK(SHOW_COLL))

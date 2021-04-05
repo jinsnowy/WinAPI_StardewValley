@@ -61,7 +61,6 @@ private:
 	static constexpr float m_fMinSize = 32.f;
 	static constexpr int m_iExpectedCollNum = 20;
 	static unique_ptr<CollisionSpace> m_CurSpace;
-	bool m_bInit = false;
 	int m_CurSize = 0;
 	QuadPtr m_QuadHead = nullptr;
 	Rect m_tWorldSpace = {};
@@ -78,7 +77,8 @@ private:
 	QuadParentPtr FindSpace(int id);
 	void Draw(HDC hdc, float dt);
 public:
-	void InitializeCheckMat();
+	void Ready();
+	void Update();
 	int GetCurSize() const { return m_CurSize; }
 	static CollisionSpace* GetCurQuadTree() { return m_CurSpace.get(); }
 	static void SetQuadTree();

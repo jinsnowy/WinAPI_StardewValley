@@ -14,8 +14,6 @@ CollisionSpace::CollisionSpace()
 
 void CollisionSpace::SetQuadTree()
 {
-	// 기존 쿼드트리가 있는 경우 삭제
-	m_CurSpace = nullptr;
 	m_CurSpace = make_unique<CollisionSpace>();
 	m_CurSpace->Init();
 }
@@ -24,9 +22,6 @@ void CollisionSpace::Init()
 {
 	// 월드 좌표계 설정
 	m_tWorldSpace = { 0.f, 0.f, 4096.f , 4096.f };
-
-	// 카메라 좌표계 설정
-	m_tCameraSpace = CAMERA->GetWorldRect();
 
 	// 헤드 초기화
 	m_QuadHead = QuadSpace::MakeQuadPtr(0, 0, m_tWorldSpace);
@@ -49,6 +44,15 @@ void CollisionSpace::Init()
 
 CollisionSpace::~CollisionSpace()
 {
+	for (Collider*& pColl : m_ColliderContainer)
+	{
+		if (pColl)
+		{
+			pColl->SetId(-1);
+			pColl->SetSpaceId(-1);
+		}
+	}
+	m_ColliderContainer.clear();
 }
 
 void CollisionSpace::QuadSpace::Clear()
@@ -76,20 +80,22 @@ void CollisionSpace::QuadSpace::GetChildCollidersNum(size_t* const sz)
 	}
 }
 
-void CollisionSpace::InitializeCheckMat()
+void CollisionSpace::Ready()
 {
+	// 체크 행렬 초기화
 	auto curSize = m_CheckMat.size();
 	fill(m_CheckMat.begin(), m_CheckMat.end(), vector<bool>(curSize, false));
-	m_bInit = true;
+}
+
+void CollisionSpace::Update()
+{
+	m_tCameraSpace = CAMERA->GetWorldRect();
 }
 
 void CollisionSpace::Observe(Collider* pColl)
 {
-	if (QuadSpace::OutSideOfScreen(pColl))
-		return;
-
-	// 초기화
-	if (m_bInit)
+	// 쿼드 트리에 있던 콜라이더 일 경우
+	if (pColl->GetId() != -1)
 	{
 		if (!pColl->IsMoved())
 			return;
@@ -97,7 +103,7 @@ void CollisionSpace::Observe(Collider* pColl)
 		ErasePreviousCollider(pColl);
 	}
 
-	// id 큐에서 꺼냄
+	// ID 큐에서 꺼냄
 	int nxt_id = m_IdQueue.top();
 	m_IdQueue.pop();
 
@@ -121,7 +127,6 @@ void CollisionSpace::Mark(Collider* pSrc, Collider* pDst)
 
 void CollisionSpace::ErasePreviousCollider(Collider* pColl)
 {
-	// 기존에 있던 콜라이더 아님
 	int collId = pColl->GetId();
 	if (collId == -1)
 		return;
@@ -129,6 +134,7 @@ void CollisionSpace::ErasePreviousCollider(Collider* pColl)
 	// 전체 콜라이더 컨테이너에서 삭제
 	--m_CurSize;
 	m_ColliderContainer[collId] = nullptr;
+	pColl->SetId(-1);
 
 	// Id 큐에 추가
 	m_IdQueue.push(collId);
@@ -340,10 +346,6 @@ void CollisionSpace::QuadSpace::SplitArea()
 		int idx = 4 * m_iIdx + i + 1;
 		m_QuadPartitions[i] = MakeQuadPtr(m_iLevel + 1, idx, MakeArea(static_cast<Partition>(i)));
 		m_CurSpace->m_mapSpace.insert(make_pair(idx, m_QuadPartitions[i].get()));
-		if (idx == 5)
-		{
-			int a = 10;
-		}
 	}
 }
 
@@ -436,11 +438,6 @@ void CollisionSpace::QuadSpace::AddCollider(Collider* const& pColl)
 {
 	pColl->SetSpaceId(m_iIdx);
 	m_CollList.push_back(pColl);
-	if (pColl->GetTag() == "Mouse")
-	{
-		m_CurSpace->m_mapSpace;
-		int a = 10;
-	}
 }
 
 CollisionSpace::QuadSpace::Partition CollisionSpace::QuadSpace
@@ -486,6 +483,7 @@ Collider* CollisionSpace::FindCollider(const string& strTag)
 	const auto& iterEnd = m_ColliderContainer.end();
 	for (auto iter = m_ColliderContainer.begin(); iter != iterEnd; ++ iter)
 	{
+		if ((*iter) == nullptr) continue;
 		if ((*iter)->GetTag() == strTag)
 		{
 			return (*iter);

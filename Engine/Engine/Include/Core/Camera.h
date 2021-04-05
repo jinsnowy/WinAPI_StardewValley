@@ -6,6 +6,7 @@ class Camera
 	DECLARE_SINGLE(Camera)
 private:
 	Pos			m_tPos;
+	Pos			m_tPrev;
 	Pos			m_tPivot;
 	RESOLUTION	m_tClientRS;
 	RESOLUTION	m_tWorldRS;
@@ -22,11 +23,7 @@ public:
 	Pos GetTopLeft() const { return m_tPos - m_tPivot * m_tClientRS; }
 	RESOLUTION GetClientRS() const { return m_tClientRS; }
 	RESOLUTION GetWorldRS() const { return m_tWorldRS; }
-	Rect GetWorldRect() const
-	{
-		Pos tPos = GetTopLeft();
-		return { tPos.x, tPos.y, tPos.x + m_tClientRS.x , tPos.y + m_tClientRS.y };
-	}
+	Rect GetWorldRect() const;
 	void ReleaseTarget();
 	void SetTarget(class Object* pTarget);
 	void SetPos(const Pos& pos)   { m_tPos = pos; }
