@@ -72,7 +72,7 @@ private:
 private:
 	void Init();
 	void Mark(Collider* pSrc, Collider* pDst);
-	void GetEqualSpaceColliders(Collider* pSrc, vector<Collider*>& dstColliders);
+	void GetEqualSpaceColliders(Collider* const&  pSrc, vector<Collider*>& dstColliders);
 	void ExpandId();
 	QuadParentPtr FindSpace(int id);
 	void Draw(HDC hdc, float dt);

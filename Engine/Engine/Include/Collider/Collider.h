@@ -25,7 +25,7 @@ public:
 	void SetId(int id) { m_CollId = id; }
 	int GetId() const { return m_CollId; }
 	void SetSpaceId(int id) { m_SpaceId = id; }
-	size_t GetSpaceId() const { return m_SpaceId; }
+	int GetSpaceId() const { return m_SpaceId; }
 	virtual Rect GetBounds() const = 0;
 	bool IsUICollider() const;
 	void SetUICollider(bool bUI) { m_bUIColl = bUI; }

@@ -73,12 +73,7 @@ void Tree::ShadeIn(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pDst->GetTag() == "PlayerBody")
 	{
-		ColliderRect* pRC_tree = static_cast<ColliderRect*>(pSrc);
-		ColliderRect* pRC_player = static_cast<ColliderRect*>(pDst);
-		if (pRC_tree->GetWorldInfo().bottom > pRC_player->GetWorldInfo().bottom)
-		{
-			EnableTransparentEffect();
-		}
+		EnableTransparentEffect();
 	}
 }
 
@@ -86,12 +81,7 @@ void Tree::ShadeOut(Collider* pSrc, Collider* pDst, float dt)
 {
 	if (pDst->GetTag() == "PlayerBody")
 	{
-		ColliderRect* pRC_tree = static_cast<ColliderRect*>(pSrc);
-		ColliderRect* pRC_player = static_cast<ColliderRect*>(pDst);
-		if (pRC_tree->GetWorldInfo().bottom > pRC_player->GetWorldInfo().bottom)
-		{
-			DisableTransparentEffect();
-		}
+		DisableTransparentEffect();
 	}
 }
 void Tree::TileHit(Collider* pSrc, Collider* pDst, float dt)
@@ -162,7 +152,6 @@ void Tree::LateInit()
 	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
 	pRC->SetRect(5.f, 5.f, imgSize.x / 3.f - 5.f, TILESIZE - 5.f);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::TileHit);
-	pRC->AddCollisionFunction(CS_STAY, this, &Tree::TileHit);
 	SAFE_RELEASE(pRC);
 }
 

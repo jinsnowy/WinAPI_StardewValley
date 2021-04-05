@@ -9,7 +9,6 @@ Texture::Texture()
     m_bColorKeyEnable(false),
     m_ColorKey(RGB(255, 0, 255))
 {
-
 }
 
 Texture::~Texture()

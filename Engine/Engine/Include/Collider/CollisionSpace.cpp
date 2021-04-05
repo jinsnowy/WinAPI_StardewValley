@@ -5,6 +5,7 @@
 #include "../Application/Window.h"
 #include "../Resources/ResourceManager.h"
 #include "../Core/Camera.h"
+#include "../Object/Object.h"
 
 unique_ptr<CollisionSpace> CollisionSpace::m_CurSpace = nullptr;
 
@@ -102,7 +103,6 @@ void CollisionSpace::Observe(Collider* pColl)
 
 		ErasePreviousCollider(pColl);
 	}
-
 	// ID 큐에서 꺼냄
 	int nxt_id = m_IdQueue.top();
 	m_IdQueue.pop();
@@ -141,7 +141,6 @@ void CollisionSpace::ErasePreviousCollider(Collider* pColl)
 
 	// 기존 쿼드 트리 공간에서 삭제
 	int spaceId = pColl->GetSpaceId();
-
 	const auto& quad = FindSpace(spaceId);
 	auto& collList = quad->m_CollList;
 	const auto& iterEnd = collList.end();
@@ -253,7 +252,7 @@ void CollisionSpace::QuadSpace::Insert(Collider* const& pColl)
 	}
 }
 
-void CollisionSpace::GetEqualSpaceColliders(Collider* pSrc, vector<Collider*>& dstColliders)
+void CollisionSpace::GetEqualSpaceColliders(Collider* const &pSrc, vector<Collider*>& dstColliders)
 {
 	m_QuadHead->Search(pSrc, dstColliders);
 }

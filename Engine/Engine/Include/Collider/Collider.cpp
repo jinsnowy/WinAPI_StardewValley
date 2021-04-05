@@ -1,6 +1,7 @@
 #include <cassert>
 #include "Collider.h"
 #include "../Application/Window.h"
+#include "CollisionManager.h"
 #include "../Object/Object.h"
 #include "../Math.h"
 
@@ -28,6 +29,8 @@ Collider::~Collider()
 	{
 		(*iter)->EraseCollisionList(this);
 	}
+
+	COLLISION_MANAGER->EraseCollider(this);
 }
 
 bool Collider::IsUICollider() const

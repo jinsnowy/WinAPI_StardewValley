@@ -49,8 +49,9 @@ public:
         // 알파 블렌딩 버그 (클라이언트 영역 벗어나면 드로우 안됌)
         if (py < 0)
         {
-            py = 0;
             sy += py;
+            v -= py;
+            py = 0;
         }
         else if (py + sy >= GETRESOLUTION.y)
         {
@@ -58,8 +59,9 @@ public:
         }
         if (px < 0)
         {
-            px = 0;
             sx += px;
+            u -= px;
+            px = 0;
         }
         else if (px + sx >= GETRESOLUTION.x)
         {
@@ -67,6 +69,7 @@ public:
         }
         Texture* pBack = RESOURCE_MANAGER->GetBackBuffer();
         Texture* pTemp = RESOURCE_MANAGER->GetTempBuffer();
+
         pTemp->ClearBuffer(px, py, sx, sy);
         pTemp->DrawImageFrom(px, py, sx, sy, pBack, px, py);
         pTemp->DrawImageFrom(px, py, sx, sy, this, u, v);

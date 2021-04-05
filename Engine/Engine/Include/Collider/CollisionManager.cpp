@@ -118,6 +118,11 @@ void CollisionManager::AddObject(Object* pObj)
     }
 }
 
+void CollisionManager::EraseCollider(Collider* pColl)
+{
+    m_CollisionSpace->ErasePreviousCollider(pColl);
+}
+
 void CollisionManager::QuadTreeUpdate()
 {
     m_CollisionSpace->Update();
@@ -208,6 +213,11 @@ void CollisionManager::CollisionQuadTreeVersion(float dt)
         // 충돌가능한 모든 상대방 충돌체 
         for (Collider* const& pDst : pDstList)
         {
+
+            // 이전 충돌에서 src가 삭제되었을 때
+            if (pSrc == nullptr)
+                break;
+
             ++checkNum;
 
             // 비교했다는 표시를 남김
