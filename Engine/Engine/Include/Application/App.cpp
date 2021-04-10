@@ -13,12 +13,13 @@
 #include "../Sound/SoundManager.h"
 #include "../Object/Mouse.h"
 #include "../Profiler.h"
+#include "../UnReleaseTest.h"
 
 App::App()
 {
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	// _CrtSetBreakAlloc(3298);
+	//_CrtSetBreakAlloc(3616);
 	AllocConsole();
 #endif
 }
@@ -31,13 +32,15 @@ App::~App()
 	SCENE_MANAGER->Release();
 	CAMERA->Release();
 	INPUT->Release();
-	COLLISION_MANAGER->Release();
 	PROTOTYPE_MANAGER->Release();
 	RESOURCE_MANAGER->Release();
+	COLLISION_MANAGER->Release();
 	SOUND_MANAGER->Release();
 	PATH_MANAGER->Release();
 	TIMER->Release();
 	WINDOW->Release();
+
+	GetUndeletedList();
 }
 
 int App::Go()
@@ -58,7 +61,7 @@ int App::Go()
 		}
 		else {
 			// Game Frame goes
-			Process();
+			// Process();
 		}
 	}
 

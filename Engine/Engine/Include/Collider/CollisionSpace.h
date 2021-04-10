@@ -25,7 +25,6 @@ private:
 			OUT_SIDE = 5,
 		};
 	public:
-		~QuadSpace();
 		QuadSpace(const QuadSpace& space) = delete;
 		QuadSpace(unsigned int level, int idx, const Rect& rect);
 	private:

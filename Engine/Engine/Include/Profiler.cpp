@@ -2,8 +2,6 @@
 
 unordered_map<string, Profiler::Cache> Profiler::m_Cache;
 set<string> Profiler::m_NameMap;
-
-string Profiler::m_EmptyStr = "";
 Profiler::Cache Profiler::m_nullCache = nullptr;
 
 void Profiler::PrintProfileResult()

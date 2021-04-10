@@ -1,11 +1,11 @@
 #pragma once
 #include "../framework.h"
-
+#include "../Resources/Texture.h"
 class CollisionManager
 {
 DECLARE_SINGLE(CollisionManager)
 private:
-	class Texture* m_pCollTex = nullptr;
+	unique_ptr<Texture, Texture::Deleter> m_pCollTex;
 	list <class Object*> m_tempCollisionObjList;
 	list <class Object*> m_CollisionObjList;
 	class CollisionSpace* m_CollisionSpace = nullptr;

@@ -12,6 +12,15 @@ private:
     Texture();
     ~Texture();
 public:
+    struct Deleter
+    {
+        void operator()(Texture* pTex)
+        {
+            SAFE_RELEASE(pTex);
+        }
+    };
+public:
+    static unique_ptr<Texture, Deleter> MakeTexture();
     static bool TexSort(const Texture* lhs, const Texture* rhs)
     {
         return lhs->GetTexTag() < rhs->GetTexTag();

@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include "../framework.h"
 class Ref
 {
@@ -10,23 +9,14 @@ protected:
 	bool m_bEnable;
 	bool m_bLife;
 	int m_Ref;
-	std::string m_strTag;
+	string m_strTag;
 public:
 	void AddRef() { ++m_Ref; }
-	int Release()
-	{
-		--m_Ref;
-		if (m_Ref == 0)
-		{
-			delete this;
-			return 0;
-		}
-		return m_Ref;
-	}
+	int Release();
 	bool GetEnable() const { return m_bEnable; }
 	bool GetLife() const { return m_bLife; }
-	std::string GetTag() const { return m_strTag; }
+	string GetTag() const { return m_strTag; }
 	void Die() { m_bLife = false; }
 	void SetEnable(bool bEnable) { m_bEnable = bEnable; }
-	void SetTag(const std::string& tagName);
+	void SetTag(const string& tagName);
 };

@@ -137,11 +137,14 @@ void UISeedStore::BuyingCallback(Collider* pSrc, Collider* pDst, float dt, int i
 		m_fClickDelay -= dt;
 		return;
 	}
-	if (pDst->GetTag() == "Mouse" && KEYUP("MouseLButton"))
+	if (m_bShow)
 	{
-		int curBlock = m_pScrollBar->GetCurBlock() + id;
-		Item* curItem = m_vecSellingItems[curBlock];
-		PLAYER->BuyItem(curItem);
+		if (pDst->GetTag() == "Mouse" && KEYUP("MouseLButton"))
+		{
+			int curBlock = m_pScrollBar->GetCurBlock() + id;
+			Item* curItem = m_vecSellingItems[curBlock];
+			PLAYER->BuyItem(curItem);
+		}
 	}
 }
 

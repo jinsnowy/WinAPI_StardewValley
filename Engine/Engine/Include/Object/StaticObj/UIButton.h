@@ -1,8 +1,5 @@
 #pragma once
 #include "UI.h"
-
-
-
 class UIButton : public UI
 {
 private:

@@ -49,7 +49,6 @@ private:
 	static unordered_map<string, Cache> m_Cache;
 	static set<string> m_NameMap;
 private:
-	static string m_EmptyStr;
 	static Cache m_nullCache;
 	static constexpr int m_MaxFrame = 60;
 	string m_tmp_logger;
@@ -59,7 +58,6 @@ private:
 	{
 		if (m_Cache.find(logger) != m_Cache.end())
 		{
-			m_NameMap.insert(string(logger));
 			return m_Cache[logger];
 		}
 		return m_nullCache;
@@ -71,6 +69,7 @@ public:
 		m_tmp_logger = tag;
 		if (GetCache(m_tmp_logger) == m_nullCache)
 		{
+			m_NameMap.insert(m_tmp_logger);
 			m_Cache.emplace(m_tmp_logger, std::move(make_unique<Log>(tag)));
 		}
 #endif

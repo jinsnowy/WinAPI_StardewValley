@@ -230,16 +230,15 @@ void SceneManager::FadeOut()
 	Texture* pEmptyTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), RSW, RSH);
 
 	m_fDelay = 0.f;
-	RESOURCE_MANAGER->SetAlphaChannel(0);
-	float th = 0.f;
+	float threshold = 0.f;
 	while (m_fDelay < m_fSceneDelay)
 	{
 		const float dt = TIMER->Tick();
 		// FadeOut 장면 전환 효과
 		m_fDelay += dt;
-		if (m_fDelay > th)
+		if (m_fDelay > threshold)
 		{
-			th += m_fSceneDrawPeriod;
+			threshold += m_fSceneDrawPeriod;
 			int alpha = int(255.f * (m_fDelay / m_fSceneDelay));
 			RESOURCE_MANAGER->SetAlphaChannel(alpha);
 			AlphaBlend(WINDOW->GetWndDC(), 0, 0, RSW, RSH,
@@ -266,15 +265,15 @@ void SceneManager::FadeIn()
 
 	m_fDelay = 0.f;
 	RESOURCE_MANAGER->SetAlphaChannel(0);
-	float th = 0.f;
+	float threshold = 0.f;
 	while (m_fDelay < m_fSceneDelay)
 	{
 		const float dt = TIMER->Tick();
 		// FadeIn 장면 전환 효과
 		m_fDelay += dt;
-		if (m_fDelay > th)
+		if (m_fDelay > threshold)
 		{
-			th += m_fSceneDrawPeriod;
+			threshold += m_fSceneDrawPeriod;
 			int alpha = int(255.f * (m_fDelay / m_fSceneDelay));
 			RESOURCE_MANAGER->SetAlphaChannel(alpha);
 			AlphaBlend(WINDOW->GetWndDC(), 0, 0, RSW, RSH,

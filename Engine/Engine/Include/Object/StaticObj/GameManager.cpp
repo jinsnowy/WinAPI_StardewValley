@@ -72,7 +72,8 @@ void GameManager::Acknowleged(UI* changedUI)
 			m_pPlayer->DisableMovement();
 			SOUND_MANAGER->PlayMusic("OpenUI");
 		}
-		else {
+		else 
+		{
 			pTimer->SetNormalPos();
 			m_pPlayer->EnableMovement();
 			SOUND_MANAGER->PlayMusic("CloseUI");
@@ -82,7 +83,7 @@ void GameManager::Acknowleged(UI* changedUI)
 
 void GameManager::Input(float dt)
 {
-	if (KEYDOWN("PlayerUI"))
+	if (KEYDOWN("PlayerUI") && !Activated((int)PANEL_TYPE::SEED_STORE))
 	{
 		m_uiStates.flip((int)PANEL_TYPE::PLAYER_INFO);
 		m_uiStates.flip((int)PANEL_TYPE::FAST_ITEMLIST);

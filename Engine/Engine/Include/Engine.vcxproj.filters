@@ -381,6 +381,9 @@
     <ClInclude Include="Profiler.h">
       <Filter>Other</Filter>
     </ClInclude>
+    <ClInclude Include="UnReleaseTest.h">
+      <Filter>Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application\Window.cpp">
@@ -636,6 +639,9 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Profiler.cpp">
+      <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="UnReleaseTest.cpp">
       <Filter>Other</Filter>
     </ClCompile>
   </ItemGroup>

@@ -141,9 +141,9 @@ void CollisionSpace::ErasePreviousCollider(Collider* pColl)
 
 	// 기존 쿼드 트리 공간에서 삭제
 	int spaceId = pColl->GetSpaceId();
-	const auto& quad = FindSpace(spaceId);
-	auto& collList = quad->m_CollList;
-	const auto& iterEnd = collList.end();
+	const QuadParentPtr& quad = FindSpace(spaceId);
+	list<Collider*>& collList = quad->m_CollList;
+	list<Collider*>::iterator iterEnd = collList.end();
 	for (auto iter = collList.begin(); iter != iterEnd; ++iter)
 	{
 		if ((*iter) == pColl)
@@ -181,7 +181,7 @@ void CollisionSpace::ErasePreviousCollider(Collider* pColl)
 void CollisionSpace::QuadSpace::Merge(int parentId, list<Collider*> &parentColliders)
 {
 	// 콜라이더 공간 id 재조정 및 부모 공간에 추가
-	const auto adjust_collider = [&parentColliders, &parentId](Collider* pColl)
+	const auto adjust_collider = [&parentColliders, &parentId](Collider* const& pColl)
 	{
 		pColl->SetSpaceId(parentId);
 		parentColliders.push_back(pColl);
@@ -298,10 +298,6 @@ void CollisionSpace::ExpandId()
 		m_IdQueue.push(i);
 }
 
-CollisionSpace::QuadSpace::~QuadSpace()
-{
-}
-
 Rect CollisionSpace::QuadSpace::MakeArea(Partition ePart) const
 {
 	float CenterX = (m_tArea.left + m_tArea.right) / 2.f;
@@ -354,7 +350,7 @@ void CollisionSpace::QuadSpace::Search(Collider* const& pSrc, vector<Collider*>&
 	const auto& checkMat = m_CurSpace->m_CheckMat;
 
 	// 같은 오브젝트내의 콜라이더가 아니면서 콜라이더 체크를 하지 않은 애들 
-	const auto InsertByNotEqObjAndNotChecked = [&](Collider* pDst)
+	const auto InsertByNotEqObjAndNotChecked = [&](Collider* const& pDst)
 	{
 		const int& dstId = pDst->GetId();
 		bool checked = checkMat[srcId][dstId] || checkMat[dstId][srcId];

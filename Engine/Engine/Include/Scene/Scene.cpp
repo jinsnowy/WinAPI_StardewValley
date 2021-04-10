@@ -270,9 +270,9 @@ string Scene::GetNearObjectName(Scene* pScene, const Pos& worldPos)
 	}
 	if (pObj)
 	{
-		char buffer[30] = { 0 };
-		sprintf_s(buffer, "Pos (%.1f,%.1f)", pObj->GetPos().x, pObj->GetPos().y);
-		return pObj->GetTexTag() + string(buffer);
+		char buffer[MAX_PATH] = { 0 };
+		sprintf_s(buffer, "%s Pos (%.1f,%.1f)", pObj->GetTexTag().c_str(), pObj->GetPos().x, pObj->GetPos().y);
+		return buffer;
 	}
 	return "";
 

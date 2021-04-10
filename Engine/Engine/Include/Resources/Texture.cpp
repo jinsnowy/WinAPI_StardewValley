@@ -2,7 +2,6 @@
 #include "../Core/PathManager.h"
 #include "../Application/Window.h"
 
-
 Texture::Texture()
     :
     m_hMemDC(nullptr),
@@ -16,6 +15,11 @@ Texture::~Texture()
     SelectObject(m_hMemDC, m_hOldBitmap);
     DeleteObject(m_hBitmap);
     DeleteDC(m_hMemDC);
+}
+
+unique_ptr<Texture, Texture::Deleter> Texture::MakeTexture()
+{
+    return unique_ptr<Texture, Deleter>(nullptr, Deleter());
 }
 
 bool Texture::LoadTexture(HINSTANCE hInst, HDC hDC,

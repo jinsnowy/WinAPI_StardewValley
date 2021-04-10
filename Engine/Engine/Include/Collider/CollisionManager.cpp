@@ -20,14 +20,16 @@
 DEFINITION_SINGLE(CollisionManager)
 
 CollisionManager::CollisionManager()
+    :
+    m_pCollTex(Texture::MakeTexture())
 {
-    m_pCollTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), GETRESOLUTION.x, GETRESOLUTION.y);
+    Texture* pTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), GETRESOLUTION.x, GETRESOLUTION.y);
+    m_pCollTex.reset(pTex);
     m_pCollTex->SetColorKey(util::Black);
 }
 
 CollisionManager::~CollisionManager()
 {
-    SAFE_RELEASE(m_pCollTex);
 }
 
 bool CollisionManager::Init()
