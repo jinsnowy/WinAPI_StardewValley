@@ -254,13 +254,15 @@ void SceneManager::FadeIn()
 {
 	if (!m_pScene)
 		return;
-
+	// 그전 시간 버림 
+	TIMER->Tick();
 	// 카메라 조정
 	CAMERA->Input(0.01f);
 	const int RSW = GETRESOLUTION.x;
 	const int RSH = GETRESOLUTION.y;
 
-	Texture* pEmptyTex = Texture::CreateEmptyTexture(WINDOW->GetWndDC(), RSW, RSH);
+	Texture* pBackBuffer = RESOURCE_MANAGER->GetBackBuffer();
+	SCENE_MANAGER->Draw(pBackBuffer->GetDC(), 0.f);
 
 	m_fDelay = 0.f;
 	RESOURCE_MANAGER->SetAlphaChannel(0);
@@ -268,7 +270,7 @@ void SceneManager::FadeIn()
 	while (m_fDelay < m_fSceneDelay)
 	{
 		const float dt = TIMER->Tick();
-		// FadeOut 장면 전환 효과
+		// FadeIn 장면 전환 효과
 		m_fDelay += dt;
 		if (m_fDelay > th)
 		{
@@ -276,11 +278,11 @@ void SceneManager::FadeIn()
 			int alpha = int(255.f * (m_fDelay / m_fSceneDelay));
 			RESOURCE_MANAGER->SetAlphaChannel(alpha);
 			AlphaBlend(WINDOW->GetWndDC(), 0, 0, RSW, RSH,
-				pEmptyTex->GetDC(), 0, 0, RSW, RSH, RESOURCE_MANAGER->GetBlendFunc());
+				pBackBuffer->GetDC(), 0, 0, RSW, RSH, RESOURCE_MANAGER->GetBlendFunc());
 		}
 	}
 
-	SAFE_RELEASE(pEmptyTex);
+	SAFE_RELEASE(pBackBuffer);
 }
 
 void SceneManager::DrawScreenDarkness(HDC hdc)

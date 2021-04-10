@@ -20,8 +20,8 @@ private:
 	void ChangeScene();
 	void ChangeShowMode();
 private:
-	static constexpr float m_fSceneDelay = 0.5f;
-	static constexpr float m_fSceneDrawPeriod = 0.04f;
+	static constexpr float m_fSceneDelay = 1.0f;
+	static constexpr float m_fSceneDrawPeriod = 0.05f;
 	float m_fDelay = 0.f;
 	void FadeOut();
 	void FadeIn();
