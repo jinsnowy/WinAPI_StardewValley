@@ -19,6 +19,7 @@ private:
 	virtual UIFastItemList* Clone() { throw EXCEPT(L"UIFastItemList cloned"); return nullptr; }
 private:
 	bool m_bDrag = false;
+	int m_iClickItemIndex = -1;
 	class Item* m_pClickItem = nullptr;
 	class UIPanel* m_pItemInfo = nullptr;
 	vector<class Texture*> m_vecSmallNumbers;

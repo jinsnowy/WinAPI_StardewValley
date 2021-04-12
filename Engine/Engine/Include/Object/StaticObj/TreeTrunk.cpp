@@ -101,7 +101,6 @@ TreeTrunk* TreeTrunk::Clone()
 
 void TreeTrunk::LateInit()
 {
-	Size imgSize = GetImageSize();
 	Collider* pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
 	pRC->AddCollisionFunction(CS_ENTER, this, &TreeTrunk::TileHit);
 	pRC->AddCollisionFunction(CS_STAY, this, &TreeTrunk::TileHit);

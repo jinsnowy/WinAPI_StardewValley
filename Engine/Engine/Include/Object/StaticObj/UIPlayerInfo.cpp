@@ -60,6 +60,7 @@ void UIPlayerInfo::Input(float dt)
 			m_bDrag = false;
 			int index = GetClickIndex(MOUSECLIENTPOS);
 			PLAYER->SwapItem(m_iClickItemIndex, index);
+			PLAYER->SetCurItemSel(m_iClickItemIndex);
 			SAFE_RELEASE(m_pClickItem);
 		}
 	}

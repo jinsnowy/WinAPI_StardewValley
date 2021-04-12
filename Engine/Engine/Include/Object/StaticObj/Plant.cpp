@@ -62,7 +62,7 @@ void Plant::AddHarvestCollider()
         return;
     }
     ColliderRect* pRC = AddCollider<ColliderRect>("HarvestBody");
-    pRC->SetRect(0.f, 0.f, TILESIZE, TILESIZE);
+    pRC->SetRect(5.f, 5.f, TILESIZE-5.f, TILESIZE-5.f);
     pRC->AddCollisionFunction(CS_ENTER, this, &Plant::PlantHit);
     pRC->AddCollisionFunction(CS_STAY, this, &Plant::PlantHit);
     SAFE_RELEASE(pRC);
@@ -133,6 +133,11 @@ void Plant::Grow()
             }
         }
     }
+}
+
+void Plant::Peek()
+{
+    m_iGrowTime = GAMEWORLDTIME;
 }
 
 Plant::Plant()

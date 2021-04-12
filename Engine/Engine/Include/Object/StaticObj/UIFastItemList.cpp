@@ -53,7 +53,6 @@ bool UIFastItemList::Init()
 
 	COLORREF chromaKey = RGB(255, 255, 255);
 	m_vecSmallNumbers = RESOURCE_MANAGER->LoadTextureFromDirectory(L"SV/Scene/SmallNumbers/", chromaKey);
-	INPUT->AddKey("NextItemList", VK_TAB);
 	m_pItemInfo = Object::CreateObject<UIPanel>("InfoPanel");
 	m_pItemInfo->SetTexture("InfoPanel", L"Sv/Scene/UI/ItemInfoPanel.bmp");
 	m_pItemInfo->SetAsTextureSize();
@@ -65,18 +64,12 @@ bool UIFastItemList::Init()
 void UIFastItemList::Input(float dt)
 {
     UI::Input(dt);
-	if (KEYDOWN("NextItemList"))
-	{
-		m_iItemListOffset = (m_iItemListOffset + 12) % 36;
-		PLAYER->SetCurItemSel((PLAYER->GetCurItemSel() + 12) % 36);
-		SOUND_MANAGER->PlayMusic("InteractUI");
-	}
 	if (KEYDOWN("MouseLButton"))
 	{
 		SAFE_RELEASE(m_pClickItem);
-		int index = GetClickIndex(MOUSECLIENTPOS);
-		m_pClickItem = PLAYER->GetItem(index);
-		PLAYER->SetCurItemSel(index);
+		m_iClickItemIndex = GetClickIndex(MOUSECLIENTPOS);
+		m_pClickItem = PLAYER->GetItem(m_iClickItemIndex);
+		PLAYER->SetCurItemSel(m_iClickItemIndex);
 	}
 	if (KEYPRESS("MouseLButton"))
 	{
@@ -92,6 +85,9 @@ void UIFastItemList::Input(float dt)
 			m_bDrag = false;
 			if (m_pClickItem)
 			{
+				int index = GetClickIndex(MOUSECLIENTPOS);
+				PLAYER->SwapItem(m_iClickItemIndex, index);
+				PLAYER->SetCurItemSel(m_iClickItemIndex);
 				Item* pClone = m_pClickItem->Clone();
 				pClone->SetPos(MOUSEWORLDPOS);
 				ColliderPoint* pPoint = pClone->AddCollider<ColliderPoint>("ItemPointBody");

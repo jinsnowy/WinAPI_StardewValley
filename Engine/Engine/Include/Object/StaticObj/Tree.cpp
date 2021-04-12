@@ -150,8 +150,9 @@ void Tree::LateInit()
 	SAFE_RELEASE(pRC);
 
 	pRC = static_cast<ColliderRect*>(GetCollider("TileBlock"));
-	pRC->SetRect(5.f, 5.f, imgSize.x / 3.f - 5.f, TILESIZE - 5.f);
+	pRC->SetRect(5.f, 5.f, TILESIZE - 5.f, TILESIZE - 5.f);
 	pRC->AddCollisionFunction(CS_ENTER, this, &Tree::TileHit);
+	pRC->AddCollisionFunction(CS_STAY, this, &Tree::TileHit);
 	SAFE_RELEASE(pRC);
 }
 

@@ -38,6 +38,7 @@ public:
 	int GetTileIndex() const { return m_iTileIndex; }
 	int GetCurLevel() const { return m_iCurLevel; }
 	void Grow();
+	void Peek();
 protected:
 	Plant();
 	Plant(const Plant& obj) = delete;

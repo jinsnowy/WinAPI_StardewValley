@@ -198,6 +198,10 @@ void GameManager::UpdateFarm()
 		{
 			(*iter)->Grow();
 		}
+		else
+		{
+			(*iter)->Peek();
+		}
 
 		if (!(*iter)->GetLife())
 		{

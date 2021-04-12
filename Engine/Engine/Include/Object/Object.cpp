@@ -33,9 +33,7 @@ Object::Object() :
     m_tPivot(0, 0),
     m_tSize(0, 0),
     m_tImageOffset(0, 0),
-    m_blsPhysics(false),
-    m_bEnableAnimation(false),
-    m_fGravityTime(0.f)
+    m_bEnableAnimation(false)
 {
 }
 
@@ -56,7 +54,6 @@ Object::Object(const Object& obj)
     // 복사 제외 항목
     m_Ref = 1;
     m_pEffect = nullptr;
-    m_fGravityTime = 0.f;
 
     // 포인터 타입
     m_pLayer = obj.m_pLayer;

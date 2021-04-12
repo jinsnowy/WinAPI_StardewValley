@@ -13,6 +13,7 @@ protected:
 	OBJ_TYPE m_eObjType = OBJ_NORMAL;
 	bool m_bEnableAnimation = true;
 	bool m_bUIObject = false;
+	bool m_blsPhysics = false;
 	class Scene* m_pScene;
 	class Layer* m_pLayer;
 	class Texture* m_pTexture;
@@ -134,22 +135,6 @@ public:
 	bool CheckCollider() const
 	{
 		return !m_ColliderList.empty();
-	}
-protected:
-	bool m_blsPhysics;
-	float m_fGravityTime;
-public:
-	void ClearGravity()
-	{
-		m_fGravityTime = 0.f;
-	}
-	void SetPhysics(bool bPhysics)
-	{
-		m_blsPhysics = bPhysics;
-	}
-	bool GetPhysics() const
-	{
-		return m_blsPhysics;
 	}
 protected:
 	bool m_bEnableTransparent = false;
