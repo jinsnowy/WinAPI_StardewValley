@@ -56,19 +56,6 @@ CollisionSpace::~CollisionSpace()
 	m_ColliderContainer.clear();
 }
 
-void CollisionSpace::QuadSpace::Clear()
-{
-	for (int i = 0; i < 4; ++i)
-	{
-		if (m_QuadPartitions[i])
-		{
-			m_CurSpace->m_mapSpace.erase(m_QuadPartitions[i]->m_iIdx);
-			m_QuadPartitions[i]->Clear();
-			m_QuadPartitions[i] = nullptr;
-		}
-	}
-}
-
 void CollisionSpace::QuadSpace::GetChildCollidersNum(size_t* const sz)
 {
 	for (int i = 0; i < 4; ++i)
@@ -131,14 +118,6 @@ void CollisionSpace::ErasePreviousCollider(Collider* pColl)
 	if (collId == -1)
 		return;
 
-	// 전체 콜라이더 컨테이너에서 삭제
-	--m_CurSize;
-	m_ColliderContainer[collId] = nullptr;
-	pColl->SetId(-1);
-
-	// Id 큐에 추가
-	m_IdQueue.push(collId);
-
 	// 기존 쿼드 트리 공간에서 삭제
 	int spaceId = pColl->GetSpaceId();
 	const QuadParentPtr& quad = FindSpace(spaceId);
@@ -148,13 +127,21 @@ void CollisionSpace::ErasePreviousCollider(Collider* pColl)
 	{
 		if ((*iter) == pColl)
 		{
+			// 전체 콜라이더 컨테이너에서 삭제
+			--m_CurSize;
+			m_ColliderContainer[collId] = nullptr;
+			pColl->SetId(-1);
+
+			// Id 큐에 추가
+			m_IdQueue.push(collId);
+
 			pColl->SetSpaceId(-1);
 			collList.erase(iter);
 			break;
 		}
 	}
 
-	// 필요시 공간 재조정 (O(V), for total space V)
+	// 필요시 공간 재조정
 	if (spaceId != 0)
 	{
 		int parentId = (spaceId - 1) / 4;
@@ -273,11 +260,6 @@ void CollisionSpace::QuadSpace::Draw(HDC& hdc, const float& dt)
 
 void CollisionSpace::Draw(HDC hdc, float dt)
 {
-#ifdef _DEBUG
-	size_t totalSize = 0;
-	m_QuadHead->GetChildCollidersNum(&totalSize);
-	_cprintf("Managed Collider Num : %zd\n", totalSize);
-#endif // _DEBUG
 	m_QuadHead->Draw(hdc, dt);
 }
 

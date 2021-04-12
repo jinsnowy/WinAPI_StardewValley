@@ -12,6 +12,7 @@ void Profiler::PrintProfileResult()
 	if (iCount == m_MaxFrame)
 	{
 		iCount = 0;
+		system("cls");
 		_cprintf("================== Profile Result =========================\n");
 		const auto iterEnd = m_NameMap.end();
 		for (auto iter = m_NameMap.begin(); iter != iterEnd; ++iter)

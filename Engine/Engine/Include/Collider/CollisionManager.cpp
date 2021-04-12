@@ -16,7 +16,12 @@
 #include "../Object/MoveObj/Player.h"
 #include "../Object/StaticObj/GameManager.h"
 #include "../Profiler.h"
+#include "../Option.h"
+#include <mutex>
 
+int checkNum = 0;
+float duration = 0.f;
+mutex g_mtx;
 DEFINITION_SINGLE(CollisionManager)
 
 CollisionManager::CollisionManager()
@@ -46,15 +51,20 @@ void CollisionManager::AddCollideObject(Object* pObj)
 {
     pObj->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pObj);
+#ifdef QUAD_TREE
     const auto& collList = pObj->GetColliderList();
     for (auto iter = collList->begin(); iter != collList->end(); ++iter)
     {
         const auto& pColl = (*iter);
         if (pColl->GetEnable())
         {
+            pColl->SetMoved(true);
             m_CollisionSpace->Observe(pColl);
         }
     }
+#else
+    m_CollisionObjList.push_back(pObj);
+#endif
 }
 
 void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const string& strTag)
@@ -62,10 +72,15 @@ void CollisionManager::AddCollideRect(const Pos& pos, const Rect& rect, const st
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
     ColliderRect* pColl = pPoint->AddCollider<ColliderRect>(strTag);
     pColl->SetRect(rect.left, rect.top, rect.right, rect.bottom);
+    pColl->SetMoved(true);
     pPoint->SetPos(pos.x, pos.y);
     pPoint->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pPoint);
+#ifdef QUAD_TREE
     m_CollisionSpace->Observe(pColl);
+#else
+    m_CollisionObjList.push_back(pPoint);
+#endif
     SAFE_RELEASE(pColl);
 }
 
@@ -73,10 +88,15 @@ void CollisionManager::AddCollidePoint(const Pos& pos, const string& strTag)
 {
     Object* pPoint = Object::CreateObject<PointObject>(strTag);
     ColliderPoint* pColl = pPoint->AddCollider<ColliderPoint>(strTag);
+    pColl->SetMoved(true);
     pPoint->SetPos(pos.x, pos.y);
     pPoint->LateUpdate(0.f);
     m_tempCollisionObjList.push_back(pPoint);
+#ifdef QUAD_TREE
     m_CollisionSpace->Observe(pColl);
+#else
+    m_CollisionObjList.push_back(pPoint);
+#endif
     SAFE_RELEASE(pColl);
 }
 
@@ -89,13 +109,6 @@ void CollisionManager::Clear()
     for (auto iter = m_tempCollisionObjList.begin(); 
         iter != iterEnd; ++iter)
     {
-        // 쿼드 트리에서 명시적으로 삭제
-        const auto& collLiders = (*iter)->GetColliderList();
-        const auto& collIterEnd = collLiders->end();
-        for (auto collIter = collLiders->begin(); collIter != collIterEnd; ++collIter)
-        {
-            m_CollisionSpace->ErasePreviousCollider((*collIter));
-        }
         SAFE_RELEASE((*iter));
     }
     m_tempCollisionObjList.clear();
@@ -110,6 +123,7 @@ void CollisionManager::AddObject(Object* pObj)
 {
     if (pObj->CheckCollider())
     {
+#ifdef QUAD_TREE
         for (Collider* coll : *(pObj->GetColliderList()))
         {
             if (coll->GetEnable())
@@ -117,12 +131,17 @@ void CollisionManager::AddObject(Object* pObj)
                 m_CollisionSpace->Observe(coll);
             }
         }
+#else
+        m_CollisionObjList.push_back(pObj);
+#endif
     }
 }
 
 void CollisionManager::EraseCollider(Collider* pColl)
 {
+#ifdef QUAD_TREE
     m_CollisionSpace->ErasePreviousCollider(pColl);
+#endif
 }
 
 void CollisionManager::QuadTreeUpdate()
@@ -143,7 +162,10 @@ void CollisionManager::CollisionListVersion(float dt)
         Clear();
         return;
     }
+    // 충돌 체크 성능 체크
+    PROBE_PERFORMANCE("Collision/CollisionCheck");
 
+    checkNum = 0;
     // 오브젝트 간 충돌 처리를 한다.
     list<Object*>::iterator iter;
     list<Object*>::iterator iterEnd = m_CollisionObjList.end();
@@ -163,6 +185,19 @@ void CollisionManager::CollisionListVersion(float dt)
     }
     
     Clear();
+
+    duration += dt;
+    if (duration >= 1.0f)
+    {
+        duration -= 1.0f;
+#ifdef _DEBUG
+        _cprintf("collision check num : %d\n", checkNum);
+#endif
+        wchar_t message[256] = {};
+        swprintf_s(message, L"collision check num : %d\n", checkNum);
+        OutputDebugString(message);
+    }
+
 }
 
 void CollisionManager::CollisionQuadTreeVersion(float dt)
@@ -192,11 +227,10 @@ void CollisionManager::CollisionQuadTreeVersion(float dt)
     }
 
     // 충돌 체크 성능 체크
+    checkNum = 0;
     PROBE_PERFORMANCE("Collision/CollisionCheck");
 
     const auto& pSrcList = *(m_CollisionSpace->GetColliderList());
-
-    int checkNum = 0;
     // 충돌체와 충돌체 검사 시작 부분
     for (Collider* const& pSrc : pSrcList)
     {
@@ -262,15 +296,19 @@ void CollisionManager::CollisionQuadTreeVersion(float dt)
     }
 
     Clear();
-#ifdef _DEBUG
-    static float duration = 0.f;
+
     duration += dt;
     if (duration >= 1.0f)
     {
         duration -= 1.0f;
+#ifdef _DEBUG
         _cprintf("collision check num : %d\n", checkNum);
-    }
 #endif
+        wchar_t message[256] = {};
+        swprintf_s(message, L"collision check num : %d\n", checkNum);
+        OutputDebugString(message);
+    }
+
 }
 
 void CollisionManager::Draw(HDC hdc, float dt)
@@ -280,33 +318,32 @@ void CollisionManager::Draw(HDC hdc, float dt)
 
 bool CollisionManager::CheckCollision(Object* pSrc, Object* pDst, float dt)
 {
+
     const list<Collider*>* pSrcList = pSrc->GetColliderList();
     const list<Collider*>* pDstList = pDst->GetColliderList();
-
-    auto iterSrc = pSrcList->begin();
     const auto& iterSrcEnd = pSrcList->cend();
-
-    auto iterDst = pDstList->begin();
     const auto& iterDstEnd = pDstList->cend();
 
     bool bCollision = false;
-    for (; iterSrc != iterSrcEnd; ++iterSrc)
+    for (auto iterSrc = pSrcList->begin(); iterSrc != iterSrcEnd; ++iterSrc)
     {
         if (!(*iterSrc)->GetEnable())
         {
             continue;
         }
-        for (; iterDst != iterDstEnd; ++iterDst)
+        for (auto iterDst = pDstList->begin(); iterDst != iterDstEnd; ++iterDst)
         {
             if (!(*iterDst)->GetEnable())
             {
                 continue;
             }
+
+            ++checkNum;
+
             // 충돌체가 서로 충돌했는가
             if ((*iterSrc)->CheckCollision(*iterDst))
             {
                 bCollision = true;
-
                 // 히트 포인트 셋팅
                 ((*iterDst))->SetHitPoint((*iterSrc)->GetHitPoint());
 

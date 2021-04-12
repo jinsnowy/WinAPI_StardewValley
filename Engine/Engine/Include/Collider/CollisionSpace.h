@@ -9,12 +9,13 @@ public:
 	~CollisionSpace();
 private:
 	class QuadSpace;
-	typedef QuadSpace* QuadParentPtr;
-	typedef unique_ptr<QuadSpace> QuadPtr;
+	using QuadParentPtr = QuadSpace*;
+	using QuadPtr = unique_ptr<QuadSpace>;
 	class QuadSpace
 	{
 		friend class CollisionSpace;
 	private:
+		struct Deleter;
 		enum class Partition
 		{
 			LEFT_TOP = 0,
@@ -25,7 +26,6 @@ private:
 			OUT_SIDE = 5,
 		};
 	public:
-		QuadSpace(const QuadSpace& space) = delete;
 		QuadSpace(unsigned int level, int idx, const Rect& rect);
 	private:
 		unsigned int m_iLevel = 0;
@@ -43,7 +43,6 @@ private:
 		void Search(class Collider* const& pSrc, vector<Collider*>& dstColliders);
 		void Merge(int parentId, list<Collider*>& parentColliders);
 	public:
-		void Clear();
 		void GetChildCollidersNum(size_t* const sz);
 		bool Empty() const { return m_CollList.empty(); }
 		bool IsOverLoaded() const;

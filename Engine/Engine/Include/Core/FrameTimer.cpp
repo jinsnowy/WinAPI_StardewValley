@@ -1,4 +1,6 @@
 #include "FrameTimer.h"
+#include "../Resources/ResourceManager.h"
+#include "../Resources/Texture.h"
 using namespace chrono;
 
 DEFINITION_SINGLE(FrameTimer)
@@ -57,7 +59,6 @@ float FrameTimer::Tick()
         swprintf_s(strFPS, L"FPS : %.f\n", m_fFPS);
         SetWindowText(m_hWnd, strFPS);
         OutputDebugString(strFPS);
-
     }
     return dt * m_TimeScale;
 }

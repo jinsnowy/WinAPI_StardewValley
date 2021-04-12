@@ -22,6 +22,7 @@ protected:
 	Pos				m_tPrev = Pos(-1.f, -1.f);
 public:
 	bool IsMoved() const { return m_bMoved; }
+	void SetMoved(bool bMoved) { m_bMoved = bMoved; }
 	void SetId(int id) { m_CollId = id; }
 	int GetId() const { return m_CollId; }
 	void SetSpaceId(int id) { m_SpaceId = id; }

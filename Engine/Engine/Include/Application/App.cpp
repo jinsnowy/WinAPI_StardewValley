@@ -14,6 +14,7 @@
 #include "../Object/Mouse.h"
 #include "../Profiler.h"
 #include "../UnReleaseTest.h"
+#include "../Option.h"
 
 App::App()
 {
@@ -39,7 +40,6 @@ App::~App()
 	PATH_MANAGER->Release();
 	TIMER->Release();
 	WINDOW->Release();
-
 	GetUndeletedList();
 }
 
@@ -61,7 +61,7 @@ int App::Go()
 		}
 		else {
 			// Game Frame goes
-			// Process();
+			Process();
 		}
 	}
 
@@ -180,7 +180,11 @@ void App::Collision(float dt)
 {
 	PROBE_PERFORMANCE("Collision");
 	SCENE_MANAGER->Collision(dt);
+#ifdef QUAD_TREE
 	COLLISION_MANAGER->CollisionQuadTreeVersion(dt);
+#else
+	COLLISION_MANAGER->CollisionListVersion(dt);
+#endif
 }
 
 void App::Draw(float dt)
@@ -191,11 +195,12 @@ void App::Draw(float dt)
 
 	SCENE_MANAGER->Draw(pBackBuffer->GetDC(), dt);
 
+	Mouse* pMouse = INPUT->GetMouse();
+
+	pMouse->Draw(pBackBuffer->GetDC(), dt);
+
 	BitBlt(WINDOW->m_hDC, 0, 0, GETRESOLUTION.x, GETRESOLUTION.y, pBackBuffer->GetDC(), 0, 0, SRCCOPY);
 
 	SAFE_RELEASE(pBackBuffer);
 
-	Mouse* pMouse = INPUT->GetMouse();
-
-	pMouse->Draw(WINDOW->m_hDC, dt);
 }
